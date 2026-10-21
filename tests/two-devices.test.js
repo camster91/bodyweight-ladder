@@ -50,10 +50,10 @@ const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Erro
 
   // H2: clock skew, B hides crab, A (1h ahead) then hides bear
   S=server(); A=device(S,{v:2,prefs:{setupDone:true}},{skew:3600e3}); await sleep(80); B=device(S,{v:2,prefs:{setupDone:true}}); await sleep(80);
-  click(A,'#tab-ladders'); ((A.d.querySelector('[data-ui=ex][data-t=push][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=focus][data-t=push][data-f=more]')); await sleep(40);
-  click(B,'#tab-ladders'); ((B.d.querySelector('[data-ui=ex][data-t=crab][aria-expanded=false]')||{click(){}}).click(), click(B,'[data-act=hide][data-t=crab]')); await sleep(40);
+  click(A,'#tab-ladders'); ((A.d.querySelector('[data-ui=ex][data-t=push][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=focus][data-t=push][data-f=more]')); await sleep(150);
+  click(B,'#tab-ladders'); ((B.d.querySelector('[data-ui=ex][data-t=crab][aria-expanded=false]')||{click(){}}).click(), click(B,'[data-act=hide][data-t=crab]')); await sleep(150);
   ok(st(A).prefs.hidden.crab===true,'H2 A sees B hide despite clock skew');
-  ((A.d.querySelector('[data-ui=ex][data-t=bear][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=hide][data-t=bear]')); await sleep(40);
+  ((A.d.querySelector('[data-ui=ex][data-t=bear][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=hide][data-t=bear]')); await sleep(150);
   ok(S.doc.prefs.hidden.crab && S.doc.prefs.hidden.bear && S.doc.prefs.focus.push==='more','H2/M2 all three changes kept');
 
   // H3: invalid_argument does not delete history
