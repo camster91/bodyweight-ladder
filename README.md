@@ -1,3 +1,5 @@
+![Bodyweight Ladder](assets/brand/banner.png)
+
 # Bodyweight Ladder
 
 A phone-first training app for bodyweight strength, tendon health, mobility and stretching. Every exercise is a **ladder** of steps from easy to hard. Hit the top of the rep range on every set and you move up a rung. Rung, the mascot, shows each step.
@@ -26,7 +28,10 @@ The tests run the real page in jsdom: data repair of old saves, Undo, two-device
 
 ## Files
 - `index.html`: the whole app (HTML, CSS, JS)
-- `img/`: Rung illustrations for every step (`<track>-<step>.webp`), app icon and cheer image
+- `img/`: Rung illustrations for every step (`<track>-<step>.webp`), app icon, logo banner and cheer image
+- `img/w/`: start → finish two-pose pictures for moves where one pose doesn't show the movement
+- `assets/brand/`: app icon (512px) and logo banner
+- `assets/coaches/`: two designs for a second, female coach (not used in the app yet)
 - `assets/mascot/rung-reference.png`: the reference image used to keep Rung consistent
 - `tests/`: test files and runner
 

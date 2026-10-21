@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="img/icon.webp">
+<link rel="apple-touch-icon" href="assets/brand/icon-512.png">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -245,6 +247,7 @@ body.in-setup header.top .date{display:none}
 .setup{display:flex;flex-direction:column;gap:10px;padding-bottom:90px}
 body.in-setup .sticky-actions{position:fixed;left:0;right:0;bottom:0;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));margin:0}
 .setup-hero{width:120px;height:120px;align-self:center}
+.setup-brand{width:100%;height:auto;border-radius:16px;max-width:100%}
 .togs{display:flex;flex-wrap:wrap;gap:8px}
 .togs.col{flex-direction:column}
 .tog{background:var(--surface);text-align:left}
@@ -254,6 +257,9 @@ body.in-setup .sticky-actions{position:fixed;left:0;right:0;bottom:0;padding:12p
 .timer .tlabel{white-space:nowrap;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.85}
 .timer.reached{background:var(--good);color:#fff}
 .timer button{min-height:44px!important;min-width:44px}
+.pic-wide{width:100%;height:auto;aspect-ratio:3/2;border-radius:12px;background:#EEF2F8;display:block;max-width:100%}
+.move.nopic .move-text{width:100%}
+img.wthumb{width:78px!important;flex:0 0 78px!important;object-fit:cover!important}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:14px;width:max-content;max-width:calc(100% - 32px);box-sizing:border-box;border-radius:16px!important;background:var(--toast-bg);color:var(--toast-fg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;z-index:9;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .2s}}
 </style>
@@ -440,7 +446,10 @@ function lvlOf(t){
   const k=state.levels[t.id]; const i=k?t.steps.findIndex((_,j)=>keyOf(t,j)===k):-1;
   return i<0 ? defaultIdx(t) : i;
 }
-const imgOf = (t,i) => t.custom ? "img/rung.webp" : t.img ? `img/${t.img[i]}.webp` : `img/${t.id}-${i}.webp`;
+// Start → finish pictures for moves where one pose doesn't show the movement
+const WIDE = {"push:diamond-push-up": "w/push-diamond-push-up", "push:archer-push-up": "w/push-archer-push-up", "dip:bench-dip-knees-bent": "w/dip-bench-dip-knees-bent", "dip:bench-dip-legs-straight": "w/dip-bench-dip-legs-straight", "dip:negative-dip": "w/dip-negative-dip", "dip:parallel-bar-dip": "w/dip-parallel-bar-dip", "dip:straight-bar-dip": "w/dip-straight-bar-dip", "pull:scapular-pull": "w/pull-scapular-pull", "pull:jumping-pull-up": "w/pull-jumping-pull-up", "pull:negative-pull-up": "w/pull-negative-pull-up", "pull:pull-up": "w/pull-pull-up", "pull:archer-pull-up": "w/pull-archer-pull-up", "pull:l-sit-pull-up": "w/pull-l-sit-pull-up", "row:doorway-row": "w/row-doorway-row", "row:bent-knee-table-row": "w/row-bent-knee-table-row", "core:lying-leg-raise": "w/core-lying-leg-raise", "core:hanging-knee-raise": "w/core-hanging-knee-raise", "core:hanging-leg-raise": "w/core-hanging-leg-raise", "hinge:glute-bridge": "w/hinge-glute-bridge", "hinge:nordic-curl-negative": "w/hinge-nordic-curl-negative", "hinge:nordic-curl": "w/hinge-nordic-curl", "frog:frog-stretch-rocks": "w/frog-frog-stretch-rocks", "hams:contract-relax-hamstring-stretch": "w/hams-contract-relax-hamstring-stretch", "openbook:open-book-stretch": "w/openbook-open-book-stretch", "kneewall:knee-to-wall-ankle-stretch": "w/kneewall-knee-to-wall-ankle-stretch", "ninety:90-90-hip-switches": "w/ninety-90-90-hip-switches", "swing:kettlebell-swing": "w/swing-kettlebell-swing", "ankle:slow-step-calf-raise": "w/ankle-slow-step-calf-raise", "ankle:split-stance-calf-raise": "w/ankle-split-stance-calf-raise", "ankle:single-leg-calf-raise-5s-top-hold": "w/ankle-single-leg-calf-raise-5s-top-hold", "ankle:single-leg-calf-eccentric": "w/ankle-single-leg-calf-eccentric", "ankle:rope-less-jump-rope": "w/ankle-rope-less-jump-rope", "ankle:single-leg-pogo-hops": "w/ankle-single-leg-pogo-hops", "shin:tibialis-raise": "w/shin-tibialis-raise", "push:push-up": "w/push-push-up"};
+const isWide = (t,i) => !t.custom && !!WIDE[keyOf(t,i)];
+const imgOf = (t,i) => t.custom ? "img/rung.webp" : isWide(t,i) ? `img/${WIDE[keyOf(t,i)]}.webp` : t.img ? `img/${t.img[i]}.webp` : `img/${t.id}-${i}.webp`;
 function spec(t, lvl=lvlOf(t)){ const st=t.steps[lvl].slice(); const n=state.prefs.sets[t.id]; if(n) st[1]=n; return st; }
 const groupOf = t => t.custom ? "Custom" : (t.group || "Strength");
 let filter = "All"; try{ filter = localStorage.getItem("bwl-filter") || "All"; }catch(e){}
@@ -741,7 +750,8 @@ function fullCard(t, first){
   return `<section class="card${first?" first":""}" id="card-${t.id}">
     <div class="track-head"><div><div class="label">${first?`<span class="next">Up next</span> · `:""}${esc(t.name)}${t.steps.length<2?"":` · step ${lvl+1}/${t.steps.length}`}</div>${t.steps.length<2?"":rungs(t,lvl)}</div>
       <span class="target">${targetText(st)}</span>${first?"":`<button class="icon" data-act="close" data-t="${t.id}" aria-label="Close ${esc(t.name)}">✕</button>`}</div>
-    <div class="move"><img class="pic" src="${imgOf(t,lvl)}" alt="${esc(st[0])} shown by Rung" loading="lazy" width="96" height="96">
+    ${isWide(t,lvl)?`<img class="pic-wide" src="${imgOf(t,lvl)}" alt="${esc(st[0])}: start and finish positions, shown by Rung" loading="lazy" width="900" height="600">`:""}
+    <div class="move${isWide(t,lvl)?" nopic":""}">${isWide(t,lvl)?"":`<img class="pic" src="${imgOf(t,lvl)}" alt="${esc(st[0])} shown by Rung" loading="lazy" width="96" height="96">`}
       <div class="move-text"><div class="step-name" tabindex="-1">${esc(st[0])}</div><p class="cue">${esc(st[5])}${st[6]!=="None"?` <span class="gear">Needs: ${esc(st[6])}</span>`:""}</p>
       <a class="video" href="${ytLink(st[0])}" target="_blank" rel="noopener">▶ Watch how</a></div></div>
     ${timed && hn<st[1] ? `<button class="holdbtn" data-act="hold" data-t="${t.id}">▶ Start hold · set ${hn+1} of ${st[1]} · goal ${g[hn]}s</button>` : ""}
@@ -761,7 +771,7 @@ function miniRow(t, kind){
     : last ? `Last done ${ago(last.ts)} · about ${Math.round(minutesFor(t))} min` : `New · about ${Math.round(minutesFor(t))} min`;
   const same = slug(st[0])===slug(t.name);
   return `<button class="mini${kind==="done"?" done-row":""}" data-act="open" data-t="${t.id}">
-    <img src="${imgOf(t,lvl)}" alt="" width="52" height="52" loading="lazy">
+    <img class="${isWide(t,lvl)?"wthumb":""}" src="${imgOf(t,lvl)}" alt="" width="52" height="52" loading="lazy">
     <span class="mini-t"><b>${esc(st[0])}${focusOf(t.id)==="more"?` <span class="star" title="More often">★</span>`:""}</b><span>${same?"":esc(t.name)+" · "}${targetText(st)}</span><span class="${kind==="done"?"ok":""}">${sub}</span></span>
     <span class="chev">${kind==="done"?"Again":"Open"}</span></button>`;
 }
@@ -869,11 +879,11 @@ function viewLadders(){
     html+=ts.map(t=>{
       const lvl=lvlOf(t), st=spec(t,lvl), open=expandedEx.has(t.id);
       const words=esc([t.name,g,...t.steps.map(x=>x[0])].join(" ").toLowerCase());
-      const row=`<button class="exrow" data-ui="ex" data-t="${t.id}" aria-expanded="${open}"${open?"":` data-sr="${words}" data-g="${g}"`}><img src="${imgOf(t,lvl)}" alt="" width="48" height="48" loading="lazy">
+      const row=`<button class="exrow" data-ui="ex" data-t="${t.id}" aria-expanded="${open}"${open?"":` data-sr="${words}" data-g="${g}"`}><img class="${isWide(t,lvl)?"wthumb":""}" src="${imgOf(t,lvl)}" alt="" width="48" height="48" loading="lazy">
         <span class="mini-t"><b>${esc(t.name)}${focusOf(t.id)==="more"?` <span class="star">★</span>`:focusOf(t.id)==="less"?` <span class="muted">· less often</span>`:""}</b><span>${t.custom?"Your own":`Step ${lvl+1}/${t.steps.length}`} · ${esc(st[0])}</span></span><span class="chev">${open?"▴":"▾"}</span></button>`;
       if(!open) return row;
       const list=t.custom ? "" : `<ol class="ladder">${t.steps.map((s2,i)=>`
-        <li class="${i===lvl?"cur":i<lvl?"past":""}"><span class="n">${i<lvl?"✓":i+1}</span><img class="thumb" src="${imgOf(t,i)}" alt="" loading="lazy" width="48" height="48">
+        <li class="${i===lvl?"cur":i<lvl?"past":""}"><span class="n">${i<lvl?"✓":i+1}</span><img class="thumb${isWide(t,i)?" wthumb":""}" src="${imgOf(t,i)}" alt="" loading="lazy" width="48" height="48">
         <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">▶ Watch how</a></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}">Start here</button>`}</li>`).join("")}</ol>`;
       return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}${controls(t)}${list}</section>`;
@@ -958,7 +968,7 @@ function viewSetup(){
     : {groups:new Set(["Strength","Tendon","Mobility","Stretch"]), gear:new Set(), level:"some"});
   const tog=(kind,val,label)=>`<button class="tog" data-ui="stog" data-kind="${kind}" data-v="${val}" aria-pressed="${kind==="level"?d.level===val:d[kind].has(val)}">${label}</button>`;
   return `<div class="setup">
-    <img class="setup-hero" src="img/cheer.webp" alt="Rung, the app's coach, cheering">
+    <img class="setup-brand" src="img/brand.webp" alt="Bodyweight Ladder. Climb one rung at a time." width="1200" height="675">
     <h2>Let's set you up</h2><p class="cue">Three quick questions. You can change all of this later.</p>
     <div class="label sect">1. What do you want to train?</div>
     <div class="togs">${tog("groups","Strength","Strength")}${tog("groups","Tendon","Tendons &amp; joints")}${tog("groups","Mobility","Mobility")}${tog("groups","Stretch","Stretching")}${tog("groups","Weights","Carries &amp; swings")}</div>
