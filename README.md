@@ -13,7 +13,7 @@ A phone-first training app for bodyweight strength, tendon health, mobility and 
 - **Syncs across devices** when hosted as a claude.ai artifact (per-user database, merged entry by entry and setting by setting). Anywhere else it saves in the browser.
 
 ## Run it
-It's one static page. Open `index.html`, or serve the folder:
+It's one static page. Open `index.html`, or serve the folder. To put it on a server, see **[DEPLOY.md](DEPLOY.md)** (includes a copy-paste prompt for an AI agent on your VPS).
 
 ```bash
 npm start          # serves on http://localhost:3000
@@ -39,3 +39,9 @@ The tests run the real page in jsdom: data repair of old saves, Undo, two-device
 `{ v, updated, stamps, levels:{track:"track:step-slug"}, log:[{ts,t,k,sets}], deleted:[], prefs:{hidden,focus,sets,presetsSeen,setupDone}, custom:[], routines:[] }`
 
 Steps are identified by permanent keys (`pull:jumping-pull-up`), never by position, so ladders can be reordered safely. `stamps` records when each setting last changed, so devices merge setting by setting.
+
+## Known to-dos
+- App icon: Rung's hands and feet should clearly grip the ladder rungs.
+- Redo the remaining single-pose pictures in the newer athletic style so every picture matches.
+- Optional second coach (female) with a "Choose your coach" setting. Designs are in `assets/coaches/`.
+- Self-hosted copies save in the browser only. Cross-device sync needs a small backend.
