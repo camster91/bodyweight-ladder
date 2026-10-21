@@ -1,0 +1,13 @@
+{
+  "name": "bodyweight-ladder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Phone-first bodyweight training app: skill ladders, time-based session planner, hold and rest timers.",
+  "scripts": {
+    "test": "node tests/run.js",
+    "start": "npx --yes serve@14.2.4 ."
+  },
+  "devDependencies": {
+    "jsdom": "24.1.3"
+  }
+}

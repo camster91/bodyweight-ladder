@@ -1,0 +1,36 @@
+# Bodyweight Ladder
+
+A phone-first training app for bodyweight strength, tendon health, mobility and stretching. Every exercise is a **ladder** of steps from easy to hard. Hit the top of the rep range on every set and you move up a rung. Rung, the mascot, shows each step.
+
+## What it does
+- **Plans your session from the time you have.** Pick 5, 10, 20, 30, 60 min or All. Overdue moves come first, with at most one new move when you already train.
+- **Logs in one tap.** Goals are pre-filled (last time + 1 rep, or +5 s for holds). Adjust with − / + and Save. Undo is there for 5 seconds.
+- **Hold timer** for timed moves (3-2-1, counts up, buzz and beep at the goal, both sides for per-side moves) and **rest timer** with each move's own rest.
+- **26 exercises** in groups: Strength (Push, Dip, Pull, Row, Squat, Core, Hinge), Tendon, Mobility, Stretch and Weights, plus your own custom moves.
+- **Routines** (presets plus your own), **first-time setup**, **welcome back** after a break, **progress per exercise** in History.
+- **Syncs across devices** when hosted as a claude.ai artifact (per-user database, merged entry by entry and setting by setting). Anywhere else it saves in the browser.
+
+## Run it
+It's one static page. Open `index.html`, or serve the folder:
+
+```bash
+npm start          # serves on http://localhost:3000
+```
+
+## Tests
+```bash
+npm install
+npm test
+```
+The tests run the real page in jsdom: data repair of old saves, Undo, two-device sync with a fake cloud (offline phones, clock skew, conflicting edits), the session planner, hold timer, setup, search and History.
+
+## Files
+- `index.html`: the whole app (HTML, CSS, JS)
+- `img/`: Rung illustrations for every step (`<track>-<step>.webp`), app icon and cheer image
+- `assets/mascot/rung-reference.png`: the reference image used to keep Rung consistent
+- `tests/`: test files and runner
+
+## Data model (v2)
+`{ v, updated, stamps, levels:{track:"track:step-slug"}, log:[{ts,t,k,sets}], deleted:[], prefs:{hidden,focus,sets,presetsSeen,setupDone}, custom:[], routines:[] }`
+
+Steps are identified by permanent keys (`pull:jumping-pull-up`), never by position, so ladders can be reordered safely. `stamps` records when each setting last changed, so devices merge setting by setting.
