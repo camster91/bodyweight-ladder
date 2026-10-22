@@ -1429,7 +1429,8 @@ function viewHistory(){
 /* ---------- first-time setup ---------- */
 const GEAR=[["bar","Pull-up bar"],["weights","Weights (jug, kettlebell)"]];
 const SETUP_GROUPS=[['Strength','Strength','Push, pull and build control.'],['Tendon','Tendons & joints','Controlled strength for smaller movements.'],['Mobility','Mobility','Move through a wider range.'],['Stretch','Stretching','Make room to move.'],['Weights','Carries & swings','Add weight to your training.']];
-let setupStage=0,setupError='';
+let setupStage=0,setupError='',setupIntro=false;
+let setupIntroRequested=new URLSearchParams(location.search).get('onboarding')==='1';
 function saveSetupDraft(){if(state.prefs.setupDone||state.log.length)return;store.set('bwl-onboarding',JSON.stringify({v:1,stage:setupStage,groups:[...setupDraft.groups],gear:[...setupDraft.gear],level:setupDraft.level}));}
 function clearSetupDraft(){store.set('bwl-onboarding','null');setupDraft=null;setupStage=0;setupError='';}
 function setupHasExercises(){return TRACKS.some(t=>setupDraft.groups.has(groupOf(t))&&(setupDraft.gear.has('weights')||groupOf(t)!=='Weights')&&(setupDraft.gear.has('bar')||!['pull','hang'].includes(t.id)));}
@@ -1442,9 +1443,10 @@ function viewSetup(){
   const redo=state.prefs.setupDone||state.log.length>0;
   if(!setupDraft){
     setupDraft=redo?{groups:new Set(['Strength','Tendon','Mobility','Stretch','Weights'].filter(g=>TRACKS.some(t=>groupOf(t)===g&&!isHidden(t.id)))),gear:new Set([...(!isHidden('pull')?['bar']:[]),...(TRACKS.some(t=>groupOf(t)==='Weights'&&!isHidden(t.id))?['weights']:[])]),level:'keep'}:{groups:new Set(['Strength','Tendon','Mobility','Stretch']),gear:new Set(),level:'some'};
-    setupStage=redo?1:0;setupError='';
+    setupStage=redo&&!setupIntro?1:0;setupError='';
     if(!redo)try{const d=JSON.parse(store.get('bwl-onboarding','null'));if(d?.v===1&&Number.isInteger(d.stage)&&d.stage>=0&&d.stage<=4&&Array.isArray(d.groups)&&d.groups.every(g=>SETUP_GROUPS.some(x=>x[0]===g))&&Array.isArray(d.gear)&&d.gear.every(g=>['bar','weights'].includes(g))&&['new','some','strong'].includes(d.level)){setupDraft={groups:new Set(d.groups),gear:new Set(d.gear),level:d.level};setupStage=d.stage;}}catch(e){}
   }
+  if(setupIntro){setupStage=0;setupIntro=false;}
   const d=setupDraft,stage=setupStage;
   const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
   const headings=['Your workout.\nOne set at a time.','What would you like to work on?','What do you have available?','Where are you starting?',redo?'Review your changes.':'Ready for your first set.'];
@@ -1489,6 +1491,10 @@ function render(){
   document.body.dataset.view=tab;
   // First visit: ask the setup questions, but only once we know this account has nothing saved yet
   const fresh = !state.prefs.setupDone && !state.log.length;
+  if(setupIntroRequested&&(!fresh||!['starting','syncing','error'].includes(sync))){
+    setupIntroRequested=false;setupIntro=true;setupWanted=true;setupDraft=null;tab='setup';
+    const url=new URL(location.href);url.searchParams.delete('onboarding');history.replaceState(history.state,'',url);
+  }
   if(fresh && sync==="error" && tab!=="setup"){ document.body.classList.add("in-setup"); $("#viewTitle").textContent="Welcome"; $("#view").innerHTML=`<div class="card empty"><img src="img/cheer.webp" alt=""><h2>Can't reach your account</h2><p>If you've used Bodyweight Ladder before, your progress will load once you're back online. Retrying…</p><button class="ghost" data-ui="forcesetup" style="margin-top:8px">I'm new here. Set me up</button></div>`; return; }
   if(fresh && sync!=="starting" && sync!=="syncing" && tab!=="setup") tab="setup";
   if(!fresh && tab==="setup" && !setupWanted) tab="today";

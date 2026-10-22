@@ -19,6 +19,8 @@ A phone-first training app for bodyweight strength, tendon health, mobility and 
 ## Run it
 It's one static page. Open `index.html`, or serve the folder. To put it on a server, see **[DEPLOY.md](DEPLOY.md)** (includes a copy-paste prompt for an AI agent on your VPS).
 
+Open `/?onboarding=1` to view the welcome with existing progress. Cancel returns to Today without changing saved settings. The parameter is consumed when the introduction opens, so refreshing does not keep forcing setup.
+
 ```bash
 npm start          # serves on http://localhost:3000
 ```
