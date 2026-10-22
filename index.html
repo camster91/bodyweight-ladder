@@ -396,6 +396,39 @@ nav button[aria-current="true"]{border:0;background:var(--chip);color:var(--acce
  body.in-setup .wrap{margin:0 auto;max-width:640px;padding-top:42px}
  body.in-setup header.top img{display:block}.setup-intro h2{font-size:42px}
 }
+/* Focus: one decision at a time. The full editor stays behind a disclosure. */
+body[data-view="today"]{background:var(--surface)}
+body[data-view="today"] .top{margin-bottom:0}
+body[data-view="today"] .top>img,body[data-view="today"] #today{display:none}
+body[data-view="today"] #saveNote{font-size:11px;margin-top:20px}
+.focus-shell{max-width:520px;margin:auto}
+.focus-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:13px}
+.focus-meta summary{color:var(--accent);cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:flex-end}
+.focus-meta>span{flex:1}.focus-edit .planbar{padding:12px 0;margin:0;flex-direction:column;align-items:stretch}
+.focus-edit[open]{position:relative}.focus-edit[open] .planbar{position:absolute;right:0;top:44px;width:min(340px,calc(100vw - 40px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px #0002;padding:20px;z-index:8}
+.focus-stage{min-height:min(590px,calc(100svh - 245px));display:flex;flex-direction:column;text-align:center;padding-top:42px}
+.focus-stage h2{font-size:clamp(28px,7vw,38px);line-height:1.15;letter-spacing:-1.2px;margin:0}
+.focus-eyebrow{font-size:14px;color:var(--muted);margin:0 0 14px}
+.focus-target{font-size:15px;color:var(--muted);margin:12px 0 0}
+.focus-counter{display:flex;align-items:center;justify-content:center;gap:28px;margin:38px 0 18px}
+.focus-number{font-size:clamp(76px,23vw,112px);font-weight:600;line-height:1;letter-spacing:-6px;font-variant-numeric:tabular-nums;min-width:100px}
+.focus-unit{font-size:14px;color:var(--muted);margin-top:8px}
+.focus-stepper{border:0;background:var(--chip);border-radius:50%;width:48px;height:48px;min-width:48px;font-size:28px;color:var(--ink);padding:0}
+.focus-link{border:0;background:none;color:var(--accent);min-height:44px;font-size:14px;padding:8px 12px}
+.focus-technique{margin:0 auto;max-width:420px;width:100%}.focus-technique summary{color:var(--accent);font-size:14px;cursor:pointer;min-height:44px;padding:12px}.focus-technique p{font-size:14px;line-height:1.6;color:var(--muted)}.focus-technique img{width:100%;height:auto;border-radius:12px}.focus-technique a{display:inline-block;min-height:44px;padding:12px}
+.focus-actions{margin-top:auto;padding:28px 0 12px;display:flex;flex-direction:column;gap:4px}
+.focus-actions .primary{width:100%;min-height:56px;border-radius:16px;font-size:17px}
+.focus-rest{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:12px 0}
+.focus-clock{font-size:clamp(60px,18vw,88px);letter-spacing:-4px;font-variant-numeric:tabular-nums;line-height:1.1;font-weight:500}
+.focus-ring{width:224px;height:224px;display:grid;place-items:center;border:5px solid var(--line);border-top-color:var(--accent);border-right-color:var(--accent);border-radius:50%}
+.focus-next{font-size:14px;line-height:1.7;color:var(--muted);margin:0}.focus-next strong{display:block;font-weight:500;color:var(--ink)}
+.focus-check{font-size:48px;color:var(--good);line-height:1}
+.focus-workout{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}.focus-workout>summary,.focus-advanced>summary{cursor:pointer;font-size:14px;color:var(--muted);padding:14px 0;min-height:48px}
+.focus-workout .session-queue{border:0;background:transparent;padding:0}.focus-workout .mini{box-shadow:none}.focus-advanced .card{margin-top:12px}.focus-ex-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.focus-ex-row>span{flex:1;font-size:14px}.focus-ex-row small{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+body.focus-timing #timer{display:none}body.focus-timing{padding-bottom:0}
+@media(min-width:1100px){body[data-view="today"] .wrap{max-width:680px;margin-left:calc(224px + (100vw - 224px - 680px)/2);padding-top:44px}body[data-view="today"] .focus-stage{min-height:590px}}
+@media(max-height:760px){.focus-stage{padding-top:24px;min-height:420px}.focus-counter{margin-top:24px}.focus-number{font-size:80px}.focus-ring{width:184px;height:184px}}
+
 </style>
 
 <div class="wrap">
@@ -412,7 +445,7 @@ nav button[aria-current="true"]{border:0;background:var(--chip);color:var(--acce
 <nav aria-label="Main navigation"><div class="nav-brand">Bodyweight Ladder</div><div class="tabs">
   <button id="tab-today" data-tab="today" aria-current="true">Today</button>
   <button id="tab-ladders" data-tab="ladders">Exercises</button>
-  <button id="tab-history" data-tab="history">History</button>
+  <button id="tab-history" data-tab="history">Progress</button>
 </div></nav>
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button id="toastUndo" hidden>Undo</button></div>
 <div class="timer" id="timer" hidden role="timer"></div>
@@ -838,18 +871,23 @@ function score(t){
 function recentlyDone(t){ const l=lastFor(t.id); return !!l && (Date.now()-l.ts)/3600000 < RECENT_HRS; }
 
 let lastSaveAt=0, confirmZero=null;
-function saveSets(t){
-  if(Date.now()-lastSaveAt<900) return;          // ignore an accidental double tap
+function saveSets(t,options={}){
+  if(!options.focus && Date.now()-lastSaveAt<900) return;          // ignore an accidental double tap
   const lvl=lvlOf(t), st=spec(t,lvl);
   const vals=(drafts[t.id]||goals(t,lvl,st).map(String)).map(v=>parseInt(v,10)).filter(v=>!isNaN(v)&&v>=0);
   if(!vals.length){ toast("Enter at least one set"); return; }
-  if(vals.every(v=>v===0) && confirmZero!==t.id){ confirmZero=t.id; toast("All sets are 0. Tap Save again to log it anyway."); return; }
+  if(vals.every(v=>v===0) && confirmZero!==t.id){ confirmZero=t.id; toast(options.focus?"All sets are 0. Tap Complete set again to confirm.":"All sets are 0. Tap Save again to log it anyway."); return; }
   confirmZero=null; lastSaveAt=Date.now();
   const entry={ts:Date.now(), t:t.id, k:keyOf(t,lvl), sets:vals};
   state.log.push(entry); state.log=state.log.slice(-LOG_KEEP);
   delete drafts[t.id]; delete holdNext[t.id]; delete completedSets[t.id]; opened.delete(t.id);
   if(hold && hold.tid===t.id) stopTimer();
-  showMore=false; commit(); render();
+  showMore=false; commit();
+  if(options.focus) return entry;
+  focusUndo=null;
+  const item=focusRun?.items.find(x=>x.id===t.id&&!x.entry);
+  if(item){stopTimer();item.values=vals.slice();item.entry=entryId(entry);focusRun.phase="work";persistFocus();}
+  render();
   const nextCard=$(".card.first"); if(nextCard){ nextCard.scrollIntoView?.({block:"start",behavior:motionBehavior()}); }
   const top = hitTarget(entry,st) && !t.custom && lvl<t.steps.length-1;
   toast(top ? `${st[0]}: top of the range. Ready to level up.` : `${st[0]} saved.`, ()=>undoEntry(entry,t));
@@ -858,6 +896,8 @@ function undoEntry(entry,t){
   state.log=state.log.filter(e=>entryId(e)!==entryId(entry));
   state.deleted=[...state.deleted, entryId(entry)].slice(-TOMB_KEEP);
   drafts[t.id]=entry.sets.map(String); opened.add(t.id);
+  const item=focusRun?.items.find(x=>x.entry===entryId(entry));
+  if(item){delete item.entry;item.values=entry.sets.slice(0,-1);item.value=entry.sets.at(-1);focusRun.at=focusRun.items.indexOf(item);focusRun.phase="work";persistFocus();}
   commit(); render(); toast("Undone. Your numbers are back in the card.");
 }
 function setLevel(id,lvl){ if(hold&&hold.tid===id) stopTimer(); const t=findTrack(id); state.levels[id]=keyOf(t,lvl); delete drafts[id]; delete holdNext[id]; delete completedSets[id]; commit(); render(); }
@@ -872,6 +912,104 @@ let showMore=false, showDone=false, sheetOpen=false;
 const expandedEx=new Set();
 const holdNext={};            // trackId -> next set to time
 let setupDraft=null, routinesOpen=false, setupWanted=false, exQuery="";
+
+// Unfinished sessions belong to this browser. Completed exercises use the existing log/sync.
+let focusRun=null, focusUndo=null;
+try{const r=JSON.parse(store.get('bwl-focus','null'));if(r?.v===1&&Array.isArray(r.items)&&r.items.length<=100)focusRun=r;}catch(e){}
+function persistFocus(){store.set('bwl-focus',JSON.stringify(focusRun));}
+function focusSignature(){return JSON.stringify([new Date().toDateString(),filter,minutes,state.levels,state.prefs.sets,state.prefs.hidden,state.routines]);}
+function ensureFocus(plan){
+  const signature=focusSignature();
+  const valid=focusRun&&focusRun.signature===signature&&focusRun.items.every(x=>{
+    const t=x&&findTrack(x.id);return t&&x.key===keyOf(t,lvlOf(t))&&Array.isArray(x.values)&&Array.isArray(x.goals)&&x.goals.length===spec(t)[1]&&x.values.length<=x.goals.length&&[...x.values,...x.goals,...(x.value===undefined?[]:[x.value])].every(v=>Number.isFinite(v)&&v>=0&&v<=9999);
+  });
+  if(!valid){
+    if(hold?.focus||focusRun?.phase==='rest')stopTimer();
+    const previous=focusRun?.items||[];
+    // Midnight refreshes completed plans, but never drops an exercise already in progress.
+    try{if(JSON.stringify(JSON.parse(focusRun.signature).slice(1))===JSON.stringify(JSON.parse(signature).slice(1))){
+      const partial=previous.filter(x=>x&&!x.entry&&Array.isArray(x.values)&&x.values.length).map(x=>findTrack(x.id)).filter(Boolean);
+      plan=[...partial,...plan.filter(t=>!partial.some(p=>p.id===t.id))];
+    }}catch(e){}
+    focusRun={v:1,signature,started:Date.now(),at:0,phase:'work',restEnd:0,items:plan.map(t=>{
+      const key=keyOf(t,lvlOf(t)),g=goals(t,lvlOf(t),spec(t)),old=previous.find(x=>x&&x.id===t.id&&x.key===key&&!x.entry&&Array.isArray(x.values)&&x.values.length<g.length&&x.values.every(v=>Number.isFinite(v)&&v>=0&&v<=9999));
+      return {id:t.id,key,goals:g,values:old?old.values.slice():[]};
+    })};focusUndo=null;persistFocus();
+  }
+  // A synced or manually saved result completes this exercise without logging it twice.
+  focusRun.items.forEach(x=>{
+    if(!x.entry){const e=state.log.find(e=>e.t===x.id&&e.k===x.key&&e.ts>=(focusRun.started||Infinity));if(e){x.entry=entryId(e);x.values=e.sets.slice();}}
+    if(!drafts[x.id]&&x.values.length&&!x.entry){drafts[x.id]=x.goals.map((v,i)=>String(x.values[i]??v));completedSets[x.id]=new Set(x.values.map((_,i)=>i));}
+  });
+  if(!Number.isInteger(focusRun.at)||focusRun.at<0||focusRun.at>=focusRun.items.length)focusRun.at=0;
+  if(focusRun.items[focusRun.at]?.entry){const next=focusRun.items.findIndex(x=>!x.entry);if(next>=0)focusRun.at=next;else focusRun.phase='finished';}
+  if(!['work','rest','finished'].includes(focusRun.phase))focusRun.phase='work';
+  if(focusRun.phase==='rest'){
+    if(!Number.isFinite(focusRun.restEnd)||focusRun.restEnd<=Date.now()||focusRun.restEnd>Date.now()+3600000){focusRun.phase='work';focusRun.restEnd=0;}
+    else if(!restTick){startRest((focusRun.restEnd-Date.now())/1000);}
+  }
+  persistFocus();return focusRun;
+}
+function focusItem(){return focusRun?.items[focusRun.at];}
+function focusValue(){const x=focusItem();return x?.value??x?.goals[x.values.length]??0;}
+function focusTime(s){return Math.floor(s/60)+':'+pad2(s%60);}
+function focusView(plan,top,more,recent){
+  const r=ensureFocus(plan),x=focusItem(),t=x&&findTrack(x.id),st=t&&spec(t),timed=st&&isSec(st[4]);
+  const runningHold=hold?.focus&&hold.tid===x?.id;
+  document.body.classList.toggle('focus-timing',r.phase==='rest'||!!runningHold);
+  const saved=r.items.filter(x=>x.entry).length;
+  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.items.length} exercises${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
+  const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
+  if(away>=7)html+=`<p class="focus-next">Welcome back. Goals match your last numbers today, so ease back in.</p>`;
+  if(!t){return html+`<section class="focus-stage"><div class="focus-rest"><h2>All caught up.</h2><p class="focus-next">Nothing due here. Rest, or choose another workout.</p></div></section></div>`+sheet();}
+  html+=`<section class="focus-stage" aria-label="Current set">`;
+  if(r.phase==='finished')html+=`<div class="focus-rest"><span class="focus-check" aria-hidden="true">✓</span><h2>Workout complete.</h2><p class="focus-next">${r.items.length} exercises · ${r.items.reduce((n,x)=>n+x.values.length,0)} sets saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
+  else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
+  else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
+  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  html+='</section>';
+  html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} exercises</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(spec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
+  if(more.length)html+=`<button class="fold" data-ui="more" aria-expanded="${showMore}">More exercises <span>${more.length}</span></button>${showMore?'<p class="label">Try something new</p>'+more.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'plan')).join(''):''}`;
+  if(recent.length)html+=`<button class="fold" data-ui="done" aria-expanded="${showDone}">Recently saved <span>${recent.length}</span></button>${showDone?recent.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'done')).join(''):''}`;
+  return html+'</div>'+sheet();
+}
+function resumeFocus(){stopTimer();focusRun.phase='work';focusRun.restEnd=0;persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});}
+function completeFocus(value=focusValue()){
+  const x=focusItem();if(!x||focusRun.phase!=='work'||x.entry)return;
+  if(hold){toast('Finish or cancel the running hold first.');return;}
+  const t=findTrack(x.id),st=spec(t),before=JSON.parse(JSON.stringify(focusRun));before.items[before.at].value=value;
+  const vals=[...x.values,value];let entry=null;
+  if(vals.length===st[1]){
+    drafts[t.id]=vals.map(String);entry=saveSets(t,{focus:true});if(!entry)return;x.entry=entryId(entry);
+  }
+  x.values=vals;delete x.value;focusUndo={before,entry};
+  if(!entry){drafts[t.id]=x.goals.map((v,i)=>String(x.values[i]??v));completedSets[t.id]=new Set(x.values.map((_,i)=>i));}
+  if(entry){const next=focusRun.items.findIndex(a=>!a.entry);if(next<0)focusRun.phase='finished';else focusRun.at=next;}
+  if(focusRun.phase!=='finished'){focusRun.phase='rest';focusRun.restEnd=Date.now()+restOf(t,st)*1000;startRest(restOf(t,st));}
+  persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});
+  // The rest/completion screen already confirms the action and keeps Undo available.
+  hideToast();
+}
+function undoFocus(){
+  if(!focusUndo)return;stopTimer();const u=focusUndo;focusUndo=null;
+  if(u.entry){state.log=state.log.filter(e=>entryId(e)!==entryId(u.entry));state.deleted=[...state.deleted,entryId(u.entry)].slice(-TOMB_KEEP);commit();}
+  focusRun=u.before;focusRun.phase='work';focusRun.restEnd=0;delete drafts[focusItem().id];delete completedSets[focusItem().id];persistFocus();hideToast();render();$('#focusPrimary')?.focus({preventScroll:true});
+}
+function handleFocus(b){
+  const a=b.dataset.focus,x=focusItem(),t=x&&findTrack(x.id);
+  if(a==='progress'){go('history');return;}
+  if(a==='another'){stopTimer();focusRun=null;focusUndo=null;persistFocus();render();return;}
+  if(a==='undo'){undoFocus();return;}
+  if(a==='skip'){resumeFocus();return;}
+  if(a==='add'){restEnd+=30000;focusRun.restEnd=restEnd;persistFocus();tick();return;}
+  if(a==='choose'){if(hold){toast('Finish or cancel the running hold first.');return;}stopTimer();focusRun.at=+b.dataset.i;focusRun.phase='work';persistFocus();render();return;}
+  if(!t)return;
+  if(a==='plus'||a==='minus'){x.value=Math.min(9999,Math.max(0,focusValue()+(a==='plus'?1:-1)*stepInc(spec(t))));persistFocus();$('#focusValue').textContent=x.value;return;}
+  if(a==='complete'){completeFocus();return;}
+  if(a==='hold'){if(hold)return;holdNext[t.id]=x.values.length;startHold(t);hold.focus=true;hold.goal=focusValue();render();return;}
+  if(a==='finish'){finishHold();return;}
+  if(a==='cancel'){stopTimer();render();}
+}
 
 /* ---------- views ---------- */
 function rungs(t,lvl){ return `<div class="rung" aria-label="Step ${lvl+1} of ${t.steps.length}">${t.steps.map((_,i)=>`<i class="${i<=lvl?"on":""}"></i>`).join("")}</div>`; }
@@ -946,32 +1084,12 @@ function viewToday(){
   for(const t of due){ if(fits(t)){ plan.push(t); used+=minutesFor(t); } }
   const capNew = veteran && filter==="All";   // a routine or type you picked gets filled with its own moves
   for(const t of fresh){ if(capNew && newCount>=1) break; if(fits(t)){ plan.push(t); used+=minutesFor(t); newCount++; } }
-  const planIds=new Set(plan.map(t=>t.id));
-  const more=[...due,...fresh].filter(t=>!planIds.has(t.id));
-  const away = veteran ? Math.floor((Date.now()-index().newest)/DAY) : 0;
-  let html=top;
-  if(away>=7) html+=`<div class="welcome"><img src="img/cheer.webp" alt=""><div><b>Welcome back!</b><span>It's been ${away} days. Goals match your last numbers today, so ease back in.</span></div></div>`;
-  html+=`<div class="session-heading"><div><span class="label">Your session</span><p class="planline">${plan.length?`<b>${plan.length}</b> ${plan.length===1?"exercise":"exercises"} · about ${Math.max(1,Math.round(used))} min`:"Nothing due right now"}</p></div>${recent.length?`<span class="saved-count">${recent.length} saved in the last 24 hours</span>`:""}</div><div class="stack session-workspace" style="--queue-rows:${Math.max(plan.length,2)}">`;
-  if(!plan.length) html+=`<div class="card empty"><img src="img/cheer.webp" alt=""><h2>All caught up</h2><p>Everything here was done in the last 24 hours. Rest, or pick something below.</p></div>`;
-  if(plan.length){
-    const active=plan.find(t=>opened.has(t.id))||plan[0];
-    html+=`<div class="session-main">${fullCard(active,true)}</div>`;
-    if(plan.length>1) html+=`<aside class="session-queue" aria-label="Other exercises in this plan"><h2 class="queue-heading">Session exercises</h2>${plan.filter(t=>t.id!==active.id).map(t=>miniRow(t,"plan")).join("")}</aside>`;
-  }
-  if(more.length){
-    html+=`<button class="fold" data-ui="more" aria-expanded="${showMore}">${showMore?"Hide":"More if you have time"} <span>${more.length}</span></button>`;
-    if(showMore){
-      const moreDue=more.filter(t=>lastFor(t.id)), moreNew=more.filter(t=>!lastFor(t.id));
-      moreDue.forEach(t=>{ html += opened.has(t.id) ? fullCard(t,false) : miniRow(t,"plan"); });
-      if(moreNew.length){ html+=`<div class="label sect">Try something new</div>`; moreNew.forEach(t=>{ html += opened.has(t.id) ? fullCard(t,false) : miniRow(t,"plan"); }); }
-    }
-  }
-  if(recent.length){
-    html+=`<button class="fold" data-ui="done" aria-expanded="${showDone}">${showDone?"Hide":"Done in the last 24 hours"} <span>${recent.length}</span></button>`;
-    if(showDone) recent.forEach(t=>{ html += opened.has(t.id) ? fullCard(t,false) : miniRow(t,"done"); });
-  }
-  return html+`</div>`+sheet();
+  ensureFocus(plan);
+  const frozenIds=new Set(focusRun.items.map(x=>x.id));
+  const more=[...due,...fresh].filter(t=>!frozenIds.has(t.id));
+  return focusView(plan,top,more,recent);
 }
+
 function sheet(){
   if(!sheetOpen) return "";
   const shown=allTracks().filter(t=>!isHidden(t.id));
@@ -1158,8 +1276,9 @@ function render(){
   if(fresh && (sync==="starting"||sync==="syncing") && tab!=="setup"){ document.body.classList.add("in-setup"); $("#viewTitle").textContent="Welcome"; $("#view").innerHTML=`<div class="card empty"><img src="img/cheer.webp" alt=""><h2>Loading your progress…</h2></div>`; return; }
   document.body.classList.toggle("in-setup", tab==="setup");
   document.body.dataset.view=tab;
-  $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"History",setup:"Welcome"}[tab];
+  $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"Progress",setup:"Welcome"}[tab];
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
+  document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
 }
@@ -1209,14 +1328,15 @@ $("#view").addEventListener("change",e=>{
   const n=$("#rCount"); if(n) n.textContent=editing.items.size;
 });
 $("#view").addEventListener("click",e=>{
+  const focusButton=e.target.closest("[data-focus]"); if(focusButton){handleFocus(focusButton);return;}
   // whole-page controls
   const u=e.target.closest("[data-ui]");
   if(u){
     const a=u.dataset.ui;
-    if(a==="min"){ hideToast(); minutes=+u.dataset.m; store.set("bwl-min",String(minutes)); showMore=false; render(); return; }
+    if(a==="min"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); minutes=+u.dataset.m; store.set("bwl-min",String(minutes)); showMore=false; render(); return; }
     if(a==="sheet"){ sheetOpen=true; render(); $(".sheet .opt[aria-pressed=true]")?.focus(); return; }
     if(a==="close"){ sheetOpen=false; render(); $(".showbtn")?.focus(); return; }
-    if(a==="pick"){ hideToast(); filter=u.dataset.f; store.set("bwl-filter",filter); sheetOpen=false; showMore=false; render(); window.scrollTo(0,0); return; }
+    if(a==="pick"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); filter=u.dataset.f; store.set("bwl-filter",filter); sheetOpen=false; showMore=false; render(); window.scrollTo(0,0); return; }
     if(a==="routines"){ routinesOpen=true; go("ladders"); return; }
     if(a==="more"){ showMore=!showMore; render(); return; }
     if(a==="rtoggle"){ routinesOpen=!routinesOpen; render(); return; }
@@ -1263,6 +1383,8 @@ $("#view").addEventListener("click",e=>{
   const b=e.target.closest("button[data-act]"); if(!b) return;
   const t=findTrack(b.dataset.t); if(!t) return;
   const lvl=lvlOf(t), st=spec(t,lvl), act=b.dataset.act;
+  if(hold?.focus && ["save","rest","hold","open","complete"].includes(act)){toast("Finish or cancel the running hold first.");return;}
+  if(focusRun?.phase==="rest" && ["hold","rest"].includes(act)){toast("Skip the current rest before starting another timer.");return;}
   if(act!=="del") confirmDel=null;
   if(act==="complete"){
     if(hold && hold.tid===t.id){ toast("Finish or cancel the running hold first."); return; }
@@ -1275,7 +1397,7 @@ $("#view").addEventListener("click",e=>{
     const i=+b.dataset.i;
     drafts[t.id][i]=String(Math.max(0,(parseInt(drafts[t.id][i],10)||0)+(act==="inc"?stepInc(st):-stepInc(st))));
     const inp=document.getElementById(`in-${t.id}-${i}`); inp.value=drafts[t.id][i]; inp.classList.toggle("hit",+inp.value>=g[i]); return; }
-  if(act==="open"){ opened.clear(); opened.add(t.id); render(); const c=document.getElementById("card-"+t.id); c?.scrollIntoView?.({block:"nearest",behavior:motionBehavior()}); c?.querySelector(".step-name")?.focus({preventScroll:true}); return; }
+  if(act==="open"){ const n=focusRun?.items.findIndex(x=>x.id===t.id&&!x.entry); if(n>=0&&!hold){stopTimer();focusRun.at=n;focusRun.phase="work";persistFocus();} opened.clear(); opened.add(t.id); render(); const c=document.getElementById("card-"+t.id); c?.scrollIntoView?.({block:"nearest",behavior:motionBehavior()}); c?.querySelector(".step-name")?.focus({preventScroll:true}); return; }
   if(act==="close"){ opened.delete(t.id); delete drafts[t.id]; delete holdNext[t.id]; delete completedSets[t.id]; if(hold&&hold.tid===t.id) stopTimer(); render(); document.querySelector(`.mini[data-t="${t.id}"]`)?.focus({preventScroll:true}); return; }
   if(act==="rest"){ if(hold){ toast("Stop or cancel the hold first."); return; } startRest(restOf(t,st)); }
   if(act==="hold"){ if(hold){ toast("Finish the current hold first."); return; } startHold(t); }
@@ -1326,6 +1448,7 @@ function tick(){
   if(hold){
     const el=(Date.now()-hold.start)/1000;
     const doneBtn=$("#timer [data-tm=done]"); if(doneBtn) doneBtn.hidden = el<0;
+    if(hold.focus){const clock=$("#focusClock");if(clock)clock.textContent=el<0?"Ready "+Math.ceil(-el):Math.floor(el)+"s";const finish=$("[data-focus=finish]");if(finish)finish.disabled=el<0;}
     if(el<0){ tx.textContent="Get ready "+Math.ceil(-el); return; }
     const s=Math.floor(el); tx.textContent=`${s}s / ${hold.goal}s`;
     $("#timer").classList.toggle("reached", s>=hold.goal);
@@ -1334,7 +1457,8 @@ function tick(){
   }
   const left=Math.max(0,Math.ceil((restEnd-Date.now())/1000));
   tx.textContent=Math.floor(left/60)+":"+pad2(left%60);
-  if(left===0){ stopTimer(); buzz([200,100,200]); toast("Rest done. Next set."); }
+  if(focusRun?.phase==="rest"){const clock=$("#focusClock");if(clock)clock.textContent=focusTime(left);}
+  if(left===0){ const focusRest=focusRun?.phase==="rest";stopTimer(); buzz([200,100,200]);if(focusRest)resumeFocus();toast("Rest done. Next set."); }
 }
 function finishHold(){
   const h=hold; if(!h) return; const t=findTrack(h.tid); if(!t){ stopTimer(); return; }
@@ -1346,9 +1470,10 @@ function finishHold(){
   if(secs>cap){ secs=cap; toast(`Capped at ${cap}s. Fix the number if that's wrong.`); }
   if(h.sides>1 && h.side===1){                                          // time the other side next
     hold={...h, first:secs}; stopTimer(); hold=null;
-    const keep={first:secs}; startHold(t,2); hold.first=keep.first; return;
+    const keep={first:secs}; startHold(t,2); hold.first=keep.first; if(h.focus){hold.focus=true;hold.goal=h.goal;render();} return;
   }
   if(h.sides>1) secs=Math.min(secs, h.first ?? secs);                    // count the weaker side
+  if(h.focus){stopTimer();completeFocus(secs);return;}
   drafts[t.id]=drafts[t.id]||goals(t,lvl,st).map(String);
   drafts[t.id][h.i]=String(secs); holdNext[t.id]=h.i+1; opened.add(t.id);
   (completedSets[t.id]||(completedSets[t.id]=new Set())).add(h.i);
@@ -1359,8 +1484,8 @@ function stopTimer(){ clearInterval(restTick); restTick=null; hold=null; const e
 $("#timer").addEventListener("click",e=>{
   const b=e.target.closest("[data-tm]"); if(!b) return;
   const a=b.dataset.tm;
-  if(a==="add"){ restEnd+=30000; tick(); }
-  if(a==="stop"||a==="cancel") stopTimer();
+  if(a==="add"){ restEnd+=30000;if(focusRun?.phase==="rest"){focusRun.restEnd=restEnd;persistFocus();} tick(); }
+  if(a==="stop"||a==="cancel"){if(focusRun?.phase==="rest")resumeFocus();else{const focused=hold?.focus;stopTimer();if(focused)render();}}
   if(a==="done") finishHold();
 });
 

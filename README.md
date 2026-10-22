@@ -6,10 +6,11 @@ A phone-first training app for bodyweight strength, tendon health, mobility and 
 
 ## What it does
 - **Plans your session from the time you have.** Pick 5, 10, 20, 30, 60 min or All. Overdue moves come first, with at most one new move when you already train.
-- **Logs in one tap.** Goals are pre-filled (last time + 1 rep, or +5 s for holds). Adjust with − / + and Save. Undo is there for 5 seconds.
+- **One set at a time.** Adjust the suggested number, then Complete set. Rest fills the screen before the next set. The final set saves the exercise and advances the workout. Undo is available during rest and on the completion screen.
+- **Details when you need them.** Technique, the workout list, and an editor for all sets stay collapsed. Time and routine choices live under Edit workout. Unfinished sets and rest deadlines resume after refreshing this browser.
 - **Hold timer** for timed moves (3-2-1, counts up, buzz and beep at the goal, both sides for per-side moves) and **rest timer** with each move's own rest.
 - **26 exercises** in groups: Strength (Push, Dip, Pull, Row, Squat, Core, Hinge), Tendon, Mobility, Stretch and Weights, plus your own custom moves.
-- **Routines** (presets plus your own), **first-time setup**, **welcome back** after a break, **progress per exercise** in History.
+- **Routines** (presets plus your own), **first-time setup**, **welcome back** after a break, **progress per exercise** in Progress.
 - **Syncs across devices** when hosted as a claude.ai artifact (per-user database, merged entry by entry and setting by setting). Anywhere else it saves in the browser.
 
 ## Run it
@@ -39,6 +40,8 @@ The tests run the real page in jsdom: data repair of old saves, Undo, two-device
 `{ v, updated, stamps, levels:{track:"track:step-slug"}, log:[{ts,t,k,sets}], deleted:[], prefs:{hidden,focus,sets,presetsSeen,setupDone}, custom:[], routines:[] }`
 
 Steps are identified by permanent keys (`pull:jumping-pull-up`), never by position, so ladders can be reordered safely. `stamps` records when each setting last changed, so devices merge setting by setting.
+
+The separate `bwl-focus` localStorage key stores the unfinished session on this browser. It is not synced. Completed exercises still use the v2 log and its existing sync rules. Cancelling a hold records nothing; per-side holds record the weaker side. Changing the workout rebuilds the plan and carries forward unfinished sets for exercises included in the new plan.
 
 ## Known to-dos
 - App icon: Rung's hands and feet should clearly grip the ladder rungs.
