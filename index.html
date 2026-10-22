@@ -652,7 +652,6 @@ body[data-view="today"] .top{margin-bottom:4px}
 .swap-applied span,.swap-applied small{display:block}
 .swap-applied small{font-size:11px;margin-top:4px}
 .swap-applied button{border:0;color:var(--accent);font-size:12px;min-height:44px;padding:8px}
-body[data-view="today"] .focus-shell:has(.readiness-check) .focus-stage{min-height:min(590px,calc(100svh - 315px))}
 .focus-saved{top:9px}
 .focus-workout .focus-advanced .session-main{min-width:0}
 .progress-week{background:#18232F;color:#F5F7FA;border-radius:24px;padding:24px}
@@ -799,6 +798,73 @@ body[data-view="ladders"] .sect[data-grp][hidden]{display:none}
 .technique .pic{display:block;width:100%;max-width:420px;height:auto;border-radius:12px}
 .levelup .cheer,.empty>img{display:none}
 @media(max-width:360px){.exrow:not(.plain){gap:10px}.movement-mark{width:48px;height:48px;flex-basis:48px}.movement-mark svg{width:42px;height:38px}.card.exopen{padding:0 12px 12px}.exopen .ladder li{gap:8px}.exopen .ladder button{max-width:64px;white-space:normal}.library-intro h2{font-size:27px}}
+
+/* A compact active screen; deeper controls scroll inside one modal sheet. */
+body[data-view="today"]{background:var(--surface)}
+body[data-view="today"] .wrap{min-height:100svh;padding-top:12px;padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+body[data-view="today"] .top{min-height:44px;margin-bottom:0}
+body[data-view="today"] .app-brand-mark,body[data-view="today"] #saveNote{display:none}
+#focusAnnouncement{position:fixed;top:0;left:0;margin:0}
+body[data-view="today"] .focus-shell>.focus-stage{min-height:max(320px,calc(100svh - 200px));border:0;border-radius:0;background:transparent;padding:20px 8px 0}
+body[data-view="today"] .focus-meta{min-height:44px;margin-bottom:8px;font-size:12px;padding:0 4px}
+.workout-tools-button{display:flex;align-items:center;justify-content:center;gap:8px;position:relative;padding:8px 10px;min-height:44px;border:0;font-size:13px;color:var(--muted)}
+.workout-tools-button svg{width:20px;height:20px;fill:currentColor}
+.workout-tools-button.has-suggestion::after{content:"";position:absolute;right:6px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+body[data-view="today"] .focus-stage h2{font-size:clamp(26px,7vw,36px)}
+body[data-view="today"] .focus-eyebrow{font-size:12px;margin-bottom:10px}
+body[data-view="today"] .focus-target{font-size:13px;margin-top:10px}
+body[data-view="today"] .focus-counter{flex:1;min-height:110px;margin:20px 0 12px;gap:26px}
+body[data-view="today"] .focus-actions{padding:16px 0 0}
+body[data-view="today"] .focus-actions .primary{min-height:54px;font-size:16px}
+body[data-view="today"] .focus-saved{top:4px;font-size:11px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
+body[data-view="today"] .focus-shell>.focus-stage:has(.focus-saved:not(:empty)){padding-top:26px}
+body[data-view="today"] .focus-set-path{margin-top:18px}
+body[data-view="today"] .focus-rest{gap:12px;padding:0}
+.effort-disclosure{border-top:1px solid var(--line);margin-top:12px;text-align:left}
+.effort-disclosure>summary{cursor:pointer;min-height:44px;padding:12px 0;color:var(--muted);font-size:12px;line-height:1.5}
+.focus-stage .effort-disclosure .effort-check{margin:0;border:0;padding:0}
+.effort-disclosure .effort-check h3{display:none}
+.workout-tools:not([open]){display:none}
+.workout-tools{padding:0;border:1px solid var(--line);border-radius:24px 24px 0 0;color:var(--ink);background:var(--surface);width:min(100%,640px);max-width:100%;max-height:85svh;margin:auto auto 0;box-shadow:0 12px 60px #0003;overflow:hidden}
+.workout-tools[open]{display:flex;flex-direction:column}
+.workout-tools::backdrop{background:rgb(10 16 23 / .45)}
+body.workout-tools-open{overflow:hidden}
+.workout-tools-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px 8px;flex:0 0 auto;border-bottom:1px solid var(--line)}
+.workout-tools-head h2{font-size:18px;font-weight:600;letter-spacing:-.03em;margin:0}
+.workout-tools-head button{border:0;font-size:26px;font-weight:400;min-width:44px;min-height:44px;padding:4px;color:var(--muted)}
+.workout-tools-body{overflow:auto;overscroll-behavior:contain;min-height:0;padding:16px 20px max(24px,env(safe-area-inset-bottom,0px))}
+.workout-storage{font-size:11px;color:var(--muted);line-height:1.6;margin:20px 0 0}
+.workout-tools-body>.focus-edit,.workout-tools-body>.focus-technique,.workout-tools-body>.swap-picker{display:block;max-width:none;width:100%;margin:0;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;background:transparent}
+.workout-tools-body .focus-edit>summary,.workout-tools-body .focus-technique>summary,.workout-tools-body .swap-picker>summary{min-height:52px;padding:16px 0;color:var(--ink);font-size:14px;cursor:pointer;line-height:1.4}
+.workout-tools-body .focus-edit[open] .planbar{position:static;width:auto;box-shadow:none;border:0;border-radius:0;padding:0 0 18px;background:transparent}
+.workout-tools-body .focus-technique[open]{text-align:left}
+.workout-tools-body .readiness-check{margin:0 0 12px}
+.workout-tools-body .focus-workout{border:0;margin-top:0;padding:0}
+.workout-tools-body .focus-workout>summary{color:var(--ink);font-size:14px;padding:16px 0;border-bottom:1px solid var(--line);min-height:52px}
+.workout-tools-body .coach-inline{border-top:0;margin-top:0;max-width:none}
+.workout-tools-body .swap-applied{margin-bottom:12px;text-align:left;max-width:none}
+.workout-tools-body .swap-applied button{padding-left:0}
+.workout-tool-actions{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+.workout-tool-actions button{border:1px solid var(--line);font-size:13px;min-height:44px;flex:1;padding:10px}
+body[data-view="ladders"] .top{margin-bottom:12px}
+body[data-view="ladders"] .library-intro{padding:0;border:0;margin:0}
+body[data-view="ladders"] .library-intro>.label,body[data-view="ladders"] .library-intro>h2,body[data-view="ladders"] .library-intro>.cue,body[data-view="ladders"] .library-intro .row>span{display:none}
+body[data-view="ladders"] .library-intro .row{margin-top:0;justify-content:flex-end}
+body[data-view="ladders"] .search{margin-top:14px}
+.compact-progress{border-top:1px solid var(--line);padding-top:0}
+.compact-progress>summary{min-height:56px;padding:16px 0;cursor:pointer;font-size:16px;font-weight:600;color:var(--ink)}
+.compact-progress>summary>span{display:block;font-weight:400;font-size:12px;color:var(--muted);margin:4px 0 0 17px}
+body[data-view="history"] .top{margin-bottom:18px}
+.progress-page{gap:20px}
+.progress-columns{gap:12px}
+.progress-week{padding:20px}
+.progress-week .week-activity{margin-top:18px}
+.progress-week .week-legend{margin-top:10px}
+.progress-section:has(.records-empty)>.progress-caption{display:none}
+.records-empty{font-size:13px;margin-top:8px;line-height:1.6}
+@media(min-width:700px){.workout-tools{border-radius:24px;margin:auto;width:min(580px,calc(100% - 48px))}}
+@media(min-width:1100px){body[data-view="today"] .wrap{padding-top:28px;padding-bottom:32px}body[data-view="today"] .focus-shell>.focus-stage{min-height:min(700px,calc(100svh - 160px))}}
+@media(max-height:650px){body[data-view="today"] .focus-shell>.focus-stage{padding-top:8px}body[data-view="today"] .focus-counter{margin-top:18px}body[data-view="today"] .focus-number{font-size:76px}body[data-view="today"] .focus-ring{width:168px;height:168px}body[data-view="today"] .focus-actions{padding-top:12px}}
 
 </style>
 
@@ -1562,12 +1628,55 @@ function handleSwap(b){
  if(b.dataset.swap==='cancel'){swapChoice=null;render();document.querySelector('.swap-picker>summary')?.focus({preventScroll:true});}
 }
 
+// One secondary surface; the active set and its primary action stay on Today.
+let workoutToolsOpen=false;
+function closeWorkoutTools(){
+ workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');const d=$('#workoutTools');if(d?.open&&typeof d.close==='function')d.close();else d?.removeAttribute('open');
+ $('#workoutToolsButton')?.setAttribute('aria-expanded','false');
+ $('#workoutToolsButton')?.focus({preventScroll:true});
+}
+function mountWorkoutTools(previous={}){
+ const shell=$('.focus-shell');if(!shell)return;
+ const button=document.createElement('button');button.id='workoutToolsButton';button.className='workout-tools-button';button.dataset.ui='workouttools';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded',String(workoutToolsOpen));
+ button.innerHTML='<span>Options</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>';
+ const settings=$('.focus-edit');shell.querySelector('.focus-meta')?.append(button);
+ const dialog=document.createElement('dialog');dialog.id='workoutTools';dialog.className='workout-tools';dialog.setAttribute('aria-labelledby','workoutToolsTitle');
+ dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
+ const body=dialog.querySelector('.workout-tools-body');
+ // Move existing controls so their data, event handlers, and IDs have a single owner.
+ for(const el of [$('.readiness-check'),settings,$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
+ if(settings){settings.querySelector('summary').textContent='Time & workout settings';}
+ const restControls=[...shell.querySelectorAll('.focus-rest [data-focus="add"],.focus-rest [data-focus="undo"],.focus-actions [data-focus="another"]')];
+ if(restControls.length){const controls=document.createElement('div');controls.className='workout-tool-actions';restControls.forEach(el=>controls.append(el));body.prepend(controls);}
+ const returning=shell.querySelector(':scope>.focus-next');if(returning)body.prepend(returning);
+ const feedback=shell.querySelector('.effort-check');
+ if(feedback){
+  const fold=document.createElement('details');fold.className='effort-disclosure';const summary=document.createElement('summary'),selected=feedback.querySelector('[aria-pressed="true"]');
+  summary.textContent=selected?'Last exercise: '+selected.textContent:'How did the last exercise feel?';feedback.before(fold);fold.append(summary,feedback);
+ }
+ const counts={};for(const d of body.querySelectorAll('details')){const name=d.id||d.classList[0]||'details';counts[name]=(counts[name]||0)+1;d.dataset.toolKey=name+':'+counts[name];if(previous.open?.includes(d.dataset.toolKey))d.open=true;}
+ const suggestion=!!body.querySelector('[data-coach="level"]');if(suggestion){button.classList.add('has-suggestion');button.setAttribute('aria-label','Workout options, progression suggestion available');}
+ dialog.addEventListener('cancel',e=>{e.preventDefault();closeWorkoutTools();});
+ dialog.addEventListener('keydown',e=>{
+  if(e.key!=='Tab')return;
+  const controls=[...dialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex="0"]')].filter(el=>el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden');
+  const first=controls[0],last=controls.at(-1);if(!first)return;
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+ });
+ dialog.addEventListener('close',()=>{workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');button.setAttribute('aria-expanded','false');});
+ dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeWorkoutTools();});
+ const storage=document.createElement('p');storage.className='workout-storage';storage.textContent=$('#saveNote')?.textContent||'';body.append(storage);
+ shell.append(dialog);document.body.classList.toggle('workout-tools-open',workoutToolsOpen);
+ if(workoutToolsOpen){if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');body.scrollTop=previous.scroll||0;}
+}
+
 function focusView(plan,top,more,recent){
   const r=ensureFocus(plan),x=focusItem(),t=x&&findTrack(x.id),st=t&&sessionSpec(t),timed=st&&isSec(st[4]);
   const runningHold=hold?.focus&&hold.tid===x?.id;
   document.body.classList.toggle('focus-timing',r.phase==='rest'||!!runningHold);
   const saved=r.items.filter(x=>x.entry).length;
-  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.items.length} ${r.items.length===1?'exercise':'exercises'}${r.readiness?.kind==='low'?' · Lighter day':r.readiness?.kind==='short'?' · Short workout':''}${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${r.readiness?.kind==='short'?'Short workout':minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
+  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.items.length} ${r.items.length===1?'exercise':'exercises'}${minutes&&r.readiness?.kind!=='short'?' · '+minutes+' min':''}${r.readiness?.kind==='low'?' · Lighter day':r.readiness?.kind==='short'?' · Short workout':''}${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${r.readiness?.kind==='short'?'Short workout':minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
   html+=readinessView();
   const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
   if(away>=7)html+=`<p class="focus-next">Welcome back. Targets repeat your last results within the exercise range, so ease back in.</p>`;
@@ -1579,10 +1688,11 @@ function focusView(plan,top,more,recent){
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
   else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,sessionLevel(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
+  html+='<div class="workout-secondary">';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} exercises</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
   if(more.length)html+=`<button class="fold" data-ui="more" aria-expanded="${showMore}">More exercises <span>${more.length}</span></button>${showMore?'<p class="label">Try something new</p>'+more.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'plan')).join(''):''}`;
   if(recent.length)html+=`<button class="fold" data-ui="done" aria-expanded="${showDone}">Recently saved <span>${recent.length}</span></button>${showDone?recent.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'done')).join(''):''}`;
-  return html+'</div>'+sheet();
+  return html+'</div></div>'+sheet();
 }
 function resumeFocus(){stopTimer();focusRun.phase='work';focusRun.restEnd=0;persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});}
 function completeFocus(value=focusValue()){
@@ -1877,9 +1987,9 @@ function viewHistory(){
     return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):'Removed exercise'}: ${e.sets.join(' · ')}${f?unit(f.st[4]):''}${e.mode==='light'?' · Lighter day':''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
   return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
-    <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">A best appears when you exceed a previous total. Your first result sets the baseline.</p>'}</section>
-    <section class="progress-section"><h2>Training days</h2><p class="progress-caption">${days.length} ${days.length===1?'day':'days'} recorded${days.length>5?' · Most recent five':''}</p><ol class="training-ladder">${timeline}</ol></section></div>
-    <section class="progress-section progress-exercises"><h2>Your progress</h2><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</section>
+    <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">Your first improvement will appear here.</p>'}</section>
+    <details class="progress-section compact-progress"><summary>Training days <span>Recent recorded activity</span></summary><p class="progress-caption">${days.length} ${days.length===1?'day':'days'} recorded${days.length>5?' · Most recent five':''}</p><ol class="training-ladder">${timeline}</ol></details></div>
+    <details class="progress-section progress-exercises compact-progress"><summary>Your progress <span>Exercise trends and comparisons</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
     <details class="progress-log" id="progressLog" ${progressLogOpen?'open':''}><summary>Workout log <span>View or correct saved entries</span></summary><p class="progress-caption">Tap an entry to delete it.</p>${recent}</details></div>`;
 }
 
@@ -1995,7 +2105,9 @@ function render(){
   const logDisclosure=$("#progressLog");if(logDisclosure)progressLogOpen=logDisclosure.open;
   const previousOnboard=$(".onboard")?.dataset.step;
   const previousStage=$(".focus-stage")?.dataset.stage;
+  const oldTools=$('#workoutTools .workout-tools-body');const toolsState=workoutToolsOpen&&oldTools?{scroll:oldTools.scrollTop,open:[...oldTools.querySelectorAll('details[open]')].map(d=>d.dataset.toolKey)}:{};
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
+  if(tab==='today')mountWorkoutTools(toolsState);else{workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');}
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
   const onboarding=$(".onboard");if(onboarding&&previousOnboard!==undefined&&onboarding.dataset.step!==previousOnboard){onboarding.classList.add("onboard-enter");if(+onboarding.dataset.step<+previousOnboard)onboarding.classList.add("onboard-reverse");}
   if(onboarding)onboarding.querySelector('.onboard-meta>span').insertAdjacentHTML('afterbegin',uiGlyph('keep'));
@@ -2015,7 +2127,7 @@ $("#toastUndo").addEventListener("click",()=>{ const f=undoFn; undoFn=null; $("#
 const hideToast=()=>{ $("#toast").hidden=true; undoFn=null; };
 
 /* ---------- events ---------- */
-function go(t){ tab=t; confirmDel=null; editing=null; sheetOpen=false; hideToast(); render(); window.scrollTo(0,0); }
+function go(t){ workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t; confirmDel=null; editing=null; sheetOpen=false; hideToast(); render(); window.scrollTo(0,0); }
 document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; go(b.dataset.tab); });
 $("#syncDot").addEventListener("click",()=>toast($("#syncDot").title||"Loading…"));
 $("#syncWarn").addEventListener("click",()=>{ toast("Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
@@ -2051,14 +2163,17 @@ $("#view").addEventListener("change",e=>{
   const n=$("#rCount"); if(n) n.textContent=editing.items.size;
 });
 $("#view").addEventListener("click",e=>{
-  const swapButton=e.target.closest("[data-swap]");if(swapButton){handleSwap(swapButton);return;}
-  const readinessButton=e.target.closest("[data-readiness]");if(readinessButton){handleReadiness(readinessButton);return;}
-  const coachButton=e.target.closest("[data-coach]");if(coachButton){handleCoach(coachButton);return;}
-  const focusButton=e.target.closest("[data-focus]"); if(focusButton){handleFocus(focusButton);return;}
+  const swapButton=e.target.closest("[data-swap]");if(swapButton){if(['apply','restore'].includes(swapButton.dataset.swap))closeWorkoutTools();handleSwap(swapButton);return;}
+  const readinessButton=e.target.closest("[data-readiness]");if(readinessButton){if(['apply','reset'].includes(readinessButton.dataset.readiness)||(readinessButton.dataset.readiness==='choose'&&readinessButton.dataset.kind==='ready'))closeWorkoutTools();handleReadiness(readinessButton);return;}
+  const coachButton=e.target.closest("[data-coach]");if(coachButton){if(coachButton.dataset.coach==='level')closeWorkoutTools();handleCoach(coachButton);return;}
+  const focusButton=e.target.closest("[data-focus]"); if(focusButton){if(focusButton.closest('#workoutTools'))closeWorkoutTools();handleFocus(focusButton);return;}
   // whole-page controls
   const u=e.target.closest("[data-ui]");
   if(u){
     const a=u.dataset.ui;
+    if(a==='workouttools'){workoutToolsOpen=true;render();return;}
+    if(a==='workouttoolsclose'){closeWorkoutTools();return;}
+    if(a==='min'||a==='sheet')closeWorkoutTools();
     if(a==="min"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); minutes=+u.dataset.m; store.set("bwl-min",String(minutes)); showMore=false; render(); return; }
     if(a==="sheet"){ sheetOpen=true; render(); $(".sheet .opt[aria-pressed=true]")?.focus(); return; }
     if(a==="close"){ sheetOpen=false; render(); $(".showbtn")?.focus(); return; }
@@ -2113,6 +2228,7 @@ $("#view").addEventListener("click",e=>{
   const b=e.target.closest("button[data-act]"); if(!b) return;
   const t=findTrack(b.dataset.t); if(!t) return;
   const lvl=sessionLevel(t), st=spec(t,lvl), act=b.dataset.act;
+  if(act==='save'||act==='up'||act==='down'||(act==='open'&&focusRun?.items.some(x=>x.id===t.id&&!x.entry)))closeWorkoutTools();
   if(hold?.focus && ["save","rest","hold","open","complete"].includes(act)){toast("Finish or cancel the running hold first.");return;}
   if(focusRun?.phase==="rest" && ["hold","rest"].includes(act)){toast("Skip the current rest before starting another timer.");return;}
   if(act!=="del") confirmDel=null;
