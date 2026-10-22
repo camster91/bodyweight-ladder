@@ -8,6 +8,12 @@ pass('one closed options surface owns secondary controls without duplicate IDs',
 pass('opening and closing options preserves targets and history with explicit dialog semantics',()=>{
  const run=w.localStorage.getItem('bwl-focus'),state=w.localStorage.getItem('bwl-state');click('#workoutToolsButton');assert(d.querySelector('#workoutTools').open);assert.equal(d.querySelector('#workoutTools').getAttribute('aria-labelledby'),'workoutToolsTitle');click('[data-ui="workouttoolsclose"]');assert(!d.querySelector('#workoutTools').open);assert.equal(d.querySelector('#workoutToolsButton').getAttribute('aria-expanded'),'false');assert.equal(w.localStorage.getItem('bwl-focus'),run);assert.equal(w.localStorage.getItem('bwl-state'),state);
 });
+pass('common options use visible sections and a direct technique button instead of disclosure toggles',()=>{
+ click('#workoutToolsButton');for(const name of ['readiness-check','focus-edit','focus-workout'])assert.equal(d.querySelector('#workoutTools .'+name).tagName,'SECTION');assert.equal(d.querySelector('#workoutTools .focus-technique').tagName,'BUTTON');assert.equal(d.querySelectorAll('#workoutTools .mins button').length,6);assert.equal(d.querySelector('[data-ui="min"][data-m="5"]').textContent,'5 min');click('[data-ui="workouttoolsclose"]');
+});
+pass('alternative chooser has direct navigation and Back without modifying the current plan',()=>{
+ const before=w.localStorage.getItem('bwl-focus');click('#workoutToolsButton');click('[data-ui="toolalternatives"]');assert(!d.querySelector('.swap-picker').hidden);assert(d.querySelector('.focus-edit').hidden);assert.equal(d.activeElement,d.querySelector('.tool-back'));click('[data-ui="toolmain"]');assert(!d.querySelector('.focus-edit').hidden);assert(d.querySelector('.swap-picker').hidden);assert.equal(w.localStorage.getItem('bwl-focus'),before);click('[data-ui="workouttoolsclose"]');
+});
 pass('direct technique access preserves the workout and returns focus to its trigger',()=>{
  const run=w.localStorage.getItem('bwl-focus'),state=w.localStorage.getItem('bwl-state');
  click('#focusHowTo');assert(d.querySelector('#techniqueSheet').open);assert(!d.querySelector('#workoutTools').open);
@@ -21,7 +27,7 @@ pass('readiness previews stay in options and applying returns to the active work
  click('#workoutToolsButton');click('[data-readiness="choose"][data-kind="low"]');assert(d.querySelector('#workoutTools').open);assert(d.querySelector('.readiness-preview'));click('[data-readiness="apply"]');assert(!d.querySelector('#workoutTools').open);assert.equal(w.eval('focusRun.readiness.kind'),'low');
 });
 pass('manual editor disclosures survive a rerender inside the sheet',()=>{
- click('#workoutToolsButton');d.querySelector('.focus-workout').open=true;d.querySelector('.focus-advanced').open=true;click('[data-act="complete"][data-t="push"][data-i="0"]');assert(d.querySelector('#workoutTools').open);assert(d.querySelector('.focus-workout').open);assert(d.querySelector('.focus-advanced').open);click('[data-act="complete"][data-t="push"][data-i="0"]');click('[data-ui="workouttoolsclose"]');
+ click('#workoutToolsButton');d.querySelector('.focus-advanced').open=true;click('[data-act="complete"][data-t="push"][data-i="0"]');assert(d.querySelector('#workoutTools').open);assert.equal(d.querySelector('.focus-workout').tagName,'SECTION');assert(d.querySelector('.focus-advanced').open);click('[data-act="complete"][data-t="push"][data-i="0"]');click('[data-ui="workouttoolsclose"]');
 });
 pass('rest controls remain available in options and return to the main timer',()=>{
  click('[data-focus="complete"]');assert.equal(w.eval('focusRun.phase'),'rest');assert(d.querySelector('#workoutTools [data-focus="undo"]'));click('#workoutToolsButton');click('[data-focus="undo"]');assert(!d.querySelector('#workoutTools').open);assert.equal(w.eval('focusRun.phase'),'work');assert.equal(w.eval('focusItem().values.length'),0);
