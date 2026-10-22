@@ -2074,7 +2074,7 @@ function viewLadders(){
   const tracks=allTracks(), shown=tracks.filter(t=>!isHidden(t.id)), hidden=tracks.filter(t=>isHidden(t.id));
   if(editing) return `<div class="stack">${routinesCard(tracks)}</div>`;
   let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="${LIBRARY_HERO_IMAGES[libraryHeroIndex]}" alt="" width="800" height="450"><div><p class="label">Move your way</p><h2>Find your next step.</h2><button data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
-    <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise… e.g. plank, calf, pull-up" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="${esc(exQuery)}"></div>
+    <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="${esc(exQuery)}"></div>
     <p class="search-status" id="exSearchStatus" role="status" aria-atomic="true" hidden></p>
     <section class="search-empty" id="exNone" hidden><h2>No exercises found.</h2><p>Try a movement like push-up, a muscle like calf, or add your own exercise below.</p><button data-ui="clearsearch">Clear search</button></section>`;
   for(const g of ["Strength","Tendon","Mobility","Stretch","Weights","Custom"]){
