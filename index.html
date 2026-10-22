@@ -1015,6 +1015,12 @@ body[data-view="today"] .focus-number[data-wide="true"]{font-size:64px;letter-sp
 @media(max-width:360px){.exercise-thumb{width:82px;height:60px;flex-basis:82px}.focus-exercise{gap:12px}.focus-exercise-art .exercise-thumb{width:90px;height:70px;flex-basis:90px;border-radius:14px}.exrow:not(.plain){gap:12px;min-height:90px}}
 @media(max-height:650px){.focus-exercise-art .exercise-thumb{width:92px;height:70px;flex-basis:92px}}
 
+.library-brand{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.library-brand>img{left:auto;right:0;width:48%;z-index:0;object-position:center;object-fit:cover;background:#ede7dc}
+.library-brand>div{position:relative;z-index:1;width:48%;max-width:none}
+.library-brand h2{max-width:12ch}
+.library-brand button{color:var(--accent);background:transparent;font-weight:600}
+@media(min-width:1100px){.library-brand>img{width:52%}.library-brand>div{width:44%}.library-brand h2{max-width:12ch}}
 </style>
 
 <div class="wrap">
@@ -2041,10 +2047,23 @@ function routinesCard(tracks){
   return `<section class="card" id="routinesCard"><div class="track-head"><h2>Routines</h2><button class="ghost small" data-ract="new">+ New</button><button class="icon" data-ui="rtoggle" aria-expanded="true" aria-label="Collapse routines">▴</button></div>
     <div class="stack" style="gap:6px">${state.routines.map(r=>`<div class="rrow"><span><b>${esc(r.name)}</b><span>${esc(r.items.map(id=>findTrack(id)?.name).filter(Boolean).join(", ")||"No moves yet")}</span></span><button data-ract="edit" data-r="${esc(r.id)}">Edit</button></div>`).join("") || `<p class="muted">No routines yet.</p>`}</div></section>`;
 }
+const LIBRARY_HERO_IMAGES = [
+ 'assets/brand/studio-reset-v2-small.webp',
+ 'assets/brand/editorial-hero-v1-small.webp',
+ 'assets/brand/exercises/generated/carry-suitcase-carry-v2-detail.webp',
+ 'assets/brand/exercises/generated/squat-bulgarian-split-squat-v2-detail.webp'
+];
+let libraryHeroIndex=-1;
+function rotateLibraryHero(){
+ const previous=Number(store.get('bwl-library-hero','-1'));
+ libraryHeroIndex=(Number.isInteger(previous)&&previous>=-1&&previous<LIBRARY_HERO_IMAGES.length?previous+1:0)%LIBRARY_HERO_IMAGES.length;
+ store.set('bwl-library-hero',String(libraryHeroIndex));
+}
 function viewLadders(){
+  if(libraryHeroIndex<0)rotateLibraryHero();
   const tracks=allTracks(), shown=tracks.filter(t=>!isHidden(t.id)), hidden=tracks.filter(t=>isHidden(t.id));
   if(editing) return `<div class="stack">${routinesCard(tracks)}</div>`;
-  let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="assets/brand/studio-reset-v2-small.webp" alt="" width="800" height="450"><div><p class="label">Move your way</p><h2>Find your next step.</h2><button data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
+  let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="${LIBRARY_HERO_IMAGES[libraryHeroIndex]}" alt="" width="800" height="450"><div><p class="label">Move your way</p><h2>Find your next step.</h2><button data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
     <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise… e.g. plank, calf, pull-up" autocomplete="off" value="${esc(exQuery)}"></div>
     <p class="muted" id="exNone" hidden>No matches. Try another word, or add it as your own below.</p>`;
   for(const g of ["Strength","Tendon","Mobility","Stretch","Weights","Custom"]){
@@ -2293,7 +2312,7 @@ document.addEventListener('click',e=>{
  document.body.append(dialog);document.body.classList.add('photo-credits-open');dialog.showModal();
 });
 /* ---------- events ---------- */
-function go(t){ workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t; confirmDel=null; editing=null; sheetOpen=false; hideToast(); render(); window.scrollTo(0,0); }
+function go(t){ if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t; confirmDel=null; editing=null; sheetOpen=false; hideToast(); render(); window.scrollTo(0,0); }
 document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; go(b.dataset.tab); });
 $("#syncDot").addEventListener("click",()=>toast($("#syncDot").title||"Loading…"));
 $("#syncWarn").addEventListener("click",()=>{ toast("Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
