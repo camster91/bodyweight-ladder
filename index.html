@@ -659,6 +659,54 @@ body.in-setup .wrap{max-width:620px}
 @media(max-height:760px){.focus-stage{padding-top:26px}.focus-counter{margin-top:20px}.focus-set-path{margin-top:14px}}
 @media(max-width:360px){.focus-stage{padding-left:16px;padding-right:16px}.onboard-choice{grid-template-columns:36px minmax(0,1fr) 22px;gap:10px;padding:10px}.choice-art{width:36px;height:44px}.onboard-choice small{font-size:11px}.onboard-preview>div{padding:10px 8px}.onboard-preview small{font-size:10px}.progress-week{padding:20px}}
 
+/* One movement-symbol vocabulary for browsing; full-size guides retain step-specific detail. */
+.movement-mark{display:grid;place-items:center;width:56px;height:56px;flex:0 0 56px;border-radius:16px;background:var(--bg);color:var(--ink);pointer-events:none}
+.movement-mark svg{width:48px;height:42px;fill:none;stroke:currentColor;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round}
+.movement-mark .movement-equipment{stroke:var(--muted);stroke-width:1.5}
+.library-intro{padding:8px 0 20px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.library-intro .label{color:var(--accent);margin-bottom:8px}
+.library-intro h2{font-size:clamp(27px,5vw,36px);line-height:1.12;letter-spacing:-.045em;font-weight:650;margin:0 0 12px}
+.library-intro .cue{max-width:49ch}
+.library-intro .row{margin-top:16px;align-items:center;justify-content:space-between;gap:12px}
+.library-intro .row>span{font-size:12px;color:var(--muted)}
+.library-intro button{border:0;padding:8px 0;color:var(--accent)}
+body[data-view="ladders"] #view>.stack{gap:0}
+body[data-view="ladders"] .search{margin:22px 0 8px}
+body[data-view="ladders"] .search input{background:var(--surface);border-radius:14px;padding:15px 16px;font-size:14px}
+body[data-view="ladders"] .sect[data-grp]{margin:26px 0 8px;display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.1em}
+body[data-view="ladders"] .sect[data-grp]::after{content:"";flex:1;height:1px;background:var(--line)}
+body[data-view="ladders"] .sect[data-grp][hidden]{display:none}
+.exrow:not(.plain){padding:16px 0;gap:16px;border:0;border-bottom:1px solid var(--line);background:transparent;border-radius:0;box-shadow:none;text-align:left}
+.exrow .mini-t b{font-size:16px;font-weight:600;letter-spacing:-.025em;line-height:1.25}
+.exrow .mini-t>span{font-size:12px;margin-top:5px;line-height:1.5}
+.exrow .chev{font-size:16px;color:var(--muted);padding:0 4px}
+.exrow[aria-expanded="true"] .movement-mark{color:var(--accent);background:var(--chip)}
+.card.exopen{margin:6px 0;padding:0 16px 16px;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:none}
+.exopen>.exrow{border-bottom:0}
+.exopen .ctl{border-top:1px solid var(--line);margin:0;padding:14px 0}
+.exopen .ladder li{align-items:flex-start;padding:18px 0;gap:12px}
+.exopen .ladder .n{flex:0 0 24px;line-height:24px;font-size:13px;font-family:var(--body);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:50%;height:24px}
+.exopen .ladder .cur .n{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.exopen .ladder .t>b{font-size:14px;line-height:1.4}
+.exopen .ladder .t>span{display:block;font-size:12px;line-height:1.5;margin-top:4px}
+.step-guide{margin-top:8px;font-size:12px;color:var(--muted)}
+.step-guide summary{min-height:32px;padding:6px 0;color:var(--accent);cursor:pointer;font-weight:500}
+.step-guide p{font-size:13px;line-height:1.6;margin:10px 0}
+.step-guide img{display:block;width:100%;max-width:440px;height:auto;border-radius:12px;background:var(--art-bg);filter:var(--art-filter)}
+.step-guide .video{display:inline-flex;min-height:44px;align-items:center;margin-top:4px}
+.mini .movement-mark{width:48px;height:48px;flex-basis:48px;border-radius:14px}
+.mini .movement-mark svg{width:42px;height:38px}
+.pick .movement-mark{width:36px;height:36px;flex-basis:36px;border-radius:10px}
+.pick .movement-mark svg{width:32px;height:30px}
+.hid .movement-mark{width:44px;height:44px;flex-basis:44px}
+.focus-technique[open]{text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:0 12px;margin-top:12px}
+.focus-technique[open] summary{padding-left:0}
+.focus-technique img{display:block;background:var(--art-bg);filter:var(--art-filter)}
+.focus-technique a{padding-left:0}
+.technique .pic{display:block;width:100%;max-width:420px;height:auto;border-radius:12px}
+.levelup .cheer,.empty>img{display:none}
+@media(max-width:360px){.exrow:not(.plain){gap:10px}.movement-mark{width:48px;height:48px;flex-basis:48px}.movement-mark svg{width:42px;height:38px}.card.exopen{padding:0 12px 12px}.exopen .ladder li{gap:8px}.exopen .ladder button{max-width:64px;white-space:normal}.library-intro h2{font-size:27px}}
+
 </style>
 
 <div class="wrap">
@@ -1325,13 +1373,48 @@ function fullCard(t, first){
     ${!canUp ? (last ? `<div class="last">Last time, ${ago(last.ts)}: ${last.sets.join(" · ")}${lastStep?unit(lastStep.st[4]):""}${lastStep&&!t.custom&&lastStep.i!==lvl?` (${esc(lastStep.st[0])})`:""}</div>` : `<div class="last">New for you. Start at the low end and focus on form.</div>`) : ""}
   </section>`;
 }
+// Movement-family symbols identify exercises; the detailed guides teach each step.
+const MOVEMENT_POSES={
+ push:[14,17,'M20 22 35 28 48 39M23 24 19 39M35 28 31 39'],
+ dip:[27,12,'M27 18 29 30 40 32 40 43M26 22 20 31 15 31','M10 33H22V44'],
+ pull:[32,17,'M32 23V34M32 25 20 18 20 9M32 25 44 18 44 9M32 34 25 45M32 34 39 45','M12 8H52'],
+ row:[18,24,'M23 28 38 33 50 43M25 29 27 17M27 17H37','M10 14H44M13 14V44M43 14V28'],
+ squat:[34,10,'M33 16 28 28 41 33 32 44M29 25 15 21M28 28 20 35 14 44'],
+ core:[16,28,'M22 31 40 33 51 43M24 32 21 42 14 42M40 33 43 43'],
+ hinge:[20,16,'M25 20 37 28 31 43M37 28 48 43M27 22 21 34'],
+ knee:[29,11,'M29 17 26 28 43 29 44 42M26 28 18 42M29 21 40 22','M13 44H49'],
+ groin:[30,12,'M30 18 27 30 15 42M27 30 42 33 49 42M28 23 16 24M29 23 42 23'],
+ hold:[16,24,'M22 28 40 32 51 42M25 29 20 35 24 42M40 32 43 42'],
+ curl:[31,11,'M31 17V31M31 31 24 44M31 31 38 44M31 22 43 27 46 19','M42 16 49 20'],
+ hang:[32,20,'M32 26V35M32 27 22 20 22 9M32 27 42 20 42 9M32 35 26 45M32 35 38 45','M14 8H50'],
+ hips:[30,10,'M30 16V29M30 29 23 44M30 29 42 26 47 33M30 21 17 24M30 21 43 18'],
+ carry:[32,10,'M32 16V31M32 31 25 44M32 31 39 44M32 21 21 30M32 21 43 30','M16 31H25V39H16ZM39 31H48V39H39Z'],
+ frog:[32,20,'M32 26V34M32 34 20 29 13 39M32 34 44 29 51 39M32 28 22 40M32 28 42 40'],
+ bear:[20,18,'M25 22 38 25 43 34 39 43M26 24 21 34 26 43M38 25 48 33 51 42'],
+ crab:[39,16,'M36 22 29 32 42 33 50 43M29 32 20 26 14 42M29 32 20 43'],
+ toesit:[33,12,'M33 18V30L22 37 42 39M33 24 25 31','M42 39V44H48'],
+ hipflex:[27,10,'M27 16 30 28 43 30 44 43M30 28 22 41 12 41M28 22 38 24'],
+ hams:[26,17,'M29 23 32 34 46 42M32 34 20 42M29 26 43 37','M12 44H52'],
+ openbook:[17,32,'M23 33H35L44 41 36 44M27 33 26 20M27 33 42 25','M12 46H52'],
+ kneewall:[30,12,'M30 18 29 29 41 32 44 43M29 29 19 42M30 23 47 20','M50 10V45'],
+ ninety:[30,15,'M30 21V33M30 33 19 33 15 43M30 33 42 38 49 34M30 27 20 39'],
+ swing:[25,12,'M26 18 34 28 28 43M34 28 45 43M27 21 43 25 46 31','M43 32Q46 28 49 32V36H43Z'],
+ ankle:[31,10,'M31 16V30M31 30 27 41 34 41M31 30 40 40 47 40M31 22 43 20','M17 45H51'],
+ shin:[31,10,'M31 16V30M31 30 24 43 18 40M31 30 39 43 46 40M31 22 43 20','M14 46H50']
+};
+function movementMark(t){
+ const p=MOVEMENT_POSES[t.id];
+ const drawing=p?`<circle cx="${p[0]}" cy="${p[1]}" r="4"/><path d="${p[2]}"/>${p[3]?`<path class="movement-equipment" d="${p[3]}"/>`:''}`:'<path d="M20 16H44M20 32H44M20 48H44M20 12V52M44 12V52"/>';
+ return `<span class="movement-mark" aria-hidden="true"><svg viewBox="0 0 64 56" focusable="false">${drawing}</svg></span>`;
+}
+
 function miniRow(t, kind){
   const lvl=lvlOf(t), st=spec(t,lvl), last=lastFor(t.id);
   const sub = kind==="done" ? `Done ${ago(last.ts)} · ${last.sets.join(" · ")}${unit(st[4])}`
     : last ? `Last done ${ago(last.ts)} · about ${Math.round(minutesFor(t))} min` : `New · about ${Math.round(minutesFor(t))} min`;
   const same = slug(st[0])===slug(t.name);
   return `<button class="mini${kind==="done"?" done-row":""}" data-act="open" data-t="${t.id}">
-    <img src="${thumbOf(t,lvl)}" alt="" width="52" height="52" loading="lazy">
+    ${movementMark(t)}
     <span class="mini-t"><b>${esc(st[0])}${focusOf(t.id)==="more"?` <span class="star" title="More often">★</span>`:""}</b><span>${same?"":esc(t.name)+" · "}${targetText(st)}</span><span class="${kind==="done"?"ok":""}">${sub}</span></span>
     <span class="chev">${kind==="done"?"Again":"Open"}</span></button>`;
 }
@@ -1401,7 +1484,7 @@ function routinesCard(tracks){
     return `<section class="card" id="routineEditor"><h2>${editing.id?"Edit routine":"New routine"}</h2>
       <div class="addform"><label for="rName">Name</label><input id="rName" maxlength="30" value="${esc(editing.name)}" placeholder="e.g. Morning 10 min"></div>
       ${groups.map(g=>{ const ts=tracks.filter(t=>groupOf(t)===g&&!isHidden(t.id)); if(!ts.length) return "";
-        return `<div class="label sect">${g}</div><div class="picks">${ts.map(t=>`<label class="pick"><input type="checkbox" data-rt="${t.id}" ${editing.items.has(t.id)?"checked":""}><img src="${thumbOf(t,lvlOf(t))}" alt="" width="36" height="36"><span>${esc(t.name)}</span></label>`).join("")}</div>`; }).join("")}
+        return `<div class="label sect">${g}</div><div class="picks">${ts.map(t=>`<label class="pick"><input type="checkbox" data-rt="${t.id}" ${editing.items.has(t.id)?"checked":""}>${movementMark(t)}<span>${esc(t.name)}</span></label>`).join("")}</div>`; }).join("")}
       <div class="sticky-actions"><button class="ghost" data-ract="cancel">Cancel</button><button class="primary" data-ract="save">Save routine (<span id="rCount">${editing.items.size}</span>)</button></div>
       ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
     </section>`;
@@ -1413,8 +1496,7 @@ function routinesCard(tracks){
 function viewLadders(){
   const tracks=allTracks(), shown=tracks.filter(t=>!isHidden(t.id)), hidden=tracks.filter(t=>isHidden(t.id));
   if(editing) return `<div class="stack">${routinesCard(tracks)}</div>`;
-  let html=`<div class="stack">${routinesCard(tracks)}
-    <div class="row between"><p class="cue" style="flex:1;min-width:0">Each exercise is a ladder. Hit the top of the range on every set to move up a step.</p><button class="ghost small" data-ui="setup">Redo setup</button></div>
+  let html=`<div class="stack"><section class="library-intro"><p class="label">Movement library</p><h2>Find your next step.</h2><p class="cue">Build on what you can do. Reach the top of the range on every set, then move up.</p><div class="row"><span>${shown.length} exercise ladders</span><button class="ghost small" data-ui="setup">Edit your setup</button></div></section>${routinesCard(tracks)}
     <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise… e.g. plank, calf, pull-up" autocomplete="off" value="${esc(exQuery)}"></div>
     <p class="muted" id="exNone" hidden>No matches. Try another word, or add it as your own below.</p>`;
   for(const g of ["Strength","Tendon","Mobility","Stretch","Weights","Custom"]){
@@ -1423,18 +1505,18 @@ function viewLadders(){
     html+=ts.map(t=>{
       const lvl=lvlOf(t), st=spec(t,lvl), open=expandedEx.has(t.id);
       const words=esc([t.name,g,...t.steps.map(x=>x[0])].join(" ").toLowerCase());
-      const row=`<button class="exrow" data-ui="ex" data-t="${t.id}" aria-expanded="${open}"${open?"":` data-sr="${words}" data-g="${g}"`}><img src="${thumbOf(t,lvl)}" alt="" width="48" height="48" loading="lazy">
+      const row=`<button class="exrow" data-ui="ex" data-t="${t.id}" aria-expanded="${open}"${open?"":` data-sr="${words}" data-g="${g}"`}>${movementMark(t)}
         <span class="mini-t"><b>${esc(t.name)}${focusOf(t.id)==="more"?` <span class="star">★</span>`:focusOf(t.id)==="less"?` <span class="muted">· less often</span>`:""}</b><span>${t.custom?"Your own":`Step ${lvl+1}/${t.steps.length}`} · ${esc(st[0])}</span></span><span class="chev">${open?"▴":"▾"}</span></button>`;
       if(!open) return row;
       const list=t.custom ? "" : `<ol class="ladder">${t.steps.map((s2,i)=>`
-        <li class="${i===lvl?"cur":i<lvl?"past":""}"><span class="n">${i<lvl?"✓":i+1}</span><img class="thumb" src="${thumbOf(t,i)}" alt="" loading="lazy" width="48" height="48">
-        <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">▶ Watch how</a></div>
+        <li class="${i===lvl?"cur":i<lvl?"past":""}"><span class="n">${i<lvl?"✓":i+1}</span>
+        <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><details class="step-guide"><summary>Technique guide</summary><p>${esc(s2[5])}</p><img src="${imgOf(t,i)}" alt="${esc(s2[0])} demonstrated by Rung" loading="lazy" width="900" height="600"><a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">Watch video tutorial ↗</a></details></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}">Start here</button>`}</li>`).join("")}</ol>`;
       return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}${controls(t)}${list}</section>`;
     }).join("");
   }
   if(hidden.length) html+=`<section class="card"><h2>Hidden</h2><p class="cue">These don't show on Today. Your progress is kept.</p><div class="stack" style="gap:8px">${hidden.map(t=>`
-    <div class="hid"><img src="${thumbOf(t,lvlOf(t))}" alt="" width="44" height="44"><span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}">Add back</button></div>`).join("")}</div></section>`;
+    <div class="hid">${movementMark(t)}<span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}">Add back</button></div>`).join("")}</div></section>`;
   html+=`<details class="card custom-exercise"><summary>Add a custom exercise</summary><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
     <form id="addForm" class="addform">
       <label for="cName">Name <span class="muted" id="cCount">0/40</span></label><input id="cName" required maxlength="40" placeholder="e.g. Burpees">
