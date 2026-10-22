@@ -1,0 +1,921 @@
+[
+  {
+    "exercise_keys": [
+      "groin:copenhagen-plank-knee-on-bench"
+    ],
+    "name": "Copenhagen plank, knee on bench",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/groin-copenhagen-plank-knee-on-bench-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/groin-copenhagen-plank-knee-on-bench-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/side-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Copenhagen plank, knee on bench. Required mechanics: Short-lever Copenhagen side plank, clearly viewed from the side. Lower forearm and elbow on the mat under the shoulder, upper knee and inner lower thigh resting ON the padded top of a sturdy low bench to the side. Top knee bent about 90 degrees. Hips raised in line with the torso. Bottom leg lifted off the floor, bent comfortably. No foot on top of the bench: the KNEE is the supported contact.. Equipment: Bench. Preserve the correct points of contact and support; no floating equipment."
+  },
+  {
+    "exercise_keys": [
+      "groin:copenhagen-plank-foot-on-bench"
+    ],
+    "name": "Copenhagen plank, foot on bench",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/groin-copenhagen-plank-foot-on-bench-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/groin-copenhagen-plank-foot-on-bench-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/side-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Copenhagen plank, foot on bench. Required mechanics: Long-lever Copenhagen side plank viewed from the side. Lower forearm and elbow on mat directly under the shoulder; upper leg fully straight with INSIDE OF UPPER ANKLE/FOOT resting ON padded top of low bench at the side. Hips raised so shoulder, hips and upper ankle align. Bottom leg lifted just below upper leg, both legs off the floor. Knee must NOT be the supported contact.. Equipment: Bench. Preserve the correct points of contact and support; no floating equipment."
+  },
+  {
+    "exercise_keys": [
+      "shin:tibialis-raise"
+    ],
+    "name": "Tibialis raise",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/shin-tibialis-raise-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/shin-tibialis-raise-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Tibialis raise. Required mechanics: Standing tibialis anterior raise, side view. Upper back and buttocks rest against a flat wall. Both legs mostly straight, heels planted on floor about 12 inches forward from the wall. Both TOES AND FOREFOOT LIFTED UP toward the shins, while BOTH HEELS remain firmly on the floor. This is toe lifting, NOT a calf raise: heels do not lift.. Equipment: Wall. Preserve the correct points of contact and support; no floating equipment."
+  },
+  {
+    "exercise_keys": [
+      "toesit:toe-sit"
+    ],
+    "name": "Toe sit",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/toesit-toe-sit-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/toesit-toe-sit-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Toe sit. Required mechanics: Barefoot toe sit, side view. Athlete kneels on mat with both knees down, both feet behind, all toes curled UNDER so toe pads contact mat and heels are raised. Athlete sits back toward the raised heels, upright relaxed torso, hands resting on thighs. Show both feet and tucked toes clearly. NOT sitting on tops of flat feet.. Equipment: None. Preserve the correct points of contact and support; no floating equipment."
+  },
+  {
+    "exercise_keys": [
+      "curl:towel-curl-hold-at-90"
+    ],
+    "name": "Towel curl hold at 90°",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/curl-towel-curl-hold-at-90-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/curl-towel-curl-hold-at-90-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Towel curl hold at 90°. Required mechanics: Standing isometric biceps towel curl, three-quarter side view. Athlete stands with both feet pinning CENTER OF ONE LONG TOWEL to floor. Each hand grips one end of same towel, palms facing up; upper arms stay beside ribs, elbows bent about 90 degrees, forearms horizontal. Towel runs taut from under feet to both hands. No weights, no unattached towels. Show full continuous towel and feet.. Equipment: Towel. Preserve the correct points of contact and support; no floating equipment."
+  },
+  {
+    "exercise_keys": [
+      "frog:frog-stretch-rocks"
+    ],
+    "name": "Frog stretch rocks",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/frog-frog-stretch-rocks-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/frog-frog-stretch-rocks-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Frog stretch rocks. Required mechanics: Frog hip stretch on mat, three-quarter view. Both knees bent 90 degrees and spread widely to the sides, inside of knees and shins resting on mat, lower legs extending laterally behind with ankles aligned approximately with knees. Both forearms down on mat in front, pelvis low and shifted gently back. Torso horizontal, no standing or squatting.. Equipment: Mat. Preserve the correct points of contact and support; no floating equipment."
+  },
+  {
+    "exercise_keys": [
+      "push:wall-push-up"
+    ],
+    "name": "Wall push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-wall-push-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-wall-push-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/push-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Wall push-up. Required mechanics: Side view, adult facing wall, both palms on wall at shoulder height and shoulder width, elbows bent so chest approaches wall. Body straight from shoulders through hips to planted heels, feet stepped back. This is an upright inclined wall push-up, not a floor push-up.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete; reference is for photographic grounding, not identity."
+  },
+  {
+    "exercise_keys": [
+      "push:knee-push-up",
+      "hold:knee-push-up-bottom-hold"
+    ],
+    "name": "Knee push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-knee-push-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-knee-push-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/push-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Knee push-up. Required mechanics: Bottom of a knee push-up, side view. Both palms flat on mat under shoulders, elbows bent backwards about 45 degrees, chest just above mat. Both knees are planted on mat behind hips; shoulders, hips and knees align straight, lower legs bent upward comfortably. Hips do not fold into a hands-and-knees position.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete; reference is for photographic grounding, not identity."
+  },
+  {
+    "exercise_keys": [
+      "push:diamond-push-up"
+    ],
+    "name": "Diamond push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-diamond-push-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-diamond-push-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/push-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Diamond push-up. Required mechanics: Three-quarter front view showing a close-grip diamond push-up on toes. Body straight, both knees off mat. Hands placed together UNDER CHEST with thumbs and index fingers touching to form a small diamond; elbows bent and kept close to torso. Include hands clearly in foreground, chest lowered close to hands.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete; reference is for photographic grounding, not identity."
+  },
+  {
+    "exercise_keys": [
+      "push:archer-push-up"
+    ],
+    "name": "Archer push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-archer-push-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-archer-push-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/push-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Archer push-up. Required mechanics: Wide archer push-up, slightly elevated front-three-quarter view. Both hands grip floor widely apart. Athlete shifts chest toward ONE hand with that elbow deeply bent, while opposite arm remains fully straight out to the side, its palm planted. Legs straight behind, toes planted, hips level. Both hands must visibly contact floor.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete; reference is for photographic grounding, not identity."
+  },
+  {
+    "exercise_keys": [
+      "push:pseudo-planche-push-up"
+    ],
+    "name": "Pseudo-planche push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-pseudo-planche-push-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-pseudo-planche-push-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/push-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Pseudo-planche push-up. Required mechanics: Side view of a pseudo-planche push-up on toes. Palms planted near waist/hip level rather than under shoulders, fingers turned slightly outward. Straight body leans forward so shoulders are WELL FORWARD of wrists. Toes remain on floor, elbows bent close to ribs. Not a standard shoulder-width push-up and not a full floating planche.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete; reference is for photographic grounding, not identity."
+  },
+  {
+    "exercise_keys": [
+      "dip:bench-dip-knees-bent"
+    ],
+    "name": "Bench dip, knees bent",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/dip-bench-dip-knees-bent-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/dip-bench-dip-knees-bent-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/straight-leg-bench-dip-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Bench dip, knees bent. Required mechanics: Side view of bent-knee bench dip. Both hands grip the front edge of a sturdy low bench behind hips, fingers forward. Hips hover just in front of bench edge, elbows bent backward. Both feet flat on floor in front, knees bent roughly 90 degrees. Clearly include bench, wrists, elbows, knees and feet.. Equipment: Chair. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete; reference is for photographic grounding, not identity."
+  },
+  {
+    "exercise_keys": [
+      "dip:support-hold"
+    ],
+    "name": "Support hold",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/dip-support-hold-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/dip-support-hold-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/straight-leg-bench-dip-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Support hold. Required mechanics: Front-three-quarter view of locked-arm support between two sturdy parallel dip bars. Athlete grips one bar in each hand, arms straight, shoulders pressed down away from ears. Torso upright, knees bent behind and both feet clearly off floor. Bars on a stable frame, not floating. No bench sitting.. Equipment: Dip bars or 2 chairs. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "dip:parallel-bar-dip",
+      "dip:negative-dip"
+    ],
+    "name": "Parallel bar dip",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/dip-parallel-bar-dip-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/dip-parallel-bar-dip-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/straight-leg-bench-dip-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Parallel bar dip. Required mechanics: Three-quarter side view of bottom/middle position of a parallel-bar dip. Both hands grip two stable parallel dip bars at hip sides, elbows bent backward about 90 degrees and shoulders near elbow height. Body suspended between bars, knees bent behind, both feet off ground. Slight forward torso lean, neck neutral.. Equipment: Dip bars. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "dip:straight-bar-dip"
+    ],
+    "name": "Straight bar dip",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/dip-straight-bar-dip-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/dip-straight-bar-dip-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/straight-leg-bench-dip-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Straight bar dip. Required mechanics: Three-quarter side view of a straight-bar dip over ONE horizontal bar. Both hands grip SAME single horizontal bar about shoulder width, bar at lower abdomen/hip in front of body. Torso leans forward OVER bar, elbows bent, shoulders above bar, legs hang below with feet off floor. This is not a parallel-bar dip or a pull-up under the bar.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "pull:scapular-pull",
+      "hang:dead-hang"
+    ],
+    "name": "Scapular pull",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-scapular-pull-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-scapular-pull-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/pull-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Scapular pull. Required mechanics: Full-body straight-arm active hang from a high horizontal bar. Both hands shoulder-width overhand, BOTH ELBOWS COMPLETELY STRAIGHT, body upright hanging with feet off floor, shoulders slightly drawn down away from ears. Side-three-quarter view shows arms and shoulders. Not a chin-over-bar pull-up.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "pull:jumping-pull-up"
+    ],
+    "name": "Jumping pull-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-jumping-pull-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-jumping-pull-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/pull-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Jumping pull-up. Required mechanics: Assisted jumping pull-up at a LOW horizontal bar, three-quarter view. Athlete grips bar with both hands, elbows bent, chin approaching bar. Both knees bent with legs near ground after a small jump, low enough bar that feet can reach floor when arms extend. Show low bar supports and floor clearly, no step or jumping box.. Equipment: Low bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "pull:archer-pull-up"
+    ],
+    "name": "Archer pull-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-archer-pull-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-archer-pull-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/pull-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Archer pull-up. Required mechanics: Front view of archer pull-up on one high horizontal bar. BOTH hands visibly grip same bar very wide apart. Chest/chin shifted toward one bent arm. Opposite arm extended STRAIGHT sideways along bar to its hand. Body hangs vertically below with both feet off floor. Do not remove or float the straight-arm hand.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "pull:l-sit-pull-up"
+    ],
+    "name": "L-sit pull-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-l-sit-pull-up-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-l-sit-pull-up-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/pull-up-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: L-sit pull-up. Required mechanics: Three-quarter side view of L-sit pull-up. Both hands overhand grip high horizontal bar, elbows flexed with chin at bar. Both legs held together STRAIGHT out in front, approximately horizontal at hip height. Body forms L, feet off floor. No bent-knee tuck.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "row:doorway-row"
+    ],
+    "name": "Doorway row",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/row-doorway-row-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/row-doorway-row-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/inverted-row-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Doorway row. Required mechanics: Side-three-quarter view of standing doorway row. Athlete grips BOTH upright sides of one sturdy doorway/frame around chest height, elbows bent pulling chest toward frame. Feet flat slightly forward, body straight and leaning BACK away from doorway. Frame structurally attached to wall; no table or bar.. Equipment: Doorway. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "row:bent-knee-table-row"
+    ],
+    "name": "Bent-knee table row",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/row-bent-knee-table-row-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/row-bent-knee-table-row-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/inverted-row-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Bent-knee table row. Required mechanics: Side view of an inverted BENT-KNEE TABLE ROW under a sturdy heavy four-legged rectangular table. Both hands grip FRONT EDGE of tabletop above chest. Knees bent about 90 degrees and both feet flat on floor. Hips raised, shoulders-to-knees form straight line, chest pulled toward underside/edge of table. Table must remain on floor with full stable legs. No gym bar.. Equipment: Table. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "row:feet-elevated-row"
+    ],
+    "name": "Feet-elevated row",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/row-feet-elevated-row-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/row-feet-elevated-row-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/inverted-row-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Feet-elevated row. Required mechanics: Side view of feet-elevated inverted table row. Athlete hangs UNDER a sturdy four-legged rectangular table, both hands gripping tabletop edge, elbows bent pulling chest up. Both heels rest ON a separate sturdy low chair in front, both legs straight, body nearly horizontal from shoulders through heels. Clearly show stable table and chair as separate supports.. Equipment: Table + chair. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "row:archer-row"
+    ],
+    "name": "Archer row",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/row-archer-row-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/row-archer-row-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/inverted-row-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Archer row. Required mechanics: Front-three-quarter view of archer inverted row under a LOW horizontal bar. Body leans backwards under bar with legs straight, heels on floor and hips elevated. BOTH hands grip bar widely. Chest pulled toward one bent elbow while opposite arm remains straight sideways along bar. This is a low-bar row, not an upright overhead pull-up.. Equipment: Low bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "row:tuck-front-lever"
+    ],
+    "name": "Tuck front lever",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/row-tuck-front-lever-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/row-tuck-front-lever-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/inverted-row-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Tuck front lever. Required mechanics: Side view of tuck front lever beneath a stable high horizontal bar. Both hands grip overhead bar, arms completely straight. Back and hips suspended horizontally; BOTH knees drawn tightly to chest, feet tucked under hips, no contact with ground. Shoulders packed, torso approximately parallel to floor.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "row:advanced-tuck-front-lever"
+    ],
+    "name": "Advanced tuck front lever",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/row-advanced-tuck-front-lever-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/row-advanced-tuck-front-lever-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/inverted-row-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Advanced tuck front lever. Required mechanics: Side view of advanced tuck front lever under a stable overhead horizontal bar, BOTH arms straight. Torso and back held horizontal. Hips OPEN farther than in a tight tuck: thighs project out from hips, knees bent 90 degrees, feet tucked below knees, knees clearly away from chest. Entire body suspended, no foot support.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "squat:assisted-squat"
+    ],
+    "name": "Assisted squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/squat-assisted-squat-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/squat-assisted-squat-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Assisted squat. Required mechanics: Side-three-quarter view of deep assisted bodyweight squat. Athlete lightly grips sturdy doorframe/post with both hands in front for balance, knees bent and hips lowered below knee height, heels flat on floor. Upright chest, knees follow toes. No weights and no chair sitting.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "squat:split-squat"
+    ],
+    "name": "Split squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/squat-split-squat-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/squat-split-squat-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Split squat. Required mechanics: Side view of bodyweight split squat at bottom. Feet in a staggered split stance, front foot flat, front knee near 90 degrees over foot. Back heel lifted and back knee just above/touching padded floor behind. Torso upright, both feet on floor, no bench and no weights.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "squat:bulgarian-split-squat"
+    ],
+    "name": "Bulgarian split squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/squat-bulgarian-split-squat-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/squat-bulgarian-split-squat-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Bulgarian split squat. Required mechanics: Side-three-quarter view of Bulgarian split squat, rear-foot elevated. Front foot flat on floor, knee bent around 90 degrees; BACK FOOT rests ON a sturdy low bench/chair behind, rear knee lowered toward floor. Torso controlled upright, hands on hips. Clearly show elevated rear foot supported by bench, no weights.. Equipment: Chair. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "squat:assisted-pistol-squat"
+    ],
+    "name": "Assisted pistol squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/squat-assisted-pistol-squat-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/squat-assisted-pistol-squat-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Assisted pistol squat. Required mechanics: Side view of assisted pistol squat at bottom. One foot flat on floor supporting a deep single-leg squat; other leg extends STRAIGHT forward off floor. Both hands lightly grip a vertical stable post in front for balance. Chest lifted, no second foot touching ground.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "squat:pistol-squat"
+    ],
+    "name": "Pistol squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/squat-pistol-squat-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/squat-pistol-squat-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Pistol squat. Required mechanics: Side-three-quarter view of unassisted full-depth pistol squat. One foot flat on floor, supporting knee deeply bent and hips low close to heel. Opposite leg extended fully STRAIGHT forward horizontally with foot off floor. Arms extended forward for balance. No support post, bench or weights.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "core:dead-bug"
+    ],
+    "name": "Dead bug",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-dead-bug-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-dead-bug-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Dead bug. Required mechanics: Side-three-quarter view of dead bug. Athlete lies on BACK, lower back pressed flat into mat. One arm extends overhead near floor while OPPOSITE leg extends straight low above floor. Other arm points up toward ceiling and other hip/knee bent 90 degrees above hips. Clearly show opposite arm/leg pattern, no side plank.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "core:hollow-hold"
+    ],
+    "name": "Hollow hold",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-hollow-hold-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-hollow-hold-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Hollow hold. Required mechanics: Side view of hollow-body hold. Athlete lies supine, lower back pressed into mat, shoulder blades raised, both arms straight overhead near ears. Both legs together and straight, heels hovering low above floor. Only lower back/pelvis contact mat. Chin gently tucked, no arched back.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "core:lying-leg-raise"
+    ],
+    "name": "Lying leg raise",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-lying-leg-raise-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-lying-leg-raise-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Lying leg raise. Required mechanics: Side-three-quarter view of lying straight-leg raise. Athlete flat on BACK on mat, hands flat beside hips, head and shoulders down. Both knees straight, legs together raised about 45 degrees above floor. Lower back stays controlled flat, no hanging bar and no bent knees.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "core:hanging-knee-raise"
+    ],
+    "name": "Hanging knee raise",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-hanging-knee-raise-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-hanging-knee-raise-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Hanging knee raise. Required mechanics: Side-three-quarter view of hanging knee raise from high horizontal pull-up bar. Both arms straight overhead gripping bar, body hanging. BOTH hips and knees bent so knees lift toward chest; lower legs tucked under knees. Both feet off ground. No straight-leg L-sit.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "core:hanging-leg-raise"
+    ],
+    "name": "Hanging leg raise",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-hanging-leg-raise-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-hanging-leg-raise-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Hanging leg raise. Required mechanics: Side-three-quarter view of hanging STRAIGHT-leg raise. Both hands grip high horizontal bar and both arms remain fully straight. Torso upright, both legs together and knees fully STRAIGHT extended forward to hip height, feet off floor. Body forms an L. Unlike L-sit pull-up, elbows must not bend.. Equipment: Bar. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "core:l-sit"
+    ],
+    "name": "L-sit",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-l-sit-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-l-sit-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: L-sit. Required mechanics: Side-three-quarter view of L-sit supported on two low stable parallettes on floor. Both palms grip parallettes beside hips, arms straight and shoulders pressed down. Hips raised clear of floor, BOTH legs together and completely straight forward horizontally, heels off floor. No hanging overhead bar.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "hinge:glute-bridge"
+    ],
+    "name": "Glute bridge",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hinge-glute-bridge-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hinge-glute-bridge-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Glute bridge. Required mechanics: Side view of floor glute bridge. Athlete lies supine with shoulders/head on mat and arms by sides. Both knees bent, both feet flat on floor under knees. Hips raised so shoulders-hips-knees form straight diagonal, no back arch. No bench or weight.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "hinge:single-leg-glute-bridge"
+    ],
+    "name": "Single-leg glute bridge",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hinge-single-leg-glute-bridge-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hinge-single-leg-glute-bridge-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Single-leg glute bridge. Required mechanics: Side view of single-leg glute bridge. Upper back and head on mat. One knee bent, that foot flat on floor supporting raised hips. OTHER leg extends straight diagonally upward, entirely off floor. Hips level, arms by sides, no bench or weight.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "hinge:elevated-single-leg-bridge"
+    ],
+    "name": "Elevated single-leg bridge",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hinge-elevated-single-leg-bridge-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hinge-elevated-single-leg-bridge-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Elevated single-leg bridge. Required mechanics: Side view of feet-elevated SINGLE-leg glute bridge. Upper back and head on floor mat; ONE HEEL rests ON seat/top of sturdy low chair/bench, supporting knee bent. Hips raised and level. OTHER LEG extended upward with foot not supported. Clearly distinguish upper back on FLOOR from supporting foot on CHAIR; not a hip thrust with back on bench.. Equipment: Chair. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "hinge:nordic-curl",
+      "hinge:nordic-curl-negative"
+    ],
+    "name": "Nordic curl",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hinge-nordic-curl-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hinge-nordic-curl-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Nordic curl. Required mechanics: Side view of Nordic hamstring curl in forward-lean mid-lowering position. BOTH knees on thick mat, lower legs along floor behind, both ankles securely trapped UNDER a low padded fixed anchor bar. Torso and hips remain one straight line from knees to head leaning forward about 40 degrees from vertical. Arms held in front ready to catch. Hips must not hinge or fold, feet must not float free.. Equipment: Anchor. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "knee:wall-sit"
+    ],
+    "name": "Wall sit",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/knee-wall-sit-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/knee-wall-sit-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Wall sit. Required mechanics: Side view of wall sit. Athlete's upper back and buttocks against flat wall, thighs horizontal and shins vertical, BOTH knees bent about 90 degrees. Both feet flat on floor away from wall, hands resting on thighs. No chair or bench under body.. Equipment: Wall. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "knee:spanish-squat-hold"
+    ],
+    "name": "Spanish squat hold",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/knee-spanish-squat-hold-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/knee-spanish-squat-hold-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Spanish squat hold. Required mechanics: Three-quarter side view of Spanish squat isometric hold. A thick wide resistance band/strap loops behind BOTH knees and runs forward horizontally to a securely fixed post in front of athlete at knee height. Athlete sits hips back, knees bent near 90 degrees, SHINS VERTICAL, torso upright. Heels and feet flat. Show band behind knees and attachment to post clearly, no chair.. Equipment: Band + post. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "hips:horse-stance"
+    ],
+    "name": "Horse stance",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hips-horse-stance-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hips-horse-stance-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Horse stance. Required mechanics: Front-three-quarter view of low horse stance. Feet wide apart, wider than shoulders, both feet flat and toes slightly turned out. Both knees bent outward following toes, thighs near horizontal, hips centered between feet, torso upright. Hands relaxed at chest. No weights, no wall or bench.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "hips:cossack-squat"
+    ],
+    "name": "Cossack squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hips-cossack-squat-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hips-cossack-squat-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Cossack squat. Required mechanics: Front-three-quarter view of deep Cossack squat. Wide stance, hips shifted down toward ONE heel with that knee deeply bent. Opposite leg extends fully STRAIGHT out to side, heel stays on floor and toes point upward. Supporting foot flat, torso tall, hands held ahead for balance. Both legs visible.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "hips:single-leg-rdl"
+    ],
+    "name": "Single-leg RDL",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hips-single-leg-rdl-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hips-single-leg-rdl-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Single-leg RDL. Required mechanics: Side-three-quarter view of bodyweight single-leg Romanian deadlift. One foot on floor, supporting knee slightly bent. Torso hinges forward from hip until nearly horizontal while opposite leg extends STRAIGHT backwards to about hip height. Back neutral, hips square, arms reaching toward floor, no weights.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "carry:suitcase-carry"
+    ],
+    "name": "Suitcase carry",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/carry-suitcase-carry-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/carry-suitcase-carry-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Suitcase carry. Required mechanics: Full-body three-quarter view of suitcase carry during a slow walking step. Athlete upright carrying ONE kettlebell in ONE hand hanging by the outside of thigh. Other hand empty, shoulders level, torso not leaning toward weight. Weight does not touch body. Plain stable floor.. Equipment: Jug or bag. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "carry:gunwalk-carry"
+    ],
+    "name": "Gunwalk carry",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/carry-gunwalk-carry-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/carry-gunwalk-carry-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Gunwalk carry. Required mechanics: Full-body three-quarter view of gunwalk carry. Athlete walking upright with TWO matching handled water jugs, one in each hand. Upper arms close to ribs, BOTH ELBOWS BENT 90 degrees, forearms horizontal in front, palms up/neutral supporting jugs at waist/chest level. Both hands and both jugs visible. Not a straight-arm farmer carry.. Equipment: 2 jugs. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "carry:bear-hug-carry"
+    ],
+    "name": "Bear hug carry",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/carry-bear-hug-carry-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/carry-bear-hug-carry-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Bear hug carry. Required mechanics: Full-body three-quarter view of bear-hug carry. Athlete slowly walking upright hugging ONE compact heavy sandbag vertically against chest with BOTH forearms wrapped around it. Neutral spine, shoulders down, bag supported securely. No loose floating objects.. Equipment: Heavy bag. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "carry:pinch-carry"
+    ],
+    "name": "Pinch carry",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/carry-pinch-carry-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/carry-pinch-carry-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Pinch carry. Required mechanics: Full-body three-quarter view of plate pinch carry. Athlete standing/walking upright holding ONE flat weight plate at each side using fingertips on one face and thumb on opposite face AT TOP EDGE. Plates hang vertically beside thighs, NO HANDLES and hands do not grip holes. Show pinching fingertips clearly, arms straight.. Equipment: Heavy books or plates. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "carry:double-overhead-carry"
+    ],
+    "name": "Double overhead carry",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/carry-double-overhead-carry-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/carry-double-overhead-carry-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Double overhead carry. Required mechanics: Full-body three-quarter view of double overhead carry. Athlete walks upright holding TWO handled water jugs, one in each hand, BOTH ARMS STRAIGHT OVERHEAD with elbows locked. Jugs stable directly over shoulders, ribs down, torso upright, no back arch. No arms at sides.. Equipment: 2 jugs. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "bear:bear-crawl"
+    ],
+    "name": "Bear crawl",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/bear-bear-crawl-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/bear-bear-crawl-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Bear crawl. Required mechanics: Three-quarter side view of low bear crawl. Both knees bent about 90 degrees and hovering only one inch above mat, hips low in line with shoulders and back flat. One hand and opposite foot take a small step forward while other hand/foot support. No knees resting on floor and no high straight-leg downward dog.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "crab:crab-hold"
+    ],
+    "name": "Crab hold",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/crab-crab-hold-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/crab-crab-hold-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Crab hold. Required mechanics: Side-three-quarter view of reverse-tabletop crab hold. Hands planted on mat BEHIND body under shoulders, fingers pointing toward feet or outward comfortably. Both feet flat in front, both knees bent 90 degrees. Hips raised until shoulders-hips-knees align horizontally, chest faces upward, head neutral. No face-down plank.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "openbook:open-book-stretch"
+    ],
+    "name": "Open book stretch",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/openbook-open-book-stretch-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/openbook-open-book-stretch-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Open book stretch. Required mechanics: Three-quarter overhead view of open-book thoracic rotation stretch. Athlete lies on LEFT SIDE on mat with BOTH knees bent about 90 degrees and STACKED together on floor in front of hips. Bottom arm straight forward on mat; upper right arm opens backwards toward floor behind, chest rotates toward ceiling. Knees remain together pinned down; pelvis does not roll open. Show separated open arms and stacked knees.. Equipment: Mat. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "kneewall:knee-to-wall-ankle-stretch"
+    ],
+    "name": "Knee-to-wall ankle stretch",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/kneewall-knee-to-wall-ankle-stretch-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/kneewall-knee-to-wall-ankle-stretch-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Knee-to-wall ankle stretch. Required mechanics: Side view of knee-to-wall ankle dorsiflexion stretch. Athlete faces wall in short half-kneeling/lunge stance. FRONT FOOT flat a few inches from wall, FRONT HEEL firmly down, front knee moves forward to gently touch wall in line with middle toes. Back knee on mat behind. Hands lightly on wall for balance. Show front knee touching wall and heel grounded.. Equipment: Wall. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "ninety:90-90-hip-switches"
+    ],
+    "name": "90/90 hip switches",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ninety-90-90-hip-switches-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ninety-90-90-hip-switches-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: 90/90 hip switches. Required mechanics: Elevated three-quarter front view of seated 90/90 hip position, one still midpoint of hip switches. Athlete sits upright on floor with BOTH knees bent about 90 degrees. FRONT thigh forward, front shin angled sideways across body; REAR thigh extends to side with rear shin directed behind. Both legs folded to SAME side of body in classic shin-box position, not cross-legged, not butterfly. Both knees visibly approximately right angles, hands lightly behind for balance.. Equipment: Mat. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "ankle:slow-step-calf-raise"
+    ],
+    "name": "Slow step calf raise",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ankle-slow-step-calf-raise-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ankle-slow-step-calf-raise-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Slow step calf raise. Required mechanics: Side-three-quarter view of standing two-leg calf raise on a sturdy low exercise step. BOTH forefeet/balls of feet on FRONT EDGE of step, heels hanging FREE beyond edge and raised above step level. Both knees straight, body tall, fingertips on nearby wall for balance. Show edge under forefeet and unsupported raised heels clearly. No toe raise with heels on floor.. Equipment: Step. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "ankle:split-stance-calf-raise"
+    ],
+    "name": "Split stance calf raise",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ankle-split-stance-calf-raise-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ankle-split-stance-calf-raise-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Split stance calf raise. Required mechanics: Side view of bent-knee split-stance calf raise. Athlete lightly holds wall for balance, feet staggered in lunge stance. FRONT knee stays bent over front foot, FRONT HEEL lifts off floor while front ball/toes remain planted. Rear foot supports balance behind, torso upright. Not a straight-knee bilateral calf raise.. Equipment: Wall. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "ankle:single-leg-calf-raise-5s-top-hold"
+    ],
+    "name": "Single-leg calf raise, 5s top hold",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ankle-single-leg-calf-raise-5s-top-hold-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ankle-single-leg-calf-raise-5s-top-hold-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Single-leg calf raise, 5s top hold. Required mechanics: Side-three-quarter view of single-leg calf raise at top position beside wall. One forefoot planted on floor, that HEEL RAISED high, supporting knee mostly straight. OTHER FOOT clearly lifted behind with knee bent, not resting on supporting leg. Fingertips of one hand on wall for balance, torso tall.. Equipment: Wall. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "ankle:single-leg-calf-eccentric"
+    ],
+    "name": "Single-leg calf eccentric",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ankle-single-leg-calf-eccentric-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ankle-single-leg-calf-eccentric-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Single-leg calf eccentric. Required mechanics: Side view of one-leg calf eccentric on edge of sturdy step. ONE forefoot supported on step edge, heel lowered slightly BELOW step level with straight knee. OTHER foot lifted behind, not supporting. One hand on stable wall for balance. Show heel below edge and only one foot supporting, no floating step.. Equipment: Step. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "ankle:rope-less-jump-rope"
+    ],
+    "name": "Rope-less jump rope",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ankle-rope-less-jump-rope-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ankle-rope-less-jump-rope-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Rope-less jump rope. Required mechanics: Full-body front-three-quarter view of a SMALL two-foot bounce as if jumping rope, but absolutely NO ROPE. Both feet together hovering just an inch above floor, toes pointed slightly down ready for quiet forefoot landing, knees softly bent. Elbows close to sides, hands miming small rope-turning circles.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult female athlete."
+  },
+  {
+    "exercise_keys": [
+      "ankle:single-leg-pogo-hops"
+    ],
+    "name": "Single-leg pogo hops",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/ankle-single-leg-pogo-hops-v2-thumb.webp",
+      "detail": "assets/brand/exercises/generated/ankle-single-leg-pogo-hops-v2-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Single-leg pogo hops. Required mechanics: Full-body side-three-quarter view of a SMALL single-leg pogo hop. One leg nearly straight under hips with that forefoot hovering about an inch above floor ready for quiet ball-of-foot landing. Other knee bent with foot lifted behind. Torso upright, arms relaxed for balance. Only one foot is poised to land, no deep jumping squat.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  }
+]

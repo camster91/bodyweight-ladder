@@ -12,7 +12,7 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 18036,
-    "library_family": "push"
+    "reference_family": "push"
   },
   {
     "author": "SUNDAY II SUNDAY",
@@ -26,7 +26,7 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 14670,
-    "library_family": "squat"
+    "reference_family": "squat"
   },
   {
     "author": "Monika Kab",
@@ -40,10 +40,10 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 82780,
-    "library_family": "dip"
+    "reference_family": "dip"
   },
   {
-    "author": "Micha\u0142 Parzuchowski",
+    "author": "Michał Parzuchowski",
     "source": "https://unsplash.com/photos/a-man-standing-on-a-surfboard-in-the-grass-BLOe0XvremI",
     "license": "Unsplash License",
     "license_url": "https://unsplash.com/license",
@@ -54,7 +54,7 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 59888,
-    "library_family": null
+    "reference_family": null
   },
   {
     "author": "Pam loves pie",
@@ -68,7 +68,7 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 56594,
-    "library_family": null
+    "reference_family": null
   },
   {
     "author": "Nenad Stojkovic",
@@ -82,7 +82,7 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 58846,
-    "library_family": "core"
+    "reference_family": "core"
   },
   {
     "author": "Tyler  Read",
@@ -97,7 +97,7 @@
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 52864,
     "author_url": "https://www.ptpioneer.com/",
-    "library_family": null
+    "reference_family": null
   },
   {
     "author": "PTPioneer",
@@ -114,7 +114,7 @@
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 40642,
     "author_url": "https://www.ptpioneer.com/",
-    "library_family": "pull"
+    "reference_family": "pull"
   },
   {
     "author": "Taco fleur",
@@ -128,7 +128,7 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 30790,
-    "library_family": null
+    "reference_family": null
   },
   {
     "author": "Colossus Fitness",
@@ -140,7 +140,7 @@
     "exercise_keys": [],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 19022,
-    "library_family": "row"
+    "reference_family": "row"
   },
   {
     "author": "Helisusa",
@@ -154,6 +154,6 @@
     ],
     "changes": "Resized and converted to WebP; no pose changes or AI generation.",
     "bytes": 39054,
-    "library_family": null
+    "reference_family": null
   }
 ]
