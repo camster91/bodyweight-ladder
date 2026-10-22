@@ -70,6 +70,8 @@ The app now embeds `controls.css`, `controls.js` and `app-foundation.css` from t
 
 The production server serves only the committed app HTML, manifest and permitted images. It does not expose this development library or documentation. Inline synchronization preserves the original no-build deployment: cloned `index.html` is ready to serve.
 
+App-specific responsive composition lives in `app-responsive.css`, included by the same synchronization command. At 700px width and 700px height, the active workout uses two columns; shorter views keep the compact workout layout. Tablets at 1000–1099px width and over 500px high use an 88px rail; desktop navigation keeps its wider rail. Bottom navigation stays centered on tablet portrait. These are product layouts rather than portable control defaults.
+
 After editing library sources:
 
 ```sh

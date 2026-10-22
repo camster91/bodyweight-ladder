@@ -93,3 +93,11 @@ Library dialogs contain keyboard focus, lock background scrolling, close with Es
 ## First portable-control migration
 
 Time, readiness, effort, display and exercise-frequency groups now consume the library's choice markup and state styling. App callbacks remain the sole owner of their stored values. Training settings use an editable, bounded number field with stepper actions; custom exercise creation uses shared labeled fields and inline recovery errors. Invalid values keep the draft and do not mutate saved preferences or create an exercise. Dialog close actions use the same SVG anatomy. Portable fields align their content to the top so adjacent validation messages cannot stretch neighboring inputs.
+
+## Responsive composition
+
+`ui/app-responsive.css` owns the app's responsive polish layer. Active workouts use a larger exercise photo and a counter/action column when both viewport dimensions permit it (at least 700px wide and 700px high). Timers, completion and short landscape retain their compact layouts. Main actions must remain inside the visible viewport and above bottom navigation.
+
+Tablet landscape at 1000–1099px uses an 88px navigation rail; tablet portrait retains centered bottom navigation. The measured navigation inset contract still decides whether controls need a bottom offset. Exercise names and metadata have a larger tablet/desktop hierarchy. The setup action remains a quiet text action inside the browsing header.
+
+Recent training exposes the latest saved step, its corresponding photo and actual set values without opening another disclosure. The preview follows the entry's saved step, not the currently selected variation, and preserves seconds and per-side units. Removed exercises and empty history omit the preview. It never writes training data or creates achievement claims.
