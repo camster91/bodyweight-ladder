@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-v2.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2555D5">
+<script>try{const theme=localStorage.getItem("bwl-appearance");if(theme==="light"||theme==="dark")document.documentElement.dataset.theme=theme;}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ladder">
 <meta name="description" content="Bodyweight training that plans your session from the time you have. Skill ladders, hold and rest timers, progress tracking.">
@@ -1029,6 +1030,93 @@ body[data-view="ladders"] .search input{font-size:16px}
 .search-empty button{min-height:44px;color:var(--accent);font-weight:600}
 .exrow .search-match-hint{color:var(--accent);font-weight:500}
 .ladder li.search-match .t>b{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+/* Shared app shell: phone (<700), tablet (700–1099), desktop rail (1100+). */
+:root{--app-gutter:clamp(16px,3vw,32px);--app-content:1040px;--app-rail:224px;--control-size:44px;--control-radius:12px;--panel-radius:20px;--space-control:12px;--space-panel:24px;--dialog-scrim:#0b171b99;--dur-fast:140ms;--dur-base:240ms;--ease-ui:cubic-bezier(.4,0,.2,1);--ease-enter:cubic-bezier(.22,1,.36,1)}
+body[data-view]:not(.in-setup) .wrap{max-width:var(--app-content);padding-inline:var(--app-gutter);margin-inline:auto}
+header.top{gap:var(--space-control)}
+header.top h1{font-size:clamp(24px,3vw,32px);line-height:1.15;min-width:0}
+.appearance-toggle{width:var(--control-size);height:var(--control-size);min-width:var(--control-size);padding:10px;display:grid;place-items:center;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--control-radius);flex-shrink:0}
+.appearance-toggle svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round}
+header.top .date{flex:1;text-align:right}
+:where(button,input,select,summary){touch-action:manipulation}
+:where(button:not(:disabled),summary){-webkit-tap-highlight-color:transparent}
+:where(button:disabled){cursor:default;opacity:.5}
+.step-guide summary,.custom-exercise>summary{min-height:var(--control-size);display:flex;align-items:center;gap:var(--space-control)}
+.custom-exercise>summary::before{content:'+';font-size:20px;color:var(--accent)}
+.custom-exercise[open]>summary::before{content:'−'}
+.app-preferences{width:min(480px,calc(100% - 24px));margin:auto auto max(12px,env(safe-area-inset-bottom));padding:var(--space-panel);border:1px solid var(--line);border-radius:var(--panel-radius);background:var(--surface);color:var(--ink)}
+.app-preferences::backdrop{background:var(--dialog-scrim)}
+.preferences-open{overflow:hidden}
+.preferences-head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-control);margin-bottom:var(--space-panel)}
+.preferences-head h2{font-size:24px}.preferences-head button{min-width:var(--control-size);min-height:var(--control-size);border-radius:var(--control-radius)}
+.app-preferences p{color:var(--muted);line-height:1.6;margin:0 0 var(--space-panel)}
+.appearance-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.appearance-options button{min-height:52px;border-radius:var(--control-radius);padding:10px 4px}
+.appearance-options button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent);font-weight:650}
+.app-preferences .appearance-note{font-size:12px;margin:var(--space-panel) 0 0}
+.focus-meta>span{line-height:1.5}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="light"]{color-scheme:light}
+.library-brand>img{object-fit:contain}
+.appearance-toggle{margin-left:auto}
+@media(max-width:599px){header.top .date{display:none}.appearance-toggle{margin-left:auto}header.top .dot{margin-left:0}}
+@media(min-width:700px){
+ body[data-view="ladders"] #view>.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--space-panel);align-items:start}
+ body[data-view="ladders"] #view>.stack>:not(.exrow){grid-column:1/-1}
+ .exrow:not(.plain){min-height:112px;height:100%;padding-block:16px}
+ .card.exopen .exrow{height:auto}
+ .card.exopen .ladder{max-width:760px;margin-inline:auto}
+ .progress-page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-panel);align-items:start}
+ .progress-page>.progress-week{grid-column:1;position:sticky;top:var(--space-panel)}
+ .progress-page>.progress-columns{grid-column:2;display:flex;flex-direction:column;gap:var(--space-panel)}
+ .progress-page>.progress-exercises,.progress-page>.progress-log{grid-column:1/-1}
+ .app-preferences{margin:auto}
+ .focus-shell{max-width:640px}
+ .library-brand{min-height:144px;padding:var(--space-panel)}
+ .library-brand h2{font-size:clamp(25px,3vw,32px)}
+}
+@media(min-width:1100px){
+ body[data-view]:not(.in-setup) .wrap{width:calc(100% - var(--app-rail));margin-left:calc(var(--app-rail) + max(0px,(100vw - var(--app-rail) - var(--app-content))/2));margin-right:0}
+ body[data-view="today"] .app-brand-mark{display:flex}
+ header.top{margin-bottom:var(--space-panel)}
+ .workout-tools{border-radius:var(--panel-radius);margin:auto;max-height:min(85svh,900px)}
+ nav .tabs button{border-radius:var(--control-radius)}
+}
+@media(hover:hover) and (pointer:fine){button:not(:disabled):not(.primary):hover,summary:hover{background-color:color-mix(in srgb,var(--accent),transparent 94%)}.primary:hover{filter:brightness(.96)}}
+@media(max-height:500px) and (min-width:600px) and (max-width:1099px){
+ :root{--app-rail-compact:100px}
+ nav{top:0;bottom:0;left:0;right:auto;width:var(--app-rail-compact);padding:12px 8px;border:0;border-right:1px solid var(--line)}
+ nav .nav-brand{display:none}nav .tabs{display:flex;flex-direction:column;justify-content:center;height:100%;gap:8px}nav .tabs button{min-height:64px;width:100%}
+ body[data-view]:not(.in-setup) .wrap{width:calc(100% - var(--app-rail-compact));margin-left:var(--app-rail-compact);padding-block:8px 12px}
+ header.top .date{display:none}header.top{margin-bottom:0}
+ body[data-view="today"] .focus-meta{margin-bottom:0}
+ body[data-view="today"] .focus-shell>.focus-stage{min-height:0;height:calc(100svh - 116px);padding:0}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:1fr 16px 48px;gap:8px}
+ .focus-exercise{grid-column:1;grid-row:1;gap:12px}
+ .focus-set-path{grid-column:1;grid-row:2;margin:0}
+ body[data-view="today"] .focus-counter{grid-column:2;grid-row:1/3;margin:0;min-height:0;gap:12px}
+ .focus-dial{width:128px;height:128px}
+ body[data-view="today"] .focus-number{font-size:56px}
+ body[data-view="today"] .focus-actions{grid-column:1/-1;grid-row:3;padding:0;flex-direction:row;align-items:center;gap:12px}
+ .focus-actions>*{flex:1}body[data-view="today"] .focus-actions .primary{min-height:44px}
+ .focus-shell .focus-stage .focus-set-path{margin-top:0}
+ .focus-stage .focus-rest:not(.focus-finish){display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;align-content:center;align-items:center;justify-items:center}
+ .focus-rest .focus-ring,.focus-rest>.focus-clock{grid-column:1;grid-row:1/5}
+ .focus-rest .focus-ring{width:112px;height:112px}
+ .focus-rest .focus-clock{font-size:40px}
+ .focus-rest>.focus-eyebrow,.focus-rest>.focus-next,.focus-rest>.focus-link{grid-column:2;margin:0}
+ .focus-finish .finish-mark{width:60px;height:60px;border-width:5px}
+ body[data-view="today"] .finish-title{font-size:24px}
+ .focus-stage .coach-inline{grid-column:1;grid-row:2;margin:0}
+}
+@media(prefers-reduced-motion:no-preference){
+ button,summary{transition:background-color var(--dur-fast) var(--ease-ui),border-color var(--dur-fast) var(--ease-ui),transform var(--dur-fast) var(--ease-ui)}
+ button:not(:disabled):active{transform:translateY(1px)}
+ .appearance-options button:active,.appearance-toggle:active{transform:scale(.97)}
+ .app-preferences[open]{animation:preferences-enter var(--dur-base) var(--ease-enter)}
+ @keyframes preferences-enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+}
+
 </style>
 
 <div class="wrap">
@@ -1036,6 +1124,7 @@ body[data-view="ladders"] .search input{font-size:16px}
     <img src="img/icon.webp" alt="Bodyweight Ladder" width="34" height="34">
     <h1 id="viewTitle">Today</h1>
     <span class="date" id="today"></span>
+    <button class="appearance-toggle" aria-label="Display settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button>
     <button id="syncDot" class="dot local" aria-label="Sync status"></button>
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
@@ -1624,6 +1713,7 @@ const focusMotionQuery=window.matchMedia?.('(prefers-reduced-motion: no-preferen
 function focusMotionAllowed(){return focusMotionQuery?.matches===true;}
 focusMotionQuery?.addEventListener?.('change',e=>{
   if(e.matches)return;
+  document.getElementById('view')?.getAnimations?.().forEach(a=>a.cancel());
   $('#focusEffects').replaceChildren();
   if($('#focusValue'))rollFocusNumber(focusValue(),focusValue());
   document.querySelectorAll('.focus-enter,.focus-celebrate').forEach(el=>el.classList.remove('focus-enter','focus-celebrate'));
@@ -2325,8 +2415,35 @@ document.addEventListener('click',e=>{
  document.body.append(dialog);document.body.classList.add('photo-credits-open');dialog.showModal();
 });
 /* ---------- events ---------- */
-function go(t){ if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t; confirmDel=null; editing=null; sheetOpen=false; hideToast(); render(); window.scrollTo(0,0); }
-document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; go(b.dataset.tab); });
+/* Shared display preferences and navigation retain state without touching workout data. */
+const viewScrollPositions=new Map();
+function applyAppearance(value){
+ const theme=['light','dark'].includes(value)?value:'system';
+ if(theme==='system')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=theme;
+ store.set('bwl-appearance',theme);
+ document.querySelectorAll('[data-appearance]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.appearance===theme)));
+}
+function openAppearance(){
+ if(document.querySelector('.app-preferences'))return;
+ const dialog=document.createElement('dialog');dialog.className='app-preferences';dialog.setAttribute('aria-labelledby','appearanceTitle');
+ dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">Display</h2><button aria-label="Close display settings" autofocus>×</button></div><p>Choose the appearance that feels right for you.</p><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p>';
+ const close=()=>{document.body.classList.remove('preferences-open');dialog.remove();document.querySelector('.appearance-toggle')?.focus({preventScroll:true});};
+ dialog.querySelector('.preferences-head button').addEventListener('click',close);
+ dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
+ dialog.addEventListener('click',e=>{const choice=e.target.closest('[data-appearance]');if(choice){applyAppearance(choice.dataset.appearance);return;}if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
+ dialog.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const buttons=[...dialog.querySelectorAll('button')],first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
+ document.body.append(dialog);applyAppearance(store.get('bwl-appearance','system'));document.body.classList.add('preferences-open');
+ if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');dialog.querySelector('button').focus({preventScroll:true});
+}
+document.querySelector('.appearance-toggle').addEventListener('click',openAppearance);
+function animateAppScreen(){
+ const view=document.getElementById('view');view.getAnimations?.().forEach(a=>a.cancel());
+ if(!focusMotionAllowed()||!view.animate)return;
+ view.animate([{opacity:.35,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:240,easing:'cubic-bezier(.22,1,.36,1)'});
+}
+
+function go(t,{restoreScroll=false}={}){const previous=tab;viewScrollPositions.set(tab,window.scrollY||0);if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t;confirmDel=null;editing=null;sheetOpen=false;hideToast();render();window.scrollTo(0,restoreScroll?(viewScrollPositions.get(t)||0):0);if(previous!==t)animateAppScreen();}
+document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;if(b.dataset.tab===tab){window.scrollTo({top:0,behavior:motionBehavior()});return;}go(b.dataset.tab,{restoreScroll:true}); });
 $("#syncDot").addEventListener("click",()=>toast($("#syncDot").title||"Loading…"));
 $("#syncWarn").addEventListener("click",()=>{ toast("Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
 function applySearch(){
