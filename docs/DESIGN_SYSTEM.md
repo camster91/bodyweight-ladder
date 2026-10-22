@@ -1,5 +1,8 @@
 # Bodyweight Ladder component system
 
+The reusable library is maintained in [ui/README.md](../ui/README.md), with 25 component contracts in [docs/controls](controls/button.md) and a searchable [interactive catalogue](../ui/catalogue.html). The app embeds the authoritative CSS/JS sources using the development synchronization command. See that README for stable APIs, state ownership and incremental adoption boundaries.
+
+
 This document describes the shared foundation in `index.html`, under the `Component foundation` CSS block and `applyComponentSystem()`. It preserves the existing ivory, cobalt, mint and dark teal identity. It is an incremental migration: older selectors, palette aliases and layout rules remain in the cascade.
 
 ## Token contract
