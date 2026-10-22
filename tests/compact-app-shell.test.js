@@ -8,6 +8,14 @@ pass('one closed options surface owns secondary controls without duplicate IDs',
 pass('opening and closing options preserves targets and history with explicit dialog semantics',()=>{
  const run=w.localStorage.getItem('bwl-focus'),state=w.localStorage.getItem('bwl-state');click('#workoutToolsButton');assert(d.querySelector('#workoutTools').open);assert.equal(d.querySelector('#workoutTools').getAttribute('aria-labelledby'),'workoutToolsTitle');click('[data-ui="workouttoolsclose"]');assert(!d.querySelector('#workoutTools').open);assert.equal(d.querySelector('#workoutToolsButton').getAttribute('aria-expanded'),'false');assert.equal(w.localStorage.getItem('bwl-focus'),run);assert.equal(w.localStorage.getItem('bwl-state'),state);
 });
+pass('direct technique access preserves the workout and returns focus to its trigger',()=>{
+ const run=w.localStorage.getItem('bwl-focus'),state=w.localStorage.getItem('bwl-state');
+ click('#focusHowTo');assert(d.querySelector('#workoutTools').open);assert(d.querySelector('.focus-technique').open);
+ assert.equal(d.activeElement,d.querySelector('.focus-technique>summary'));
+ d.querySelector('#workoutTools').dispatchEvent(new w.Event('cancel',{cancelable:true}));
+ assert(!d.querySelector('#workoutTools').open);assert.equal(d.activeElement.id,'focusHowTo');
+ assert.equal(w.localStorage.getItem('bwl-focus'),run);assert.equal(w.localStorage.getItem('bwl-state'),state);
+});
 pass('readiness previews stay in options and applying returns to the active workout',()=>{
  click('#workoutToolsButton');click('[data-readiness="choose"][data-kind="low"]');assert(d.querySelector('#workoutTools').open);assert(d.querySelector('.readiness-preview'));click('[data-readiness="apply"]');assert(!d.querySelector('#workoutTools').open);assert.equal(w.eval('focusRun.readiness.kind'),'low');
 });

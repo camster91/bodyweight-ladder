@@ -2,6 +2,7 @@ const {JSDOM}=require('jsdom');const fs=require('fs');
 const html=fs.readFileSync(require('path').join(__dirname,'..','index.html'),'utf8');
 const ok=(c,m)=>console.log((c?'PASS ':'FAIL ')+m);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(check){const end=Date.now()+5000;while(!check()&&Date.now()<end)await sleep(25);}
 // shared fake server
 function server(){ return {doc:null, subs:[], online:true, failCode:null,
   ref(dev){ const S=this; return {
@@ -54,12 +55,14 @@ const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Erro
   click(B,'#tab-ladders'); ((B.d.querySelector('[data-ui=ex][data-t=crab][aria-expanded=false]')||{click(){}}).click(), click(B,'[data-act=hide][data-t=crab]')); await sleep(150);
   ok(st(A).prefs.hidden.crab===true,'H2 A sees B hide despite clock skew');
   ((A.d.querySelector('[data-ui=ex][data-t=bear][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=hide][data-t=bear]')); await sleep(150);
+  await waitFor(()=>S.doc?.prefs.hidden.crab && S.doc?.prefs.hidden.bear && S.doc?.prefs.focus.push==='more');
   ok(S.doc.prefs.hidden.crab && S.doc.prefs.hidden.bear && S.doc.prefs.focus.push==='more','H2/M2 all three changes kept');
 
   // H3: invalid_argument does not delete history
   S=server(); const big={v:2,log:Array.from({length:1000},(_,i)=>({ts:Date.now()-i*6e5,t:'push',k:'push:push-up',sets:[8,8,8]}))};
   S.failCode='invalid_argument'; A=device(S,big); await sleep(150);
   ok(st(A).log.length===1000,'H3 local log intact ('+st(A).log.length+')');
+  await waitFor(()=>A.d.querySelector('#saveNote').textContent.startsWith("Can't save"));
   ok(A.d.querySelector('#saveNote').textContent.startsWith("Can't save"),'H3 shows read-only note');
 
   // Zoom/long name/zero
