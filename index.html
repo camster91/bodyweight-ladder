@@ -1133,7 +1133,7 @@ header.top .date{flex:1;text-align:right}
 }
 
 /* LADDER_CONTROLS_CSS_START */
-/* Ladder Controls 1.0 — framework-free, opt-in .lui scope. */
+/* Ladder Controls 1.0.1 — framework-free, opt-in .lui scope. */
 :root{
  --lui-p-paper:#f7f6f2;--lui-p-white:#fff;--lui-p-ink:#172b30;--lui-p-muted:#52666c;--lui-p-line:#c3d1cf;--lui-p-accent:#2555d5;--lui-p-selected:#e5edff;--lui-p-danger:#b3261e;--lui-p-success:#1e7147;
  --lui-p-dark-paper:#101f22;--lui-p-dark-surface:#182b2e;--lui-p-dark-ink:#f0f7f3;--lui-p-dark-muted:#abc1bf;--lui-p-dark-line:#4d6b6d;--lui-p-dark-accent:#a4bbff;--lui-p-dark-selected:#2b4164;--lui-p-dark-danger:#ffb4ab;--lui-p-dark-success:#90d5b0;
@@ -1161,7 +1161,7 @@ header.top .date{flex:1;text-align:right}
 @media(hover:hover){.lui-button:not(:disabled):hover,.lui-tab:not(:disabled):hover{box-shadow:inset 0 0 0 var(--lui-border) var(--lui-color-action)}}
 .lui-button:not(:disabled):active{border-color:var(--lui-color-action)}
 .lui-stack{display:grid;gap:var(--lui-panel-gap)}.lui-inline{display:flex;flex-wrap:wrap;align-items:center;gap:var(--lui-space-gap)}
-.lui-field{display:grid;gap:var(--lui-space-gap);min-width:0}.lui-field>label,.lui-field>legend{font-size:var(--lui-label-font);font-weight:600}
+.lui-field{display:grid;align-content:start;gap:var(--lui-space-gap);min-width:0}.lui-field>label,.lui-field>legend{font-size:var(--lui-label-font);font-weight:600}
 .lui-field :is(input:not([type=checkbox],[type=radio],[type=range]),select,textarea){width:100%;min-height:var(--lui-field-height);padding:var(--lui-field-inset);background:var(--lui-field-fill);color:var(--lui-field-ink);border:var(--lui-border) solid var(--lui-field-border);border-radius:var(--lui-field-radius);font-size:var(--lui-field-font)}
 .lui-field textarea{resize:vertical;min-height:calc(var(--lui-field-height) * 2)}.lui-field small{font-size:var(--lui-label-font);color:var(--lui-label-ink)}
 .lui-field :is(input,select,textarea)[aria-invalid=true]{border-color:var(--lui-color-danger)}.lui-field [data-lui-error]{color:var(--lui-color-danger);margin:0;font-size:var(--lui-label-font)}
@@ -1188,6 +1188,10 @@ header.top .date{flex:1;text-align:right}
 @media(max-width:599px){.lui-dialog[data-presentation=sheet]{width:100%;max-height:90dvh;margin:auto 0 0;border-bottom-left-radius:0;border-bottom-right-radius:0;padding-bottom:max(var(--lui-panel-inset),env(safe-area-inset-bottom))}}
 @media(max-width:359px){.lui-choice{flex-direction:column}.lui-row{flex-wrap:wrap}.lui-row>.lui-button{margin-inline-start:auto}}
 @media(prefers-reduced-motion:reduce){.lui *, .lui *::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Also wins against legacy app choice rules during gradual adoption. */
+.lui.lui-choice>.lui-button{min-height:var(--lui-button-height);padding:var(--lui-space-gap);border:var(--lui-border) solid var(--lui-button-border);border-radius:var(--lui-button-radius);background:var(--lui-button-fill);color:var(--lui-button-ink);font-size:var(--lui-button-font);line-height:1.4}
+.lui.lui-choice>.lui-button[aria-pressed=true]{--lui-button-fill:var(--lui-color-selected);--lui-button-ink:var(--lui-color-action);--lui-button-border:var(--lui-color-action)}
 
 /* Component foundation: primitives → semantics → component aliases. Legacy aliases remain compatible. */
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--palette-paper:#101f22;--palette-white:#182b2e;--palette-ink:#f0f7f3;--palette-muted:#abc1bf;--palette-line:#345052;--palette-cobalt:#a4bbff}}
@@ -1267,6 +1271,14 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
  .rest-quick-actions{grid-column:2;display:flex;flex-wrap:nowrap}.rest-quick-actions button{font-size:12px;padding:4px}
  .focus-rest .focus-ring{width:104px;height:104px}
 }
+
+/* Shared control adoption: app handlers own saved state. */
+.minrow>.lui-choice{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.ctl .lui-choice{width:100%}.ctl .set-count-field{width:64px;flex:none}.ctl .set-count-field input{width:100%;padding:var(--scale-space-2);text-align:center}
+.ctl .mini-step{align-items:flex-start;flex-wrap:wrap}.ctl .set-count-field:has([data-lui-error]:not([hidden])){width:100%}
+.ctl .mini-step button{width:var(--target-min);height:var(--field-height);flex:none}
+.lui.addform .lui-field{margin:0}.lui.addform .lui-field label{margin:0}.lui.addform [data-lui-error]{font-size:var(--type-control);line-height:1.5}
+.workout-tools-head .lui-button[data-icon] svg,.preferences-head .lui-button[data-icon] svg,.photo-credits header .lui-button[data-icon] svg{width:22px;height:22px}
 /* LADDER_CONTROLS_CSS_END */
 
 /* Exercise discovery: content first, management in focused sheets. */
@@ -2313,10 +2325,10 @@ function sheet(){
 function controls(t){
   const f=focusOf(t.id), n=spec(t)[1];
   const seg=["less","normal","more"].map(k=>`<button data-act="focus" data-t="${t.id}" data-f="${k}" aria-pressed="${f===k}">${k==="less"?"Less often":k==="more"?"More often":"Normal"}</button>`).join("");
-  return `<div class="ctl">
+  return `<div class="ctl lui">
     <div class="ctl-row"><span class="label">How often</span><div class="seg" role="group" aria-label="How often for ${esc(t.name)}">${seg}</div></div>
-    <div class="ctl-row"><span class="label">Sets</span><div class="mini-step"><button data-act="setsDec" data-t="${t.id}" aria-label="Fewer sets">−</button><b>${n}</b><button data-act="setsInc" data-t="${t.id}" aria-label="More sets">+</button></div>
-      ${t.custom?`<button class="danger" data-act="del" data-t="${t.id}">${confirmDel===t.id?"Tap again to delete":"Delete"}</button>`:`<button class="ghost small" data-act="hide" data-t="${t.id}">Hide</button>`}</div>
+    <div class="ctl-row"><span class="label">Sets</span><div class="mini-step lui-stepper"><button class="lui-button" data-control="stepper" data-act="setsDec" data-t="${t.id}" aria-label="Fewer sets" ${n<=1?'disabled':''}>−</button><div class="lui-field set-count-field"><input id="sets-${t.id}" data-set-count="${t.id}" type="number" inputmode="numeric" min="1" max="6" step="1" value="${n}" aria-label="Sets for ${esc(t.name)}"></div><button class="lui-button" data-control="stepper" data-act="setsInc" data-t="${t.id}" aria-label="More sets" ${n>=6?'disabled':''}>+</button></div>
+      ${t.custom?`<button class="danger lui-button" data-control="destructive" data-variant="danger" data-act="del" data-t="${t.id}">${confirmDel===t.id?"Tap again to delete":"Delete"}</button>`:`<button class="lui-button" data-control="secondary" data-act="hide" data-t="${t.id}">Hide</button>`}</div>
   </div>`;
 }
 let editing=null; // {id,name,items:Set}
@@ -2391,22 +2403,22 @@ function viewLadders(){
         <li class="${i===lvl?"cur":i<lvl?"past":""}" data-step-name="${esc(s2[0])}"><span class="n">${i<lvl?"✓":i+1}</span>
         <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><details class="step-guide"><summary>Technique guide</summary><p>${esc(s2[5])}</p>${exerciseFigure(t,i)}<a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a></details></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}">Start here</button>`}</li>`).join("")}</ol>`;
-      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p>${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog">How to do this <span aria-hidden="true">↗</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Normal frequency':focusOf(t.id)==='more'?'More often':'Less often'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
+      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog">How to do this <span aria-hidden="true">↗</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Normal frequency':focusOf(t.id)==='more'?'More often':'Less often'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
     }).join("");
   }
   html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Adjust how this movement fits your workouts.</p>${controls(t)}</div><section data-library-content="guide-${t.id}"><h3>${esc(spec(t)[0])}</h3>${exerciseFigure(t,lvlOf(t))}<p class="technique-cue">${esc(spec(t)[5])}</p><a class="technique-video" href="${ytLink(spec(t)[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a></section>`).join('')}`;
   if(hidden.length) html+=`<section data-library-content="hidden"><h3>Keep your library yours.</h3><p class="cue">These don't show on Today. Your progress is kept.</p><div class="stack" style="gap:8px">${hidden.map(t=>`
     <div class="hid">${exerciseThumbnail(t)}<span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}">Add back</button></div>`).join("")}</div></section>`;
   html+=`<section class="custom-exercise" data-library-content="custom"><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
-    <form id="addForm" class="addform">
-      <label for="cName">Name <span class="muted" id="cCount">0/40</span></label><input id="cName" required maxlength="40" placeholder="e.g. Burpees">
+    <form id="addForm" class="addform lui" novalidate>
+      <div class="lui-field"><label for="cName">Name <span class="muted" id="cCount">0/40</span></label><input id="cName" required maxlength="40" placeholder="e.g. Burpees" autocomplete="off"></div>
       <div class="grid3">
-        <div><label for="cType">Type</label><select id="cType"><option value="reps">Reps</option><option value="sec">Seconds</option></select></div>
-        <div><label for="cMin">Start at</label><input id="cMin" inputmode="numeric" value="8"></div>
-        <div><label for="cMax">Level up at</label><input id="cMax" inputmode="numeric" value="15"></div>
+        <div class="lui-field"><label for="cType">Measure in</label><select id="cType"><option value="reps">Repetitions</option><option value="sec">Seconds</option></select></div>
+        <div class="lui-field"><label for="cMin">Start at</label><input id="cMin" type="number" min="1" max="9999" step="1" inputmode="numeric" value="8" required></div>
+        <div class="lui-field"><label for="cMax">Level up at</label><input id="cMax" type="number" min="1" max="9999" step="1" inputmode="numeric" value="15" required></div>
       </div>
-      <div><label for="cSets">Sets</label><input id="cSets" inputmode="numeric" value="3"></div>
-      <button class="primary" type="submit">Add exercise</button>
+      <div class="lui-field"><label for="cSets">Sets</label><input id="cSets" type="number" min="1" max="6" step="1" inputmode="numeric" value="3" required><small>Choose 1–6 sets. You can adjust this later.</small></div>
+      <button class="primary lui-button" data-control="primary" data-variant="primary" type="submit">Add exercise</button>
     </form></section></div>`;
   return html+`<p class="photo-credit-note">Exercise images follow your selected step. Includes AI-generated pose references. <button class="photo-credit-link" data-photo-credits>Photo credits</button></p></div>`;
 }
@@ -2617,13 +2629,21 @@ function applyAppControls(root=document){
   else if(button.matches('.appearance-toggle,[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
   else if(button.matches('.focus-stepper')||button.closest('.pm,.mini-step'))role='stepper';
   else if(button.matches('.onboard-choice'))role='selection';
-  else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options'))role='choice';
+  else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice'))role='choice';
   else if(button.matches('.exrow,.mini,.opt'))role='row';
   else if(button.matches('.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
   button.dataset.control=role;
+  if(role==='choice'){
+   const group=button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice');
+   if(group){group.classList.add('lui','lui-choice');group.classList.remove('seg');group.dataset.luiManaged='app';button.classList.add('lui-button');}
+  }
+  if(role==='icon'&&button.closest('.preferences-head,.workout-tools-head,.photo-credits header')){
+   button.classList.add('lui-button');button.dataset.icon='';button.parentElement.classList.add('lui');
+   if(!button.querySelector('svg')&&['×','✕'].includes(button.textContent.trim()))button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>';
+  }
  }
 }
- global.LadderControls={version:'1.0.0',bind,refresh,openDialog,setBusy,fieldError,toast,applyAppControls};
+ global.LadderControls={version:'1.0.1',bind,refresh,openDialog,setBusy,fieldError,toast,applyAppControls};
 })(window);
 /* LADDER_CONTROLS_JS_END */
 function applyComponentSystem(root=document){LadderControls.applyAppControls(root);}
@@ -2740,6 +2760,8 @@ function applySearch(){
 }
 $("#view").addEventListener("input",e=>{
   if(e.target.id==="exSearch"){ exQuery=e.target.value; applySearch(); return; }
+  if(e.target.closest('#addForm')&&document.querySelector('#addForm [aria-invalid="true"]'))validateCustomExercise();
+  if(e.target.matches('[data-set-count]')){if(e.target.hasAttribute('aria-invalid'))LadderControls.fieldError(e.target,'');return;}
   if(e.target.id==="cName"){ const c=$("#cCount"); if(c) c.textContent=e.target.value.length+"/40"; return; }
   const i=e.target.closest("input[data-t]"); if(!i) return;
   const t=findTrack(i.dataset.t), lvl=sessionLevel(t), st=spec(t,lvl);
@@ -2747,17 +2769,50 @@ $("#view").addEventListener("input",e=>{
   drafts[t.id][+i.dataset.i]=i.value.replace(/\D/g,"").slice(0,4);
   i.classList.toggle("hit", parseInt(i.value,10)>=+i.dataset.g);
 });
+function validateCustomExercise(){
+  const messages=new Map(),name=$('#cName'),min=$('#cMin'),max=$('#cMax'),sets=$('#cSets');
+  if(!name.value.trim())messages.set(name,'Enter a name for your exercise.');
+  else if(name.value.trim().length>40)messages.set(name,'Use 40 characters or fewer.');
+  for(const input of [min,max,sets]){const n=Number(input.value);if(!input.value.trim()||!Number.isInteger(n)||n<1||n>Number(input.max))messages.set(input,input===sets?'Choose a whole number from 1 to 6.':'Choose a whole number from 1 to 9,999.');}
+  if(!messages.has(min)&&!messages.has(max)&&Number(max.value)<Number(min.value))messages.set(max,'Choose a goal at least as high as your starting target.');
+  for(const input of [name,min,max,sets])LadderControls.fieldError(input,messages.get(input)||'');
+  return !messages.size;
+}
+function updateTrackSets(t,n,{refresh=true}={}){
+  if(n===spec(t)[1])return;
+  if(hold&&hold.tid===t.id)stopTimer();
+  state.prefs.sets[t.id]=n;delete drafts[t.id];delete holdNext[t.id];delete completedSets[t.id];commit();if(refresh)render();
+}
 $("#view").addEventListener("submit",e=>{
   if(e.target.id!=="addForm") return; e.preventDefault();
-  const name=$("#cName").value.trim(); if(!name){ toast("Give it a name"); return; }
-  const type=$("#cType").value;
-  let min=Math.max(1,parseInt($("#cMin").value,10)||1), max=Math.max(1,parseInt($("#cMax").value,10)||min), sets=Math.min(6,Math.max(1,parseInt($("#cSets").value,10)||3));
-  if(max<min) [min,max]=[max,min];
+  if(!validateCustomExercise()){document.querySelector('#addForm [aria-invalid="true"]')?.focus();return;}
+  const name=$("#cName").value.trim(),type=$("#cType").value;
+  const min=+$("#cMin").value,max=+$("#cMax").value,sets=+$("#cSets").value;
   const id="c"+Date.now().toString(36);
   state.custom.push({id,name,sets,min,max,unit:type==="sec"?"sec":"reps"});
   libraryPanel=null;commit(); render(); toast(`${name} added. Find it on Today.`);document.querySelector('[data-panel="custom"]')?.focus({preventScroll:true});
 });
+function saveSetCountInput(input){
+  const n=Number(input.value);
+  if(!input.value||!Number.isInteger(n)||n<1||n>6){LadderControls.fieldError(input,'Choose 1–6 sets.');return;}
+  const t=findTrack(input.dataset.setCount);if(!t)return;
+  // Keep the field in place so typing, blur and keyboard traversal stay native.
+  updateTrackSets(t,n,{refresh:false});LadderControls.fieldError(input,'');
+  const ctl=input.closest('.ctl');
+  ctl.querySelector('[data-act="setsDec"]').disabled=n<=1;
+  ctl.querySelector('[data-act="setsInc"]').disabled=n>=6;
+  document.querySelectorAll(`[data-track-prescription="${t.id}"]`).forEach(el=>el.textContent=targetText(spec(t)));
+  const summary=document.querySelector(`[data-panel="settings-${t.id}"] span`);
+  if(summary)summary.textContent=`${n} sets · ${focusOf(t.id)==='normal'?'Normal frequency':focusOf(t.id)==='more'?'More often':'Less often'}`;
+}
+$("#view").addEventListener("keydown",e=>{
+  if(!e.target.matches('[data-set-count]')||!['Tab','Enter'].includes(e.key))return;
+  if(e.key==='Enter')e.preventDefault();
+  // Commit before native Tab chooses its next target, so disabled bounds are skipped.
+  e.target.dispatchEvent(new Event('change',{bubbles:true}));
+});
 $("#view").addEventListener("change",e=>{
+  const input=e.target.closest('[data-set-count]');if(input){saveSetCountInput(input);return;}
   const cb=e.target.closest("input[data-rt]"); if(!cb||!editing) return;
   editing.name=$("#rName")?.value ?? editing.name;
   cb.checked ? editing.items.add(cb.dataset.rt) : editing.items.delete(cb.dataset.rt);
@@ -2863,7 +2918,7 @@ $("#view").addEventListener("click",e=>{
   if(act==="down"){ setLevel(t.id,lvl-1); toast(`Moved to ${t.steps[lvl-1][0]}. Build up from here.`); }
   if(act==="set"){ setLevel(t.id,+b.dataset.l); toast(`Starting at ${t.steps[+b.dataset.l][0]}`); }
   if(act==="focus"){ state.prefs.focus[t.id]=b.dataset.f; commit(); render(); }
-  if(act==="setsInc"||act==="setsDec"){ if(hold&&hold.tid===t.id) stopTimer(); const n=Math.min(6,Math.max(1,st[1]+(act==="setsInc"?1:-1))); state.prefs.sets[t.id]=n; delete drafts[t.id]; delete holdNext[t.id]; delete completedSets[t.id]; commit(); render(); }
+  if(act==="setsInc"||act==="setsDec"){const n=Math.min(6,Math.max(1,st[1]+(act==="setsInc"?1:-1)));updateTrackSets(t,n);(document.querySelector(`[data-act="${act}"][data-t="${t.id}"]:not(:disabled)`)||document.getElementById(`sets-${t.id}`))?.focus({preventScroll:true});}
   if(act==="hide"){ state.prefs.hidden[t.id]=true; expandedEx.delete(t.id); commit(); render(); toast(`${t.name} hidden. Restore it from Hidden exercises.`); }
   if(act==="show"){ delete state.prefs.hidden[t.id]; commit(); render(); toast(`${t.name} is back on Today.`); }
   if(act==="del"){

@@ -76,3 +76,11 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
  .rest-quick-actions{grid-column:2;display:flex;flex-wrap:nowrap}.rest-quick-actions button{font-size:12px;padding:4px}
  .focus-rest .focus-ring{width:104px;height:104px}
 }
+
+/* Shared control adoption: app handlers own saved state. */
+.minrow>.lui-choice{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.ctl .lui-choice{width:100%}.ctl .set-count-field{width:64px;flex:none}.ctl .set-count-field input{width:100%;padding:var(--scale-space-2);text-align:center}
+.ctl .mini-step{align-items:flex-start;flex-wrap:wrap}.ctl .set-count-field:has([data-lui-error]:not([hidden])){width:100%}
+.ctl .mini-step button{width:var(--target-min);height:var(--field-height);flex:none}
+.lui.addform .lui-field{margin:0}.lui.addform .lui-field label{margin:0}.lui.addform [data-lui-error]{font-size:var(--type-control);line-height:1.5}
+.workout-tools-head .lui-button[data-icon] svg,.preferences-head .lui-button[data-icon] svg,.photo-credits header .lui-button[data-icon] svg{width:22px;height:22px}

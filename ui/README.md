@@ -1,4 +1,4 @@
-# Ladder Controls 1.0
+# Ladder Controls 1.0.1
 
 A reusable, framework-free control library for Bodyweight Ladder. Twenty-five native HTML controls and patterns, scoped styles, light/dark themes, interaction helpers, copyable examples, token references and one documentation page per component.
 
@@ -66,7 +66,7 @@ The source manifest `components.cjs` contains each component's usage rules and c
 
 ## Adoption and maintenance
 
-The app now embeds `controls.css`, `controls.js` and `app-foundation.css` from these sources. Existing buttons call `applyAppControls` through `applyComponentSystem`, so their shared role assignment has a single maintained source. Existing workout handlers and storage/progression logic remain app-owned. Portable `.lui` markup is ready for incremental adoption; the app has not been rewritten to use every portable pattern. Legacy app CSS outside the extracted foundation remains and is not counted as migrated.
+The app now embeds `controls.css`, `controls.js` and `app-foundation.css` from these sources. Existing buttons call `applyAppControls` through `applyComponentSystem`, so their shared role assignment has a single maintained source. Existing workout handlers and storage/progression logic remain app-owned. The app uses portable choices for time, readiness, effort, appearance and frequency, portable fields for custom exercises, and shared stepper styling for directly editable set counts. App handlers own their saved state, so these groups deliberately do not bind a second choice/stepper event engine. Dialog close controls use the shared icon-button anatomy. Other portable `.lui` markup is ready for incremental adoption; the app has not been rewritten to use every portable pattern. Legacy app CSS outside the extracted foundation remains and is not counted as migrated.
 
 The production server serves only the committed app HTML, manifest and permitted images. It does not expose this development library or documentation. Inline synchronization preserves the original no-build deployment: cloned `index.html` is ready to serve.
 

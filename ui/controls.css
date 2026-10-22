@@ -1,4 +1,4 @@
-/* Ladder Controls 1.0 — framework-free, opt-in .lui scope. */
+/* Ladder Controls 1.0.1 — framework-free, opt-in .lui scope. */
 :root{
  --lui-p-paper:#f7f6f2;--lui-p-white:#fff;--lui-p-ink:#172b30;--lui-p-muted:#52666c;--lui-p-line:#c3d1cf;--lui-p-accent:#2555d5;--lui-p-selected:#e5edff;--lui-p-danger:#b3261e;--lui-p-success:#1e7147;
  --lui-p-dark-paper:#101f22;--lui-p-dark-surface:#182b2e;--lui-p-dark-ink:#f0f7f3;--lui-p-dark-muted:#abc1bf;--lui-p-dark-line:#4d6b6d;--lui-p-dark-accent:#a4bbff;--lui-p-dark-selected:#2b4164;--lui-p-dark-danger:#ffb4ab;--lui-p-dark-success:#90d5b0;
@@ -26,7 +26,7 @@
 @media(hover:hover){.lui-button:not(:disabled):hover,.lui-tab:not(:disabled):hover{box-shadow:inset 0 0 0 var(--lui-border) var(--lui-color-action)}}
 .lui-button:not(:disabled):active{border-color:var(--lui-color-action)}
 .lui-stack{display:grid;gap:var(--lui-panel-gap)}.lui-inline{display:flex;flex-wrap:wrap;align-items:center;gap:var(--lui-space-gap)}
-.lui-field{display:grid;gap:var(--lui-space-gap);min-width:0}.lui-field>label,.lui-field>legend{font-size:var(--lui-label-font);font-weight:600}
+.lui-field{display:grid;align-content:start;gap:var(--lui-space-gap);min-width:0}.lui-field>label,.lui-field>legend{font-size:var(--lui-label-font);font-weight:600}
 .lui-field :is(input:not([type=checkbox],[type=radio],[type=range]),select,textarea){width:100%;min-height:var(--lui-field-height);padding:var(--lui-field-inset);background:var(--lui-field-fill);color:var(--lui-field-ink);border:var(--lui-border) solid var(--lui-field-border);border-radius:var(--lui-field-radius);font-size:var(--lui-field-font)}
 .lui-field textarea{resize:vertical;min-height:calc(var(--lui-field-height) * 2)}.lui-field small{font-size:var(--lui-label-font);color:var(--lui-label-ink)}
 .lui-field :is(input,select,textarea)[aria-invalid=true]{border-color:var(--lui-color-danger)}.lui-field [data-lui-error]{color:var(--lui-color-danger);margin:0;font-size:var(--lui-label-font)}
@@ -53,3 +53,7 @@
 @media(max-width:599px){.lui-dialog[data-presentation=sheet]{width:100%;max-height:90dvh;margin:auto 0 0;border-bottom-left-radius:0;border-bottom-right-radius:0;padding-bottom:max(var(--lui-panel-inset),env(safe-area-inset-bottom))}}
 @media(max-width:359px){.lui-choice{flex-direction:column}.lui-row{flex-wrap:wrap}.lui-row>.lui-button{margin-inline-start:auto}}
 @media(prefers-reduced-motion:reduce){.lui *, .lui *::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Also wins against legacy app choice rules during gradual adoption. */
+.lui.lui-choice>.lui-button{min-height:var(--lui-button-height);padding:var(--lui-space-gap);border:var(--lui-border) solid var(--lui-button-border);border-radius:var(--lui-button-radius);background:var(--lui-button-fill);color:var(--lui-button-ink);font-size:var(--lui-button-font);line-height:1.4}
+.lui.lui-choice>.lui-button[aria-pressed=true]{--lui-button-fill:var(--lui-color-selected);--lui-button-ink:var(--lui-color-action);--lui-button-border:var(--lui-color-action)}
