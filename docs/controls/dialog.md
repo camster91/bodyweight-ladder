@@ -1,0 +1,40 @@
+# Dialogs
+
+Complete one focused task without leaving context.
+
+## Anatomy and usage
+
+Use a native dialog with an accessible title and an explicit Close button. Open with data-lui-dialog or openDialog(dialog, opener).
+
+```html
+<button type="button" class="lui-button" data-lui-dialog="dialog-example">Open dialog</button><dialog class="lui lui-dialog" id="dialog-example" aria-labelledby="dialog-title"><header><h2 id="dialog-title" tabindex="-1">Exercise technique</h2><button type="button" class="lui-button" data-icon data-lui-close aria-label="Close technique">×</button></header><p>Keep your body in a straight line and move with control.</p><button type="button" class="lui-button" data-lui-close>Done</button></dialog>
+```
+
+## Interaction and states
+
+Native modal focus containment and Escape dismissal. openDialog locks background scroll and restores a connected opener on close. Supply a fresh opener after replacing DOM. Native dialog support is required; do not replace it with an untrapped overlay.
+
+| State | Contract |
+|---|---|
+| Default | Native semantic element, visible label, semantic color tokens. |
+| Hover / pressed | Interactive actions only; fine pointer hover never carries essential information. |
+| Focus | Visible outline; native keyboard operation. |
+| Disabled | Native disabled for supported controls. Noninteractive content: not applicable. |
+| Selected / current | Only choices, tabs, selection inputs and navigation; use the relevant ARIA or native attribute. |
+| Loading | Async actions use setBusy; regions use aria-busy. Synchronous controls: not applicable. |
+| Error | Fields use fieldError and explanatory copy; noneditable controls have no validation state. |
+
+Unsupported states are described above; do not add ARIA states just to imitate a visual style.
+
+## Responsive and accessible behavior
+
+All interactive targets remain at least 44 CSS pixels. Text and labels wrap. Choices stack below 360px; rows may wrap; sheets dock below 600px. Test with real labels and 200% text zoom. Honor native labels, fieldsets, roles and IDs in the example. Respect reduced motion and keep recovery text visible.
+
+## Do and avoid
+
+- Do: Use a native dialog with an accessible title and an explicit Close button. Open with data-lui-dialog or openDialog(dialog, opener).
+- Avoid replacing native semantics with a styled div, hiding required actions behind hover, or inventing loading/error/selected states where they do not apply.
+
+## Adoption
+
+These portable .lui controls are available for new markup. Existing Ladder screens retain their compatible app adapter; see [library README](../../ui/README.md) for the migration boundary.
