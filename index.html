@@ -1131,6 +1131,84 @@ header.top .date{flex:1;text-align:right}
  @keyframes preferences-enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 }
 
+/* Component foundation: primitives → semantics → component aliases. Legacy aliases remain compatible. */
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--palette-paper:#101f22;--palette-white:#182b2e;--palette-ink:#f0f7f3;--palette-muted:#abc1bf;--palette-line:#345052;--palette-cobalt:#a4bbff}}
+:root[data-theme="dark"]{--palette-paper:#101f22;--palette-white:#182b2e;--palette-ink:#f0f7f3;--palette-muted:#abc1bf;--palette-line:#345052;--palette-cobalt:#a4bbff}
+:root,:root[data-theme="light"],:root[data-theme="dark"]{--bg:var(--palette-paper);--surface:var(--palette-white);--ink:var(--palette-ink);--muted:var(--palette-muted);--line:var(--palette-line);--accent:var(--palette-cobalt)}
+:root{
+ --scale-space-1:4px;--scale-space-2:8px;--scale-space-3:12px;--scale-space-4:16px;--scale-space-6:24px;--scale-space-8:32px;
+ --scale-type-sm:12px;--scale-type-md:14px;--scale-type-body:16px;--scale-type-title:24px;
+ --scale-radius-sm:12px;--scale-radius-md:16px;--scale-radius-lg:24px;--scale-target:44px;
+ --palette-paper:#f7f6f2;--palette-white:#ffffff;--palette-ink:#172b30;--palette-muted:#52666c;--palette-line:#d7e1df;--palette-cobalt:#2555d5;
+ --color-canvas:var(--bg);--color-surface:var(--surface);--color-ink:var(--ink);--color-ink-secondary:var(--muted);--color-stroke:var(--line);--color-action:var(--accent);--color-on-action:var(--accent-ink);--color-selected:var(--chip);--color-critical:var(--bad);
+ --space-control:var(--scale-space-3);--space-inset:var(--scale-space-4);--space-section:var(--scale-space-6);--type-meta:var(--scale-type-sm);--type-control:var(--scale-type-md);--type-body:var(--scale-type-body);--target-min:var(--scale-target);
+ --button-height:var(--target-min);--button-radius:var(--scale-radius-sm);--button-inset:var(--space-control);--button-font:var(--type-control);--button-fill:var(--color-surface);--button-stroke:var(--color-stroke);
+ --field-radius:var(--scale-radius-sm);--field-height:48px;--field-font:var(--type-body);--row-inset:var(--space-inset);--row-gap:var(--space-control);--row-media-width:64px;--row-media-height:48px;
+ --overlay-radius:var(--scale-radius-lg);--overlay-inset:var(--space-section);--overlay-scrim:var(--dialog-scrim);--overlay-width:640px;--focus-width:3px;--focus-offset:3px;
+}
+body[data-view] button[data-control]{font-size:var(--button-font);line-height:1.4;min-height:var(--button-height);touch-action:manipulation}
+body[data-view] button.primary[data-control="primary"]{min-height:52px;padding:var(--button-inset) var(--space-inset);background:var(--color-action);color:var(--color-on-action);border:1px solid var(--color-action);border-radius:var(--button-radius);box-shadow:none;font-size:var(--type-body);font-weight:650}
+body[data-view] button[data-control="secondary"],body[data-view] button[data-control="destructive"]{padding:var(--button-inset);border:1px solid var(--button-stroke);border-radius:var(--button-radius);background:var(--button-fill);color:var(--color-ink)}
+body[data-view] button[data-control="destructive"]{color:var(--color-critical);border-color:var(--color-critical)}
+body[data-view] button[data-control="choice"]{min-height:var(--target-min);padding:var(--scale-space-2);font-size:var(--type-control);line-height:1.4}
+body[data-view] button[data-control="choice"][aria-pressed="true"]{background:var(--color-selected);border-color:var(--color-action);color:var(--color-action);font-weight:650}
+body[data-view] button[data-control="selection"]{min-height:72px}
+body[data-view] button[data-control="stepper"]{min-height:var(--target-min);min-width:var(--target-min);padding:0;font-size:20px;border:1px solid var(--color-stroke);box-shadow:none}
+body[data-view] button[data-control="quiet"]{min-height:var(--target-min);font-size:var(--type-control);line-height:1.5}
+body[data-view] button[data-control="icon"],body[data-view] button[data-control="status"]{min-height:var(--target-min);min-width:var(--target-min);width:var(--target-min);height:var(--target-min);padding:var(--scale-space-2);border-radius:var(--button-radius);display:grid;place-items:center}
+body[data-view] button[data-control="status"]{background:transparent;border:0;box-shadow:none;color:var(--color-ink-secondary)}
+body[data-view] button[data-control="status"]::after{content:none}body[data-view] button[data-control="status"] svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+body[data-view] button[data-control="status"].ok{color:var(--good)}body[data-view] button[data-control="status"].syncing{color:var(--color-action)}body[data-view] button[data-control="status"].error{color:var(--color-critical)}
+body[data-view] button[data-control]:focus-visible,body summary:focus-visible,body a:focus-visible{outline:var(--focus-width) solid var(--color-action);outline-offset:var(--focus-offset)}
+body[data-view] button[data-control]:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+body input:not([type="checkbox"]),body select{min-height:var(--field-height);border-radius:var(--field-radius);font-size:var(--field-font);border-color:var(--color-stroke)}
+body input[aria-invalid="true"],body input:user-invalid{border-color:var(--color-critical)}
+body input:focus-visible,body select:focus-visible{outline:2px solid var(--color-action);outline-offset:2px}
+body :is(.workout-tools,.app-preferences,.photo-credits){background:var(--color-surface);color:var(--color-ink);border-color:var(--color-stroke);border-radius:var(--overlay-radius);max-height:85dvh}
+body :is(.workout-tools,.app-preferences,.photo-credits)::backdrop{background:var(--overlay-scrim)}
+.workout-tools-head,.preferences-head{gap:var(--space-control)}
+.workout-tools-head h2,.preferences-head h2,.photo-credits header h2{font-size:var(--scale-type-title);line-height:1.25}
+.tool-heading,.progress-section h2{line-height:1.4}
+.week-day>span,.week-legend,.record-context,.workout-storage,.focus-meta,.focus-dial .focus-unit{font-size:var(--type-meta)}
+.progress-caption,.progress-empty p,.search-empty p{font-size:var(--type-control);line-height:1.6}
+.hid{gap:var(--row-gap);padding-block:var(--scale-space-2)}
+.hid>.exercise-thumb{flex:0 0 var(--row-media-width);width:var(--row-media-width);max-width:var(--row-media-width);height:var(--row-media-height);display:block}
+.hid>.exercise-thumb img{width:100%;height:100%;object-fit:contain}
+.hid>span:not(.exercise-thumb){flex:1;min-width:0}
+.picks{gap:var(--scale-space-2)}.pick{min-height:72px;padding:var(--space-control);gap:var(--row-gap);border-radius:var(--button-radius)}
+.pick:focus-within{outline:var(--focus-width) solid var(--color-action);outline-offset:var(--focus-offset)}
+.pick>.exercise-thumb{flex:0 0 48px;width:48px;height:36px}.pick>span:not(.exercise-thumb){font-size:var(--type-control);line-height:1.5}
+.status-chip{display:inline-flex;align-items:center;min-height:32px;padding:var(--scale-space-1) var(--space-control);border-radius:var(--scale-radius-sm);background:var(--color-selected);color:var(--color-action);font-size:var(--type-meta);font-weight:600}
+.rest-quick-actions{display:flex;gap:var(--scale-space-2);justify-content:center;flex-wrap:wrap}.rest-quick-actions button{padding-inline:var(--space-control)}
+.completion-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--scale-space-1);scrollbar-width:thin}
+body[data-view="today"] .focus-stage[data-phase="finished"]{height:min(620px,calc(100svh - 200px));min-height:0}
+.focus-stage[data-phase="finished"] .focus-actions{flex-shrink:0}
+.completion-body .effort-check{margin-top:var(--space-control)}
+body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-size:clamp(24px,4vw,32px);line-height:1.2;margin:0 0 var(--scale-space-2);flex-shrink:0}
+.completion-body .effort-check>div>p{display:none}.completion-body .effort-check h3{font-size:var(--type-control)}
+.history-entry-title{display:block;font-size:var(--type-body);font-weight:600;color:var(--color-ink)}
+.history-entry-meta{display:block;font-size:var(--type-meta);color:var(--color-ink-secondary);margin-top:var(--scale-space-1)}
+.history-entry-values{display:block;font-size:var(--type-control);color:var(--color-ink);margin-top:var(--scale-space-1)}
+.history-entry-action{display:block;font-size:var(--type-meta);color:var(--color-action);margin-top:var(--scale-space-1)}
+.progress-log .erow{width:100%;text-align:left;padding:var(--row-inset) 0}.recent-training .training-day{min-height:64px}
+.sticky-actions{bottom:calc(var(--app-nav-height,88px) + var(--scale-space-2))}
+.toast{bottom:calc(var(--app-nav-height,88px) + var(--space-control))}
+.timer{bottom:calc(var(--app-nav-height,88px) + var(--space-control))}
+.recent-training>h2{margin-bottom:var(--space-control)}.recent-training details{border:0;padding-top:var(--space-control)}
+@media(max-width:599px){.picks{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:699px){.onboard-actions{position:sticky;bottom:0;z-index:4;padding:var(--space-inset) 0 max(var(--space-control),env(safe-area-inset-bottom));margin-top:var(--space-control);background:var(--color-surface);border-top:1px solid var(--color-stroke)}.onboard-actions button{min-height:var(--target-min)}}
+@media(max-height:650px){
+ .focus-rest .focus-ring{width:136px;height:136px}.focus-stage .focus-rest{gap:var(--scale-space-2)}
+ .completion-body .focus-finish .finish-mark{width:64px;height:64px;border-width:4px}
+ .completion-body .focus-finish .finish-mark{display:none}
+ .completion-body .focus-finish{gap:var(--scale-space-2)}body[data-view="today"] .completion-body .finish-title{font-size:24px}
+}
+@media(max-height:500px) and (min-width:600px) and (max-width:1099px){
+ body[data-view="today"] .focus-stage[data-phase="finished"]{height:calc(100svh - 116px)}
+ .rest-quick-actions{grid-column:2;display:flex;flex-wrap:nowrap}.rest-quick-actions button{font-size:12px;padding:4px}
+ .focus-rest .focus-ring{width:104px;height:104px}
+}
+
 </style>
 
 <div class="wrap">
@@ -1139,7 +1217,7 @@ header.top .date{flex:1;text-align:right}
     <h1 id="viewTitle">Today</h1>
     <span class="date" id="today"></span>
     <button class="appearance-toggle" aria-label="Display settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button>
-    <button id="syncDot" class="dot local" aria-label="Sync status"></button>
+    <button id="syncDot" class="dot local" aria-label="Storage status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H5V3h1m9 0v5h4M8 14l3 3 5-6"/></svg></button>
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
   <main id="view"></main>
@@ -1926,7 +2004,7 @@ function openTechnique(){
    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
  });
- $('.focus-shell').append(d);document.body.classList.add('technique-open');
+ $('.focus-shell').append(d);applyComponentSystem(d);document.body.classList.add('technique-open');
  if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');
  d.querySelector('#techniqueTitle').focus({preventScroll:true});
 }
@@ -1954,14 +2032,15 @@ function mountWorkoutTools(previous={}){
   const back=document.createElement('button');back.className='tool-back';back.dataset.ui='toolmain';back.textContent='← Back to options';section.prepend(back);
   const active=workoutToolsPanel==='alternatives';for(const child of [...body.children])child.hidden=active?child!==section:child===section;
  }
- const restControls=[...shell.querySelectorAll('.focus-rest [data-focus="add"],.focus-rest [data-focus="undo"],.focus-actions [data-focus="another"]')];
+ const rest=shell.querySelector('.focus-stage[data-phase="rest"] .focus-rest');if(rest){const quick=document.createElement('div');quick.className='rest-quick-actions';quick.setAttribute('role','group');quick.setAttribute('aria-label','Rest controls');for(const b of [...rest.querySelectorAll('[data-focus="add"],[data-focus="undo"]')])quick.append(b);rest.append(quick);}
+ const restControls=[...shell.querySelectorAll('.focus-actions [data-focus="another"]')];
  if(restControls.length){const controls=document.createElement('div');controls.className='workout-tool-actions';restControls.forEach(el=>controls.append(el));body.prepend(controls);}
  const returning=shell.querySelector(':scope>.focus-next');if(returning)body.prepend(returning);
  const feedback=shell.querySelector('.effort-check');
- if(feedback){
-  const fold=document.createElement('details');fold.className='effort-disclosure';const summary=document.createElement('summary'),selected=feedback.querySelector('[aria-pressed="true"]');
-  summary.textContent=selected?'Last exercise: '+selected.textContent:'How did the last exercise feel?';feedback.before(fold);fold.append(summary,feedback);
- }
+ if(feedback&&focusRun?.phase==='finished'){
+  const stage=shell.querySelector('.focus-stage'),content=document.createElement('div');content.className='completion-body';
+  const finished=stage.querySelector('.focus-finish'),title=finished.querySelector('.finish-title');finished.before(content);if(title)content.before(title);content.append(finished,feedback);
+ }else if(feedback){body.append(feedback);}
  const counts={};for(const d of body.querySelectorAll('details')){const name=d.id||d.classList[0]||'details';counts[name]=(counts[name]||0)+1;d.dataset.toolKey=name+':'+counts[name];if(previous.open?.includes(d.dataset.toolKey))d.open=true;}
  const suggestion=!!body.querySelector('[data-coach="level"]');if(suggestion){button.classList.add('has-suggestion');button.setAttribute('aria-label','Workout options, progression suggestion available');}
  dialog.addEventListener('cancel',e=>{e.preventDefault();closeWorkoutTools();});
@@ -1997,7 +2076,7 @@ function focusView(plan,top,more,recent){
   else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${exerciseThumbnail(t,sessionLevel(t),false)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps to record'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p>${exerciseFigure(t,sessionLevel(t))}<a href="${ytLink(st[0])}" target="_blank" rel="noopener">Find video tutorials</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+='<div class="workout-secondary">';
-  html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} ${r.items.length===1?'exercise':'exercises'}</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
+  html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} ${r.items.length===1?'exercise':'exercises'}</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?(i===r.at?'<span class="status-chip" aria-current="step">Current</span>':`<button class="focus-link" data-focus="choose" data-i="${i}">Start</button>`):''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
   if(more.length)html+=`<button class="fold" data-ui="more" aria-expanded="${showMore}">More exercises <span>${more.length}</span></button>${showMore?'<p class="label">Try something new</p>'+more.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'plan')).join(''):''}`;
   if(recent.length)html+=`<button class="fold" data-ui="done" aria-expanded="${showDone}">Recently saved <span>${recent.length}</span></button>${showDone?recent.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'done')).join(''):''}`;
   return html+'</div></div>'+sheet();
@@ -2264,7 +2343,10 @@ function viewHistory(){
   const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
   const weekActivity=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const key=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===key).reduce((n,e)=>n+e.sets.length,0);return `<div class="week-day${sets?' active':''}${key===dayOf(now)?' today':''}" role="listitem" aria-label="${fmtDate(key)}: ${sets} sets recorded"><span>${d.toLocaleDateString(undefined,{weekday:'short'})}</span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`;}).join('');
   const records=personalBests();
-  const timeline=days.slice(0,5).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
+  const timeline=days.slice(3,8).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
+  const recentPreview=days.slice(0,3).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
+  const latestEntry=[...state.log].sort((a,b)=>b.ts-a.ts)[0],latestStep=stepByKey(latestEntry.k);
+  const latestSummary=latestStep?'Latest: '+latestStep.st[0]+' · '+latestEntry.sets.join(' · ')+' '+(isSec(latestStep.st[4])?'sec':'reps')+(latestStep.st[4].includes('each')?' per side':''):'Exercise trends and comparisons';
   const bestHtml=records.slice(0,4).map(({entry,total,count})=>{
     const f=stepByKey(entry.k),measure=isSec(f.st[4])?'seconds':'reps',side=f.st[4].includes('each')?' per side':'';
     return `<div class="personal-best" data-record="${esc(entry.k)}" data-count="${count}"><h3>${esc(f.st[0])}</h3><p class="record-value">${total} <span>${measure}${side}</span></p><p class="record-context">${count}-set total · <time datetime="${dayOf(entry.ts)}">${fmtDate(dayOf(entry.ts))}</time></p></div>`;
@@ -2288,12 +2370,12 @@ function viewHistory(){
   const visibleDays=Math.min(historyDaysShown,days.length);
   const recent=days.slice(0,visibleDays).map(({date,entries})=>`<div class="hist-day" data-history-day="${date}"><span class="d">${fmtDate(date)}</span>${[...entries].sort((a,b)=>b.ts-a.ts).map(e=>{
     const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
-    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):'Removed exercise'}: ${e.sets.join(' · ')}${f?unit(f.st[4]):''}${e.mode==='light'?' · Lighter day':''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
+    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}"><span class="history-entry-title">${f?esc(f.st[0]):'Removed exercise'}</span><span class="history-entry-meta">${tm}${e.mode==='light'?' · Lighter day':''}</span><span class="history-entry-values">${e.sets.join(' · ')}${f?' '+(isSec(f.st[4])?'sec':'reps')+(f.st[4].includes('each')?' per side':''):''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</span><span class="history-entry-action">${sel?'Hide entry actions':'Entry actions'}</span></button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
   return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">Your first improvement will appear here.</p>'}</section>
-    <details class="progress-section compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>Training days <span>Recent recorded activity</span></summary><p class="progress-caption">${days.length} ${days.length===1?'day':'days'} recorded${days.length>5?' · Most recent five':''}</p><ol class="training-ladder">${timeline}</ol></details></div>
-    <details class="progress-section progress-exercises compact-progress" id="exerciseProgress" ${progressSectionsOpen.has('exerciseProgress')?'open':''}><summary>Your progress <span>Exercise trends and comparisons</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
+    <section class="progress-section recent-training"><h2>Recent training</h2><ol class="training-ladder">${recentPreview}</ol>${days.length>3?`<details class="compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>More training days <span>${days.length} days recorded</span></summary><ol class="training-ladder">${timeline}</ol></details>`:''}</section></div>
+    <details class="progress-section progress-exercises compact-progress" id="exerciseProgress" ${progressSectionsOpen.has('exerciseProgress')?'open':''}><summary>Your progress <span>${esc(latestSummary)}</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
     <details class="progress-log" id="progressLog" ${progressLogOpen?'open':''}><summary>Workout log <span>View or remove saved entries</span></summary><p class="progress-caption" id="historyRange" role="status">Showing ${visibleDays} of ${days.length} training ${days.length===1?'day':'days'}. Tap an entry to remove it.</p>${recent}${visibleDays<days.length?'<button class="history-more" data-ui="olderhistory">Show older training days</button>':''}</details></div>`;
 }
 
@@ -2390,6 +2472,32 @@ function finishSetup(skip){
   if(!skip){$("#focusAnnouncement").textContent="Your workout is ready.";const h=$(".focus-stage h2");if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
 }
 
+// One role contract keeps native controls semantic while sharing sizes and states.
+function applyComponentSystem(root=document){
+ for(const button of root.querySelectorAll('button')){
+  let role='secondary';
+  if(button.closest('nav'))role='navigation';
+  else if(button.id==='syncDot')role='status';
+  else if(button.matches('.primary'))role='primary';
+  else if(button.matches('.danger,.xdel'))role='destructive';
+  else if(button.matches('.appearance-toggle,[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
+  else if(button.matches('.focus-stepper')||button.closest('.pm,.mini-step'))role='stepper';
+  else if(button.matches('.onboard-choice'))role='selection';
+  else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options'))role='choice';
+  else if(button.matches('.exrow,.mini,.opt'))role='row';
+  else if(button.matches('.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
+  button.dataset.control=role;
+ }
+}
+// A measured inset supports mobile text sizing, safe areas and landscape rails.
+function syncAppInsets(){
+ const nav=document.querySelector('nav'),rect=nav?.getBoundingClientRect();
+ const height=rect&&rect.width>window.innerWidth/2&&getComputedStyle(nav).display!=='none'?rect.height:0;
+ document.documentElement.style.setProperty('--app-nav-height',height+'px');
+}
+window.addEventListener('resize',syncAppInsets);
+if(typeof ResizeObserver==='function')new ResizeObserver(syncAppInsets).observe(document.querySelector('nav'));
+
 function render(){
   idx=null;
   document.body.dataset.view=tab;
@@ -2399,10 +2507,10 @@ function render(){
     setupIntroRequested=false;setupIntro=true;setupWanted=true;setupDraft=null;tab='setup';
     const url=new URL(location.href);url.searchParams.delete('onboarding');history.replaceState(history.state,'',url);
   }
-  if(fresh && sync==="error" && tab!=="setup"){ document.body.classList.add("in-setup"); $("#viewTitle").textContent="Welcome"; $("#view").innerHTML=`<div class="card empty"><img src="assets/brand/ladder-mark-v2.svg" alt=""><h2>Can't reach your account</h2><p>If you've used Bodyweight Ladder before, your progress will load once you're back online. Retrying…</p><button class="ghost" data-ui="forcesetup" style="margin-top:8px">I'm new here. Set me up</button></div>`; return; }
+  if(fresh && sync==="error" && tab!=="setup"){ document.body.classList.add("in-setup"); $("#viewTitle").textContent="Welcome"; $("#view").innerHTML=`<div class="card empty"><img src="assets/brand/ladder-mark-v2.svg" alt=""><h2>Can't reach your account</h2><p>If you've used Bodyweight Ladder before, your progress will load once you're back online. Retrying…</p><button class="ghost" data-ui="forcesetup" style="margin-top:8px">I'm new here. Set me up</button></div>`; applyComponentSystem();syncAppInsets(); return; }
   if(fresh && sync!=="starting" && sync!=="syncing" && tab!=="setup") tab="setup";
   if(!fresh && tab==="setup" && !setupWanted) tab="today";
-  if(fresh && (sync==="starting"||sync==="syncing") && tab!=="setup"){ document.body.classList.add("in-setup"); $("#viewTitle").textContent="Welcome"; $("#view").innerHTML=`<div class="card empty"><img src="assets/brand/ladder-mark-v2.svg" alt=""><h2>Loading your progress…</h2></div>`; return; }
+  if(fresh && (sync==="starting"||sync==="syncing") && tab!=="setup"){ document.body.classList.add("in-setup"); $("#viewTitle").textContent="Welcome"; $("#view").innerHTML=`<div class="card empty"><img src="assets/brand/ladder-mark-v2.svg" alt=""><h2>Loading your progress…</h2></div>`; applyComponentSystem();syncAppInsets(); return; }
   document.body.classList.toggle("in-setup", tab==="setup");
   document.body.dataset.view=tab;
   $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"Progress",setup:"Welcome"}[tab];
@@ -2422,6 +2530,8 @@ function render(){
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
+  applyComponentSystem();
+  syncAppInsets();
 }
 
 let tt, undoFn=null;
@@ -2436,11 +2546,11 @@ const PHOTO_CREDITS_HTML="<section class=\"generated-photo-credit\"><h3>Generate
 document.addEventListener('click',e=>{
  const trigger=e.target.closest('[data-photo-credits]');if(!trigger)return;
  const dialog=document.createElement('dialog');dialog.className='photo-credits';dialog.setAttribute('aria-labelledby','photoCreditsTitle');
- dialog.innerHTML='<header><h2 id="photoCreditsTitle">Photo credits</h2><button autofocus>Close</button></header><p>Exercise photography and AI-generated pose references, resized and converted to WebP. Generated images show fictional adults and are identified in each technique guide. Movement instructions and video tutorials explain the exercise. The people in licensed photographs do not endorse this app.</p>'+PHOTO_CREDITS_HTML;
+ dialog.innerHTML='<header><h2 id="photoCreditsTitle">Photo credits</h2><button autofocus aria-label="Close photo credits">×</button></header><p>Exercise photography and AI-generated pose references, resized and converted to WebP. Generated images show fictional adults and are identified in each technique guide. Movement instructions and video tutorials explain the exercise. The people in licensed photographs do not endorse this app.</p>'+PHOTO_CREDITS_HTML;
  dialog.querySelector('header button').addEventListener('click',()=>dialog.close());
  dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();});
  dialog.addEventListener('close',()=>{document.body.classList.remove('photo-credits-open');dialog.remove();if(trigger.isConnected)trigger.focus();},{once:true});
- document.body.append(dialog);document.body.classList.add('photo-credits-open');dialog.showModal();
+ document.body.append(dialog);applyComponentSystem(dialog);document.body.classList.add('photo-credits-open');dialog.showModal();
 });
 /* ---------- events ---------- */
 /* Shared display preferences and navigation retain state without touching workout data. */
@@ -2460,7 +2570,7 @@ function openAppearance(){
  dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
  dialog.addEventListener('click',e=>{const choice=e.target.closest('[data-appearance]');if(choice){applyAppearance(choice.dataset.appearance);return;}if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
  dialog.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const buttons=[...dialog.querySelectorAll('button')],first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
- document.body.append(dialog);applyAppearance(store.get('bwl-appearance','system'));document.body.classList.add('preferences-open');
+ document.body.append(dialog);applyComponentSystem(dialog);applyAppearance(store.get('bwl-appearance','system'));document.body.classList.add('preferences-open');
  if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');dialog.querySelector('button').focus({preventScroll:true});
 }
 document.querySelector('.appearance-toggle').addEventListener('click',openAppearance);
