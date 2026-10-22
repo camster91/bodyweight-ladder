@@ -464,11 +464,12 @@ body.in-setup header.top,body.in-setup #saveNote{display:none}
 .onboard-select svg{width:18px;height:18px;fill:none;stroke:var(--accent-ink);stroke-width:2;opacity:0}
 .onboard-choice[aria-pressed="true"] .onboard-select{background:var(--accent);border-color:var(--accent)}
 .onboard-choice[aria-pressed="true"] .onboard-select svg{opacity:1}
-.onboard-actions{display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:6px;margin-top:auto;padding-top:24px}
-.onboard-actions .primary{grid-column:2;min-height:54px;border-radius:14px;font-size:16px;width:100%}
-.onboard-actions .primary:first-child{grid-column:1 / -1}
-.onboard-back{grid-column:1;min-height:48px;padding:8px 12px;background:none;color:var(--muted);border:0}
-.onboard-skip{grid-column:1 / -1;background:none;color:var(--muted);border:0;min-height:44px;font-size:13px}
+.onboard-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 16px;margin-top:auto;padding-top:24px}
+.onboard-actions .primary{grid-column:1 / -1;grid-row:1;min-height:54px;border-radius:14px;font-size:16px;width:100%}
+.onboard-back,.onboard-skip{grid-row:2;background:none;color:var(--muted);border:0;min-height:44px;min-width:44px;font-size:13px;padding:8px 4px;font-weight:500}
+.onboard-back{grid-column:1;text-align:left;justify-self:start}
+.onboard-skip{grid-column:2;text-align:right;justify-self:end}
+.onboard[data-step="0"] .onboard-skip{grid-column:1 / -1;justify-self:center;text-align:center}
 .onboard-footnote{font-size:12px;line-height:1.5;color:var(--muted);margin:12px 0 0}
 .onboard>p.onboard-footnote:last-child{text-align:center}
 .onboard-review{margin:0 0 16px}
@@ -1656,7 +1657,7 @@ function viewSetup(){
   if(stage===2)html+=`<div class="onboard-options" role="group" aria-label="Available equipment">${choice('none','','No extra equipment','A wall, a chair and some floor space.')}${choice('gear','bar','Pull-up bar','Include hanging and pulling movements.')}${choice('gear','weights','Weights','A jug, kettlebell or other suitable weight.')}</div>`;
   if(stage===3)html+=`<div class="onboard-options" role="group" aria-label="Starting level">${redo?choice('level','keep','Keep my current steps','Use the exercise levels I have now.'):''}${choice('level','new','New to this','Start with easier variations.')}${choice('level','some','Some experience','Use the standard starting steps.')}${choice('level','strong','Already training','Begin further along the exercise ladders.')}</div>${redo?'<p class="onboard-footnote">Exercises you have already logged keep their current step.</p>':''}`;
   if(stage===4){const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<div class="onboard-pool">${uiGlyph('keep')}<div><b>${setupAvailableCount()}</b><span>exercise ladders match your choices</span></div></div><dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
-  html+=`<p id="setupError" class="onboard-error" role="alert" tabindex="-1">${esc(setupError)}</p><div class="onboard-actions">${stage>0?'<button class="onboard-back" data-ui="oback">Back</button>':''}<button class="primary" data-ui="${stage===4?'finish':'onext'}">${stage===0?'Set up my workout':stage===4?(redo?'Save changes':'Start my workout'):'Continue'}</button><button class="onboard-skip" data-ui="skip">${redo?'Cancel':'Set up later'}</button></div><p class="onboard-footnote">${redo?'Your saved workouts stay with you.':'No account required. Progress saves in this browser.'}</p></section>`;
+  html+=`<p id="setupError" class="onboard-error" role="alert" tabindex="-1">${esc(setupError)}</p><div class="onboard-actions"><button class="primary" data-ui="${stage===4?'finish':'onext'}">${stage===0?'Set up my workout':stage===4?(redo?'Save changes':'Start my workout'):'Continue'}</button>${stage>0?'<button class="onboard-back" data-ui="oback">Back</button>':''}<button class="onboard-skip" data-ui="skip">${redo?'Cancel':'Set up later'}</button></div><p class="onboard-footnote">${redo?'Your saved workouts stay with you.':'No account required. Progress saves in this browser.'}</p></section>`;
   return html;
 }
 
