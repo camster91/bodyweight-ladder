@@ -567,6 +567,98 @@ body.focus-timing #timer{display:none}body.focus-timing{padding-bottom:0}
 @media(min-width:1100px){body[data-view="today"] .wrap{max-width:680px;margin-left:calc(224px + (100vw - 224px - 680px)/2);padding-top:44px}body[data-view="today"] .focus-stage{min-height:590px}}
 @media(max-height:760px){.focus-stage{padding-top:24px;min-height:420px}.focus-counter{margin-top:24px}.focus-number{font-size:80px}.focus-ring{width:184px;height:184px}}
 
+/* Athletic editorial: substantial art, graphic rhythm, and the existing cobalt accent. */
+:root{--bg:#F2F2EF;--surface:#FFF;--ink:#192027;--muted:#5C6670;--line:#DDE1E1}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151A;--surface:#1A222B;--ink:#F0F3F8;--muted:#A2AFBF;--line:#303B4A}}
+:root[data-theme="dark"]{--bg:#10151A;--surface:#1A222B;--ink:#F0F3F8;--muted:#A2AFBF;--line:#303B4A}
+.ui-glyph{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;pointer-events:none}
+header.top>img{display:none}
+.app-brand-mark{display:flex;align-items:center;color:var(--accent)}
+.app-brand-mark .ui-glyph{width:28px;height:28px}
+.nav-brand>.ui-glyph{display:block;width:32px;height:32px;color:var(--accent);margin-bottom:12px}
+nav .tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+nav .tabs button .ui-glyph{width:22px;height:22px}
+nav .tabs button[aria-current="true"]{background:transparent}
+body[data-view="today"]{background:var(--bg)}
+body[data-view="today"] .top{margin-bottom:4px}
+.focus-meta{padding:0 4px;margin-bottom:10px}
+.focus-stage{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:34px 24px 16px}
+.focus-stage h2{letter-spacing:-1.2px}
+.focus-set-path{display:flex;justify-content:center;gap:6px;margin:20px auto 0}
+.focus-set-path span{width:32px;height:5px;border-radius:4px;background:var(--line)}
+.focus-set-path .done{background:var(--accent);opacity:.4}
+.focus-set-path .current{background:var(--accent)}
+.focus-counter{margin-top:28px}
+.focus-stepper{background:var(--bg);border:1px solid var(--line)}
+.focus-actions .primary{border-radius:16px}
+.focus-workout{margin-top:18px}
+.focus-saved{top:9px}
+.focus-workout .focus-advanced .session-main{min-width:0}
+.progress-week{background:#18232F;color:#F5F7FA;border-radius:24px;padding:24px}
+.progress-week .label,.progress-week .progress-stats span{color:#BFCBD8}
+.progress-week .progress-stats b{color:#F5F7FA}
+.week-activity{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:26px}
+.week-day{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.week-day>span{font-size:10px;color:#BFCBD8}
+.week-count{display:grid;place-items:center;width:100%;height:34px;border-radius:8px;background:#263442;color:#BFCBD8;font-size:12px;font-style:normal;font-variant-numeric:tabular-nums}
+.week-day.active .week-count{background:#1F55C9;color:#FFF}
+.week-day.today .week-count{outline:1px solid #8CAEFF;outline-offset:2px}
+.week-legend{font-size:11px;color:#BFCBD8;margin:14px 0 0}
+body.in-setup{background:var(--bg)}
+body.in-setup .wrap{max-width:620px}
+.onboard-meta{align-items:center;color:var(--ink);font-weight:600;margin-bottom:20px}
+.onboard-meta>span:first-child{display:flex;align-items:center;gap:8px;font-size:14px}
+.onboard-meta>span:first-child .ui-glyph{width:22px;height:22px;color:var(--accent)}
+.onboard-meta>span:last-child:not(:first-child){font-weight:400;color:var(--muted)}
+.onboard-art{position:relative;overflow:hidden;border-radius:24px;margin:0 0 24px;background:#D9D7D0;height:clamp(190px,27svh,280px)}
+.onboard-art picture,.onboard-art img{display:block;width:100%;height:100%}
+.onboard-art img{object-fit:cover;object-position:50% 12%}
+.onboard[data-step="0"] .onboard-heading h2{font-size:clamp(32px,8.2vw,44px);max-width:18ch;margin-bottom:12px}
+.onboard-heading p{margin-bottom:24px}
+.onboard-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:none;margin-bottom:16px}
+.onboard-preview>div{border:1px solid var(--line);border-radius:14px;padding:12px 10px;background:var(--surface);min-width:0}
+.onboard-preview .ui-glyph{width:24px;height:24px;color:var(--accent);margin-bottom:8px}
+.onboard-preview b{display:block;font-size:12px;font-weight:600}
+.onboard-preview small{display:block;font-size:11px;line-height:1.4;color:var(--muted);margin-top:3px}
+.onboard-choice{display:grid;grid-template-columns:44px minmax(0,1fr) 22px;gap:12px;padding:12px;background:var(--surface);border-radius:18px;min-height:76px}
+.choice-art{width:44px;height:48px;border-radius:12px;background:var(--bg);display:grid;place-items:center;color:var(--muted)}
+.choice-art .ui-glyph{width:30px;height:30px}
+.onboard-choice[aria-pressed="true"] .choice-art{background:var(--chip);color:var(--accent)}
+.onboard-choice[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
+.choice-copy{min-width:0}
+.onboard-choice b{font-size:14px}
+.onboard-choice small{font-size:12px}
+.onboard[data-step="2"] .onboard-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.onboard[data-step="2"] [data-ui="onone"]{grid-column:1 / -1}
+.onboard[data-step="2"] [data-kind="gear"]{position:relative;display:flex;flex-direction:column;align-items:flex-start;padding:18px 14px;min-height:190px;gap:14px}
+.onboard[data-step="2"] [data-kind="gear"] .choice-art{width:58px;height:58px}
+.onboard[data-step="2"] [data-kind="gear"] .onboard-select{position:absolute;right:12px;top:12px}
+.onboard[data-step="2"] [data-kind="gear"] .choice-art .ui-glyph{width:40px;height:40px}
+.onboard-review{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:0 18px;overflow:hidden}
+.onboard-review>div:first-child{border-top:0}
+.onboard-review>div{padding-top:20px;padding-bottom:20px}
+.onboard-pool{display:flex;align-items:center;gap:18px;background:#18232F;color:#F5F7FA;border-radius:20px;padding:20px;margin:0 0 18px}
+.onboard-pool .ui-glyph{width:48px;height:48px;color:#8CAEFF}
+.onboard-pool b{font-size:25px;font-weight:600;line-height:1.2;display:block}
+.onboard-pool span{font-size:12px;color:#BFCBD8;display:block;margin-top:6px}
+.onboard-actions .primary{border-radius:16px}
+@media(min-width:900px){
+ body.in-setup:has(.onboard[data-step="0"]) .wrap{max-width:1120px;padding-top:36px}
+ .onboard[data-step="0"]{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto 1fr auto auto auto auto;column-gap:64px;min-height:min(800px,calc(100svh - 72px))}
+ .onboard[data-step="0"] .onboard-meta{grid-column:1/-1;grid-row:1;margin-bottom:28px}
+ .onboard[data-step="0"] .onboard-art{grid-column:1;grid-row:2/7;height:100%;min-height:600px;margin:0;border-radius:28px}
+ .onboard[data-step="0"] .onboard-art img{object-position:50% 50%}
+ .onboard[data-step="0"] .onboard-heading{grid-column:2;grid-row:2;align-self:end;margin-top:0}
+ .onboard[data-step="0"] .onboard-heading h2{font-size:48px;letter-spacing:-2px}
+ .onboard[data-step="0"] .onboard-preview{grid-column:2;grid-row:3;margin-top:18px;margin-bottom:30px}
+ .onboard[data-step="0"] .onboard-error{grid-column:2;grid-row:4}
+ .onboard[data-step="0"] .onboard-actions{grid-column:2;grid-row:5;margin:0;padding-top:12px}
+ .onboard[data-step="0"]>.onboard-footnote{grid-column:2;grid-row:6;margin-bottom:18px}
+}
+@media(min-width:1100px){nav .tabs button{flex-direction:row;justify-content:flex-start;gap:12px}.focus-stage{min-height:600px}.app-brand-mark{display:none}}
+@media(max-height:760px){.focus-stage{padding-top:26px}.focus-counter{margin-top:20px}.focus-set-path{margin-top:14px}}
+@media(max-width:360px){.focus-stage{padding-left:16px;padding-right:16px}.onboard-choice{grid-template-columns:36px minmax(0,1fr) 22px;gap:10px;padding:10px}.choice-art{width:36px;height:44px}.onboard-choice small{font-size:11px}.onboard-preview>div{padding:10px 8px}.onboard-preview small{font-size:10px}.progress-week{padding:20px}}
+
 </style>
 
 <div class="wrap">
@@ -1155,7 +1247,7 @@ function focusView(plan,top,more,recent){
   if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="focus-next finish-totals">${r.items.length} exercises · ${r.items.reduce((n,x)=>n+x.values.length,0)} sets saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
-  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} exercises</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(spec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
   if(more.length)html+=`<button class="fold" data-ui="more" aria-expanded="${showMore}">More exercises <span>${more.length}</span></button>${showMore?'<p class="label">Try something new</p>'+more.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'plan')).join(''):''}`;
@@ -1392,6 +1484,7 @@ function viewHistory(){
   if(!state.log.length)return `<section class="progress-empty"><h2>A record of your training.</h2><p>Complete an exercise to start your history. Personal bests appear when you improve on a previous result.</p><button class="primary" data-ui="gotoday">Go to Today</button></section>`;
   const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
   const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
+  const weekActivity=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const key=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===key).reduce((n,e)=>n+e.sets.length,0);return `<div class="week-day${sets?' active':''}${key===dayOf(now)?' today':''}" role="listitem" aria-label="${fmtDate(key)}: ${sets} sets recorded"><span>${d.toLocaleDateString(undefined,{weekday:'short'})}</span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`;}).join('');
   const records=personalBests();
   const timeline=days.slice(0,5).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
   const bestHtml=records.slice(0,4).map(({entry,total,count})=>{
@@ -1418,7 +1511,7 @@ function viewHistory(){
     const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
     return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):'Removed exercise'}: ${e.sets.join(' · ')}${f?unit(f.st[4]):''}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
-  return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div></section>
+  return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">A best appears when you exceed a previous total. Your first result sets the baseline.</p>'}</section>
     <section class="progress-section"><h2>Training days</h2><p class="progress-caption">${days.length} ${days.length===1?'day':'days'} recorded${days.length>5?' · Most recent five':''}</p><ol class="training-ladder">${timeline}</ol></section></div>
     <section class="progress-section progress-exercises"><h2>Your progress</h2><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</section>
@@ -1428,12 +1521,35 @@ function viewHistory(){
 
 /* ---------- first-time setup ---------- */
 const GEAR=[["bar","Pull-up bar"],["weights","Weights (jug, kettlebell)"]];
+function uiGlyph(name){
+  const paths={
+    work:'<rect x="5" y="5" width="22" height="22" rx="7"/><path d="m13 10 8 6-8 6z"/>',
+    rest:'<circle cx="16" cy="17" r="10"/><path d="M16 11v6l4 2M12 3h8M16 3v4"/>',
+    repeat:'<path d="M25 12a10 10 0 0 0-17-4L4 12m0-7v7h7M7 20a10 10 0 0 0 17 4l4-4m0 7v-7h-7"/>',
+    exercises:'<rect x="4" y="4" width="9" height="9" rx="2"/><rect x="19" y="4" width="9" height="9" rx="2"/><rect x="4" y="19" width="9" height="9" rx="2"/><rect x="19" y="19" width="9" height="9" rx="2"/>',
+    progress:'<path d="M5 27h23M8 22v-6M16 22V9M24 22V4"/>',
+    Strength:'<circle cx="8" cy="9" r="2.5"/><path d="m11 12 10 4 5 9M12 13l-3 11H5m16-8 7 1"/>',
+    Tendon:'<path d="m10 4 4 8-3 6 3 10m8-24-4 8 3 6-3 10"/><circle cx="16" cy="16" r="4"/>',
+    Mobility:'<circle cx="16" cy="5" r="2.5"/><path d="M16 10v9M7 9l9 4 9-4M16 19l-8 9m8-9 8 9"/>',
+    Stretch:'<circle cx="10" cy="7" r="2.5"/><path d="m11 12 7 7 9 1M18 19l-8 8H4M12 14l10 5m-4 0 9 8"/>',
+    Weights:'<path d="M11 11V8a5 5 0 0 1 10 0v3m-5-2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>',
+    none:'<path d="M4 22h23M8 18V9m0 0h18v13M5 9h6M11 27h16"/>',
+    bar:'<path d="M5 28V5h22v23M5 10h22M12 10v9m8-9v9M12 19l4 4 4-4"/>',
+    new:'<path d="M5 26h22M7 26V17h8v9m0-9h10"/>',
+    some:'<path d="M4 27h24M6 27V18h8V10h10v17M14 18v9"/>',
+    strong:'<path d="M3 28h26M5 28V20h7v-8h7V4h8v24M12 20v8m7-16v16"/>',
+    keep:'<path d="M8 28V4m16 24V4M8 10h16M8 17h16M8 24h16"/>'
+  };
+  return `<svg class="ui-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">${paths[name]||paths.keep}</svg>`;
+}
+function setupAvailableCount(){return TRACKS.filter(t=>setupDraft.groups.has(groupOf(t))&&(setupDraft.gear.has('weights')||groupOf(t)!=='Weights')&&(setupDraft.gear.has('bar')||!['pull','hang'].includes(t.id))).length;}
+
 const SETUP_GROUPS=[['Strength','Strength','Push, pull and build control.'],['Tendon','Tendons & joints','Controlled strength for smaller movements.'],['Mobility','Mobility','Move through a wider range.'],['Stretch','Stretching','Make room to move.'],['Weights','Carries & swings','Add weight to your training.']];
 let setupStage=0,setupError='',setupIntro=false;
 let setupIntroRequested=new URLSearchParams(location.search).get('onboarding')==='1';
 function saveSetupDraft(){if(state.prefs.setupDone||state.log.length)return;store.set('bwl-onboarding',JSON.stringify({v:1,stage:setupStage,groups:[...setupDraft.groups],gear:[...setupDraft.gear],level:setupDraft.level}));}
 function clearSetupDraft(){store.set('bwl-onboarding','null');setupDraft=null;setupStage=0;setupError='';}
-function setupHasExercises(){return TRACKS.some(t=>setupDraft.groups.has(groupOf(t))&&(setupDraft.gear.has('weights')||groupOf(t)!=='Weights')&&(setupDraft.gear.has('bar')||!['pull','hang'].includes(t.id)));}
+function setupHasExercises(){return setupAvailableCount()>0;}
 function setupMove(stage){
   if(stage>setupStage&&setupStage===1&&!setupDraft.groups.size){setupError='Choose at least one focus to continue.';render();$('#setupError')?.focus();return;}
   if(stage>setupStage&&setupStage===2&&!setupHasExercises()){setupError='Carries and swings need weights. Choose weights, or go back and add another focus.';render();$('#setupError')?.focus();return;}
@@ -1448,16 +1564,16 @@ function viewSetup(){
   }
   if(setupIntro){setupStage=0;setupIntro=false;}
   const d=setupDraft,stage=setupStage;
-  const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
+  const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span class="choice-art" aria-hidden="true">${uiGlyph(kind==='none'?'none':value==='weights'?'Weights':value)}</span><span class="choice-copy"><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
   const headings=['Your workout.\nOne set at a time.','What would you like to work on?','What do you have available?','Where are you starting?',redo?'Review your changes.':'Ready for your first set.'];
   const subtitles=['A plan that fits your time, with clear steps as you get stronger.','Choose the areas you want in your workouts.','Most moves use a wall, a chair or the floor. Extra equipment is optional.','Choose a starting point. You can change individual exercises later.','Your plan will use these choices. Change them anytime in Exercises.'];
-  const symbol=`<div class="onboard-symbol" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none"><path class="onboard-rail" d="M30 86V14M70 86V14"/><path class="onboard-rung rung-one" d="M30 70H70"/><path class="onboard-rung rung-two" d="M30 50H70"/><path class="onboard-rung rung-three" d="M30 30H70"/></svg></div>`;
+  const symbol=`<figure class="onboard-art"><picture><source media="(max-width:700px)" srcset="assets/brand/editorial-hero-v1-small.webp"><img src="assets/brand/editorial-hero-v1.webp" alt="An athlete training beside blue architectural steps" width="1120" height="1400" fetchpriority="high"></picture></figure>`;
   let html=`<section class="setup onboard" data-step="${stage}"><div class="onboard-meta"><span>Bodyweight Ladder</span>${stage>0?`<span>${stage<4?'Step '+stage+' of 3':'Review'}</span>`:''}</div>${stage>0?`<div class="onboard-progress" aria-hidden="true">${[1,2,3].map(i=>`<span class="${stage>=i?'on':''}"></span>`).join('')}</div>`:symbol}<div class="onboard-heading"><h2 id="setupTitle" tabindex="-1">${headings[stage].split('\n').map(esc).join('<br>')}</h2><p>${subtitles[stage]}</p></div>`;
-  if(stage===0)html+=`<div class="onboard-preview"><span>Set your focus</span><span>Choose your equipment</span><span>Find your starting point</span></div>`;
+  if(stage===0)html+=`<div class="onboard-preview" aria-label="How a workout works">${[['work','Work','One set'],['rest','Rest','A timed break'],['repeat','Repeat','The next set']].map(([icon,label,detail])=>`<div>${uiGlyph(icon)}<b>${label}</b><small>${detail}</small></div>`).join('')}</div>`;
   if(stage===1)html+=`<div class="onboard-options" role="group" aria-label="Training focus">${SETUP_GROUPS.map(([value,label,description])=>choice('groups',value,label,description)).join('')}</div>`;
   if(stage===2)html+=`<div class="onboard-options" role="group" aria-label="Available equipment">${choice('none','','No extra equipment','A wall, a chair and some floor space.')}${choice('gear','bar','Pull-up bar','Include hanging and pulling movements.')}${choice('gear','weights','Weights','A jug, kettlebell or other suitable weight.')}</div>`;
   if(stage===3)html+=`<div class="onboard-options" role="group" aria-label="Starting level">${redo?choice('level','keep','Keep my current steps','Use the exercise levels I have now.'):''}${choice('level','new','New to this','Start with easier variations.')}${choice('level','some','Some experience','Use the standard starting steps.')}${choice('level','strong','Already training','Begin further along the exercise ladders.')}</div>${redo?'<p class="onboard-footnote">Exercises you have already logged keep their current step.</p>':''}`;
-  if(stage===4){const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
+  if(stage===4){const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<div class="onboard-pool">${uiGlyph('keep')}<div><b>${setupAvailableCount()}</b><span>exercise ladders match your choices</span></div></div><dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
   html+=`<p id="setupError" class="onboard-error" role="alert" tabindex="-1">${esc(setupError)}</p><div class="onboard-actions">${stage>0?'<button class="onboard-back" data-ui="oback">Back</button>':''}<button class="primary" data-ui="${stage===4?'finish':'onext'}">${stage===0?'Set up my workout':stage===4?(redo?'Save changes':'Start my workout'):'Continue'}</button><button class="onboard-skip" data-ui="skip">${redo?'Cancel':'Set up later'}</button></div><p class="onboard-footnote">${redo?'Your saved workouts stay with you.':'No account required. Progress saves in this browser.'}</p></section>`;
   return html;
 }
@@ -1508,6 +1624,7 @@ function render(){
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
   const onboarding=$(".onboard");if(onboarding&&previousOnboard!==undefined&&onboarding.dataset.step!==previousOnboard){onboarding.classList.add("onboard-enter");if(+onboarding.dataset.step<+previousOnboard)onboarding.classList.add("onboard-reverse");}
+  if(onboarding)onboarding.querySelector('.onboard-meta>span').insertAdjacentHTML('afterbegin',uiGlyph('keep'));
   if(previousOnboard!==undefined&&stage)stage.classList.add("focus-enter");
   const number=$("#focusValue");if(number)number.dataset.wide=String(focusValue()>=1000);
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
@@ -1744,6 +1861,9 @@ setInterval(()=>{ setDate(); if(tab==="today") softRender(); },60000);
 
 /* ---------- boot ---------- */
 const local = loadLocal(); if(local){ state = local; saveLocal(); } remember();  // saves repaired records right away
+for(const [id,name]of [['tab-today','work'],['tab-ladders','exercises'],['tab-history','progress']])document.getElementById(id).insertAdjacentHTML('afterbegin',uiGlyph(name));
+$('.nav-brand').insertAdjacentHTML('afterbegin',uiGlyph('keep'));
+$('header.top').insertAdjacentHTML('afterbegin',`<span class="app-brand-mark" aria-hidden="true">${uiGlyph('keep')}</span>`);
 render(); setNote();
 (async()=>{
   let dbApi=null, uid=null;
