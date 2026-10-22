@@ -77,6 +77,12 @@ For each component change:
 
 The companion component audit and before/after screenshots are review artifacts outside the served site. Do not expose tests, documentation or development files as application routes.
 
+## Exercise library panels
+
+An expanded ladder leads with the current variation, prescription and cue. Its technique guide opens directly; training frequency and set count belong in a separate named dialog. Keep the progression available beneath this preview. Library management uses compact Add exercise and Hidden exercises actions, with bounded thumbnails inside the hidden list. Custom exercise fields use two columns for numeric targets and a full-width measurement selector on phones.
+
+Library dialogs contain keyboard focus, lock background scrolling, close with Escape or their explicit Close button, and return focus to a fresh opener after rendering. Settings mutations preserve focus on the changed control. When the final hidden item is restored, focus the restored exercise row. All panels use the shared overlay and button primitives.
+
 ## Navigation inset contract
 
 `syncAppInsets()` measures bottom navigation into `--app-nav-height`. A ResizeObserver and viewport resize update the value; desktop and landscape rails contribute zero bottom inset. Routine actions, timers and toasts consume the shared inset instead of assuming a fixed bar height. Dynamic CSS-variable injection is deliberate here because safe areas and text sizing affect the rendered height.

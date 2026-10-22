@@ -20,6 +20,7 @@
 .exercise-reference img.technique-art{display:block;width:100%;height:auto;max-height:52dvh;object-fit:contain;background:#f5f3ef;filter:none;border-radius:0}
 .exercise-reference figcaption{padding:8px 12px;font-size:12px;line-height:1.5;color:var(--muted)}
 .technique-sheet .exercise-reference{margin-top:0}.generated-photo-credit h3{font-size:17px;margin:20px 0 8px}
+
 </style>
 </head>
 <body>
@@ -1209,6 +1210,28 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
  .focus-rest .focus-ring{width:104px;height:104px}
 }
 
+
+/* Exercise discovery: content first, management in focused sheets. */
+.library-current{margin:0 12px 20px;padding:20px;border-radius:20px;background:var(--bg)}
+.library-current h3{font-size:24px;line-height:1.2;margin:8px 0}
+.library-current>p{margin:8px 0}.library-current .cue{line-height:1.6}
+.library-current>button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;margin-top:16px}
+.library-current>button span{font-size:12px;color:var(--muted);text-align:right}
+.ladder-heading{margin:12px 24px;font-size:16px}.exopen .ladder{margin-top:0}
+.library-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.library-actions>button{text-align:left;display:flex;flex-direction:column;gap:8px;padding:18px;min-width:0}
+.library-actions>button>span{font-size:13px;color:var(--muted);line-height:1.5;width:100%;display:flex;justify-content:space-between;gap:8px}
+.library-actions b>span{color:var(--accent);margin-left:8px}
+.library-sheet .ctl{margin:16px 0;padding:16px}.library-sheet .ctl-row{flex-wrap:wrap;gap:12px}
+.library-sheet .ctl-row>.label{width:100%}.library-sheet .seg{width:100%}
+.library-sheet .seg button{flex:1;white-space:normal}
+.library-sheet .grid3{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.library-sheet .grid3>div:first-child{grid-column:1/-1}
+.library-sheet .addform{gap:16px}.library-sheet .hid{padding:12px 0;gap:12px;border-bottom:1px solid var(--line)}
+.library-sheet .hid>span{flex:1;min-width:0}.library-sheet .hid>button{flex:none}
+body.library-sheet-open{overflow:hidden}
+.library-sheet .custom-exercise{border:0;padding:0;border-radius:0}.library-sheet h3{margin-top:0}.library-sheet .primary{width:100%;margin-top:8px}
+@media(max-width:380px){.library-actions{grid-template-columns:1fr}.library-current{padding:16px}.library-current>button{align-items:flex-start;flex-direction:column}.library-current>button span{text-align:left}}
 </style>
 
 <div class="wrap">
@@ -2266,6 +2289,29 @@ function rotateLibraryHero(){
  libraryHeroIndex=(Number.isInteger(previous)&&previous>=-1&&previous<LIBRARY_HERO_IMAGES.length?previous+1:0)%LIBRARY_HERO_IMAGES.length;
  store.set('bwl-library-hero',String(libraryHeroIndex));
 }
+let libraryPanel=null, libraryReturn=null;
+function closeLibraryPanel(){
+  const d=$('#librarySheet');if(!d)return;
+  if(d.open&&d.close)d.close();
+  const content=d.querySelector('[data-library-content]');if(content)$('#libraryPanelStore').append(content);
+  d.remove();libraryPanel=null;document.body.classList.remove('library-sheet-open');
+  const trigger=libraryReturn?.dataset.panel;
+  (document.querySelector(`[data-panel="${trigger}"]`)||document.querySelector('[data-panel="custom"]'))?.focus({preventScroll:true});
+}
+function mountLibraryPanel(){
+  document.body.classList.remove('library-sheet-open');
+  if(!libraryPanel||tab!=='ladders')return;
+  const content=document.querySelector(`[data-library-content="${libraryPanel}"]`);if(!content){libraryPanel=null;return;}
+  const d=document.createElement('dialog');d.id='librarySheet';d.className='workout-tools library-sheet';d.setAttribute('aria-labelledby','libraryPanelTitle');
+  const title=libraryPanel==='custom'?'Add an exercise':libraryPanel==='hidden'?'Hidden exercises':libraryPanel.startsWith('guide-')?'Technique':'Training settings';
+  d.innerHTML=`<div class="workout-tools-head"><h2 id="libraryPanelTitle" tabindex="-1">${title}</h2><button data-ui="libraryclose" aria-label="Close ${title.toLowerCase()}">×</button></div><div class="workout-tools-body"></div>`;
+  d.querySelector('.workout-tools-body').append(content);$('#view').append(d);
+  d.addEventListener('cancel',e=>{e.preventDefault();closeLibraryPanel();});
+  d.addEventListener('click',e=>{if(e.target===d)closeLibraryPanel();});
+  if(d.showModal)d.showModal();else d.setAttribute('open','');
+  document.body.classList.add('library-sheet-open');
+  applyComponentSystem(d);(libraryPanel==='custom'?$('#cName'):$('#libraryPanelTitle'))?.focus({preventScroll:true});
+}
 function viewLadders(){
   if(libraryHeroIndex<0)rotateLibraryHero();
   const tracks=allTracks(), shown=tracks.filter(t=>!isHidden(t.id)), hidden=tracks.filter(t=>isHidden(t.id));
@@ -2287,12 +2333,13 @@ function viewLadders(){
         <li class="${i===lvl?"cur":i<lvl?"past":""}" data-step-name="${esc(s2[0])}"><span class="n">${i<lvl?"✓":i+1}</span>
         <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><details class="step-guide"><summary>Technique guide</summary><p>${esc(s2[5])}</p>${exerciseFigure(t,i)}<a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a></details></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}">Start here</button>`}</li>`).join("")}</ol>`;
-      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}${controls(t)}${list}</section>`;
+      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p>${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog">How to do this <span aria-hidden="true">↗</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Normal frequency':focusOf(t.id)==='more'?'More often':'Less often'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
     }).join("");
   }
-  if(hidden.length) html+=`<section class="card"><h2>Hidden</h2><p class="cue">These don't show on Today. Your progress is kept.</p><div class="stack" style="gap:8px">${hidden.map(t=>`
+  html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Adjust how this movement fits your workouts.</p>${controls(t)}</div><section data-library-content="guide-${t.id}"><h3>${esc(spec(t)[0])}</h3>${exerciseFigure(t,lvlOf(t))}<p class="technique-cue">${esc(spec(t)[5])}</p><a class="technique-video" href="${ytLink(spec(t)[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a></section>`).join('')}`;
+  if(hidden.length) html+=`<section data-library-content="hidden"><h3>Keep your library yours.</h3><p class="cue">These don't show on Today. Your progress is kept.</p><div class="stack" style="gap:8px">${hidden.map(t=>`
     <div class="hid">${exerciseThumbnail(t)}<span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}">Add back</button></div>`).join("")}</div></section>`;
-  html+=`<details class="card custom-exercise"><summary>Add a custom exercise</summary><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
+  html+=`<section class="custom-exercise" data-library-content="custom"><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
     <form id="addForm" class="addform">
       <label for="cName">Name <span class="muted" id="cCount">0/40</span></label><input id="cName" required maxlength="40" placeholder="e.g. Burpees">
       <div class="grid3">
@@ -2302,7 +2349,7 @@ function viewLadders(){
       </div>
       <div><label for="cSets">Sets</label><input id="cSets" inputmode="numeric" value="3"></div>
       <button class="primary" type="submit">Add exercise</button>
-    </form></details>`;
+    </form></section></div>`;
   return html+`<p class="photo-credit-note">Exercise images follow your selected step. Includes AI-generated pose references. <button class="photo-credit-link" data-photo-credits>Photo credits</button></p></div>`;
 }
 
@@ -2499,6 +2546,10 @@ window.addEventListener('resize',syncAppInsets);
 if(typeof ResizeObserver==='function')new ResizeObserver(syncAppInsets).observe(document.querySelector('nav'));
 
 function render(){
+  const panelFocus=$('#librarySheet')?.contains(document.activeElement)?document.activeElement:null;
+  const panelAction=panelFocus?.dataset.act, panelTrack=panelFocus?.dataset.t, panelFrequency=panelFocus?.dataset.f;
+  const hadLibraryPanel=!!libraryPanel;
+  if(tab!=='ladders')libraryPanel=null;
   idx=null;
   document.body.dataset.view=tab;
   // First visit: ask the setup questions, but only once we know this account has nothing saved yet
@@ -2530,6 +2581,9 @@ function render(){
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
+  mountLibraryPanel();
+  if(panelAction&&libraryPanel){const buttons=[...document.querySelectorAll('#librarySheet [data-act]')];(buttons.find(b=>b.dataset.act===panelAction&&b.dataset.t===panelTrack&&b.dataset.f===panelFrequency)||$('#libraryPanelTitle'))?.focus({preventScroll:true});}
+  if(hadLibraryPanel&&!libraryPanel&&tab==='ladders')(document.querySelector(`[data-ui="ex"][data-t="${panelTrack}"]`)||document.querySelector('[data-panel="hidden"]')||document.querySelector('[data-panel="custom"]'))?.focus({preventScroll:true});
   applyComponentSystem();
   syncAppInsets();
 }
@@ -2610,7 +2664,7 @@ $("#view").addEventListener("submit",e=>{
   if(max<min) [min,max]=[max,min];
   const id="c"+Date.now().toString(36);
   state.custom.push({id,name,sets,min,max,unit:type==="sec"?"sec":"reps"});
-  commit(); render(); toast(`${name} added. Find it on Today.`);
+  libraryPanel=null;commit(); render(); toast(`${name} added. Find it on Today.`);document.querySelector('[data-panel="custom"]')?.focus({preventScroll:true});
 });
 $("#view").addEventListener("change",e=>{
   const cb=e.target.closest("input[data-rt]"); if(!cb||!editing) return;
@@ -2643,6 +2697,8 @@ $("#view").addEventListener("click",e=>{
     if(a==="rtoggle"){ routinesOpen=!routinesOpen; render(); return; }
     if(a==="done"){ showDone=!showDone; render(); return; }
     if(a==="clearsearch"){exQuery='';const input=$('#exSearch');input.value='';applySearch();input.focus();return;}
+    if(a==='libraryclose'){closeLibraryPanel();return;}
+    if(a==='librarypanel'){libraryPanel=u.dataset.panel;libraryReturn=u;mountLibraryPanel();return;}
     if(a==="ex"){ const id=u.dataset.t; expandedEx.has(id)?expandedEx.delete(id):expandedEx.add(id); confirmDel=null; render();document.querySelector(`[data-ui="ex"][data-t="${id}"]`)?.focus({preventScroll:true}); return; }
     if(a==="setup"){ setupDraft=null; setupWanted=true; go("setup"); return; }
     if(a==="onext"){setupMove(setupStage+1);return;}
@@ -2717,7 +2773,7 @@ $("#view").addEventListener("click",e=>{
   if(act==="set"){ setLevel(t.id,+b.dataset.l); toast(`Starting at ${t.steps[+b.dataset.l][0]}`); }
   if(act==="focus"){ state.prefs.focus[t.id]=b.dataset.f; commit(); render(); }
   if(act==="setsInc"||act==="setsDec"){ if(hold&&hold.tid===t.id) stopTimer(); const n=Math.min(6,Math.max(1,st[1]+(act==="setsInc"?1:-1))); state.prefs.sets[t.id]=n; delete drafts[t.id]; delete holdNext[t.id]; delete completedSets[t.id]; commit(); render(); }
-  if(act==="hide"){ state.prefs.hidden[t.id]=true; expandedEx.delete(t.id); commit(); render(); toast(`${t.name} hidden. Add it back under Hidden.`); }
+  if(act==="hide"){ state.prefs.hidden[t.id]=true; expandedEx.delete(t.id); commit(); render(); toast(`${t.name} hidden. Restore it from Hidden exercises.`); }
   if(act==="show"){ delete state.prefs.hidden[t.id]; commit(); render(); toast(`${t.name} is back on Today.`); }
   if(act==="del"){
     if(confirmDel!==t.id){ confirmDel=t.id; render(); return; }
