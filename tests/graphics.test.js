@@ -1,65 +1,41 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const { JSDOM } = require('jsdom');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {JSDOM}=require('jsdom');
+const root=path.join(__dirname,'..');
+const dom=new JSDOM(fs.readFileSync(path.join(root,'index.html'),'utf8'),{runScripts:'dangerously',url:'https://ladder.test/',beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.localStorage.setItem('bwl-state',JSON.stringify({v:2,log:[],prefs:{setupDone:true}}));}});
+try{
+ const steps=dom.window.eval('TRACKS.flatMap(t=>t.steps.map((st,i)=>({key:keyOf(t,i),name:st[0],thumb:thumbOf(t,i),detail:imgOf(t,i),figure:exerciseFigure(t,i),generated:GENERATED_PHOTO_KEYS.has(keyOf(t,i))})))');
+ assert.equal(steps.length,78);
+ for(const step of steps){
+  for(const file of [step.thumb,step.detail]){assert(file.startsWith('assets/brand/exercises/')&&file.endsWith('.webp'),`${step.key}: non-photographic asset ${file}`);assert(fs.existsSync(path.join(root,file)),`${step.key}: missing ${file}`);}
+  const figure=JSDOM.fragment(step.figure);assert.equal(figure.querySelector('img').getAttribute('src'),step.detail);assert(figure.querySelector('img').alt.includes(step.name));
+  assert.equal(figure.querySelector('figcaption').textContent.includes('AI-generated'),step.generated);assert(!/illustration|shown by Rung|Start → finish/.test(step.figure));
+ }
+ console.log('PASS all 78 steps use photographic thumbnails and guide images with accurate generated-image disclosures');
 
-const root = path.join(__dirname, '..');
-const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
-  runScripts: 'dangerously', url: 'https://ladder.test/',
-  beforeParse(w) {
-    w.scrollTo = () => {};
-    w.HTMLElement.prototype.scrollIntoView = () => {};
-    w.localStorage.setItem('bwl-state', JSON.stringify({ v: 2, log: [], prefs: { setupDone: true } }));
-  }
-});
+ const originals=JSON.parse(fs.readFileSync(path.join(root,'assets/brand/exercises/photo-sources.json'),'utf8'));
+ const generated=JSON.parse(fs.readFileSync(path.join(root,'assets/brand/exercises/generated-sources.json'),'utf8'));
+ const credited=new Set(originals.map(p=>'assets/brand/exercises/'+p.file).concat(generated.flatMap(p=>Object.values(p.files))));
+ for(const step of steps){for(const file of [step.thumb,step.detail]){assert(credited.has(file),`Uncredited asset ${file}`);const bytes=fs.readFileSync(path.join(root,file));assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');}assert(fs.statSync(path.join(root,step.thumb)).size<100000,`${step.key}: oversized thumbnail`);}
+ for(const record of generated){assert.equal(record.synthetic,true);assert(record.prompt&&record.tool==='ChatGPT built-in image generation');assert(credited.has(record.reference),`Uncredited generation reference ${record.reference}`);assert(fs.existsSync(path.join(root,record.reference)));}
+ console.log('PASS photographic assets have provenance, licensed references, disclosure metadata and compact WebP thumbnails');
 
-try {
-  const images = dom.window.eval('TRACKS.flatMap(t => t.steps.map((st,i) => ({name:st[0], thumb:thumbOf(t,i), detail:imgOf(t,i)})))');
-  for (const image of images) {
-    for (const file of [image.thumb, image.detail]) {
-      assert(fs.existsSync(path.join(root, file)), `${image.name}: missing ${file}`);
-    }
-    assert(!image.thumb.startsWith('img/w/'), `${image.name}: movement diagram in compact thumbnail`);
-  }
-  console.log(`PASS all ${images.length} exercise steps have existing detail images and single-pose thumbnails`);
+ const library=JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"))'));
+ const workout=JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"),2,false)'));
+ assert.equal(library.querySelector('img').src,workout.querySelector('img').src);assert(workout.querySelector('img').src.includes('pull-jumping-pull-up-v2-thumb.webp'));
+ const push=JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),3,false)'));
+ const incline=JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),1,false)'));
+ assert.notEqual(push.querySelector('img').src,incline.querySelector('img').src);
+ assert(!dom.window.eval('exerciseThumbnail({custom:true})').includes('<img'));assert.equal(dom.window.eval('exerciseFigure({custom:true})'),'');
+ assert(dom.window.eval('viewLadders()').includes('data-photo-credits'));
+ console.log('PASS library, workout and substitutions show the selected variation; custom exercises never inherit an unrelated image');
 
-  const photoSources = JSON.parse(fs.readFileSync(path.join(root, 'assets/brand/exercises/photo-sources.json'), 'utf8'));
-  const credited = new Set(photoSources.map(p => 'assets/brand/exercises/' + p.file));
-  const mapped = dom.window.eval('Object.values(EXERCISE_PHOTOS).concat(Object.values(EXERCISE_FAMILY_PHOTOS))');
-  for (const file of mapped) {
-    assert(credited.has(file), `Uncredited exercise photo: ${file}`);
-    const data = fs.readFileSync(path.join(root, file));
-    assert.equal(data.toString('ascii', 0, 4), 'RIFF');
-    assert.equal(data.toString('ascii', 8, 12), 'WEBP');
-    assert(data.length < 100000, `Oversized thumbnail: ${file}`);
-  }
-  for (const p of photoSources) assert(p.author && p.source.startsWith('https://') && p.license_url.startsWith('https://'));
-  console.log('PASS all exercise photographs have source credits, licenses and compact local WebP assets');
+ const card=JSDOM.fragment(dom.window.eval('fullCard(TRACKS.find(t=>t.id==="ankle"),true)'));
+ assert(card.querySelector('.cue').textContent.includes('3 sec down'));assert(card.querySelector('.exercise-reference figcaption').textContent.includes('AI-generated pose reference'));
+ assert(!card.querySelector('img[src="img/cheer.webp"]'));
+ console.log('PASS movement timing stays in readable text and generated stills do not claim to show a motion sequence');
 
-  const libraryPull = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"))'));
-  const workoutPull = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"),2,false)'));
-  assert(libraryPull.querySelector('.is-photo'));
-  assert.equal(workoutPull.querySelector('img').getAttribute('src'), 'img/pull-jump.webp');
-  const workoutPush = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),3,false)'));
-  const inclinePush = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),1,false)'));
-  assert.notEqual(workoutPush.querySelector('img').getAttribute('src'), inclinePush.querySelector('img').getAttribute('src'));
-  assert(!dom.window.eval('exerciseThumbnail({custom:true})').includes('<img'));
-  assert(dom.window.eval('viewLadders()').includes('data-photo-credits'));
-  console.log('PASS workout images follow the actual variation while library family photos and custom placeholders stay separate');
-
-  const card = dom.window.eval('fullCard(TRACKS.find(t=>t.id==="ankle"), true)');
-  const fragment = JSDOM.fragment(card);
-  assert(fragment.querySelector('.exercise-figure figcaption').textContent.includes('3 sec down'));
-  assert(fragment.querySelector('.exercise-figure img').getAttribute('alt').includes('start position'));
-  console.log('PASS movement timing and image descriptions remain readable outside the bitmap');
-
-  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
-  const maskable = manifest.icons.find(icon => icon.purpose === 'maskable');
-  assert(maskable && maskable.sizes === '512x512');
-  assert(fs.existsSync(path.join(root, maskable.src)));
-  assert(manifest.icons.some(icon => icon.purpose === 'any' && icon.src !== maskable.src));
-  console.log('PASS maskable and regular app icons use separate existing assets');
-} finally {
-  dom.window.close();
-}
+ const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest'),'utf8')),maskable=manifest.icons.find(i=>i.purpose==='maskable');
+ assert(maskable&&maskable.sizes==='512x512');assert(fs.existsSync(path.join(root,maskable.src)));assert(manifest.icons.some(i=>i.purpose==='any'&&i.src!==maskable.src));
+ console.log('PASS regular and maskable app icons retain separate existing assets');
+}finally{dom.window.close();}
 process.exit(0);

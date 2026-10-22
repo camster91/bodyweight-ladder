@@ -1,6 +1,6 @@
-# Exercise photography
+# Exercise imagery credits
 
-These are photographs of real people. Workout photographs are used for the listed matching steps. Library thumbnails may represent the movement family; other steps retain their existing illustrations.
+The original photographs listed below show real people and retain their source licenses. Additional AI-generated pose references cover the remaining exercise steps. Cards and guides show the selected step; generated images are identified in guide captions and credits.
 
 Resized WebP derivatives retain the license indicated for each source. No photographer or model endorsement is implied.
 
@@ -136,11 +136,10 @@ Resized and converted to WebP; no pose changes or AI generation.
 
 Steps: hams:contract-relax-hamstring-stretch
 
-## Library family thumbnails
+## Reference families
 
-- push-up: push
-- straight-leg-bench-dip: dip
-- pull-up: pull
-- inverted-row: row
-- bodyweight-squat: squat
-- forearm-plank: core
+The original photographs also supplied photographic references for the generated images. Per-image mappings and prompts are recorded below.
+
+## Generated pose-reference imagery
+
+61 images in `generated/` cover 65 exercise steps. Created using the ChatGPT built-in image generation tool at the user's request. They depict fictional adults, not real photographed models. Freely licensed photographs credited above were supplied as references; their original licenses remain unchanged. Prompts and per-image references are recorded in `generated-sources.json`. The app identifies generated images in technique-guide captions and credits. These are still pose references, not start-to-finish motion sequences.
