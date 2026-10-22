@@ -643,6 +643,38 @@ body.in-setup .wrap{max-width:620px}
 .onboard-pool b{font-size:25px;font-weight:600;line-height:1.2;display:block}
 .onboard-pool span{font-size:12px;color:#BFCBD8;display:block;margin-top:6px}
 .onboard-actions .primary{border-radius:16px}
+.onboard-plan{margin:0 0 18px;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.onboard-plan>summary{position:relative;list-style:none;cursor:pointer;padding:18px 44px 18px 18px;min-height:44px}
+.onboard-plan>summary::-webkit-details-marker,.plan-exercise>summary::-webkit-details-marker{display:none}
+.onboard-plan>summary b{display:block;font-size:15px;font-weight:600;line-height:1.4}
+.onboard-plan>summary>span{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.5}
+.onboard-plan>summary::after,.plan-exercise>summary::after{content:"";position:absolute;right:20px;top:24px;width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg)}
+.onboard-plan[open]>summary::after,.plan-exercise[open]>summary::after{transform:rotate(225deg);top:28px}
+.onboard-plan-content{padding:0 18px 18px;border-top:1px solid var(--line)}
+.onboard-plan-content>.cue{padding-top:18px;font-size:13px}
+.onboard-plan-content>h3{margin:24px 0 6px;font-size:11px;letter-spacing:.08em}
+.plan-exercise{border-bottom:1px solid var(--line)}
+.plan-exercise>summary{position:relative;display:flex;align-items:center;gap:12px;list-style:none;cursor:pointer;padding:12px 22px 12px 0;min-height:64px}
+.plan-exercise>summary::after{right:3px;top:32px}
+.plan-exercise[open]>summary::after{top:36px}
+.plan-exercise>summary .movement-mark{width:44px;height:44px;flex-basis:44px;border-radius:12px}
+.plan-exercise>summary .movement-mark svg{width:40px;height:36px}
+.plan-exercise>summary>span:last-of-type{min-width:0}
+.plan-exercise>summary b{display:block;font-size:14px;font-weight:600;line-height:1.4}
+.plan-exercise>summary small{display:block;font-size:12px;color:var(--muted);line-height:1.5;margin-top:4px}
+.plan-exercise-body{padding:0 0 16px}
+.plan-prescription{font-size:14px;font-weight:600;color:var(--accent);margin:0 0 10px}
+.plan-exercise-body .cue{font-size:13px}
+.plan-gear{font-size:12px;color:var(--muted);margin:8px 0}
+.plan-exercise-body>img{display:block;width:100%;max-width:440px;height:auto;background:var(--art-bg);filter:var(--art-filter);border-radius:12px;margin:12px 0 4px}
+.plan-exercise-body>.video{display:inline-flex;align-items:center;min-height:44px;font-size:13px}
+.plan-progression{margin-top:8px;font-size:13px}
+.plan-progression>summary{min-height:44px;cursor:pointer;padding:12px 0;color:var(--accent)}
+.plan-progression ol{margin:0;padding-left:24px}
+.plan-progression li{padding:8px 0;color:var(--muted);line-height:1.5}
+.plan-progression li[aria-current="step"]{color:var(--ink);font-weight:600}
+.plan-progression li small{display:block;font-size:11px;color:var(--accent);font-weight:400}
+.onboard-plan summary:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:12px}
 @media(min-width:900px){
  body.in-setup:has(.onboard[data-step="0"]) .wrap{max-width:1120px;padding-top:36px}
  .onboard[data-step="0"]{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto 1fr auto auto auto auto;column-gap:64px;min-height:min(800px,calc(100svh - 72px))}
@@ -1625,7 +1657,16 @@ function uiGlyph(name){
   };
   return `<svg class="ui-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">${paths[name]||paths.keep}</svg>`;
 }
-function setupAvailableCount(){return TRACKS.filter(t=>setupDraft.groups.has(groupOf(t))&&(setupDraft.gear.has('weights')||groupOf(t)!=='Weights')&&(setupDraft.gear.has('bar')||!['pull','hang'].includes(t.id))).length;}
+function setupAvailableTracks(){return TRACKS.filter(t=>setupDraft.groups.has(groupOf(t))&&(setupDraft.gear.has('weights')||groupOf(t)!=='Weights')&&(setupDraft.gear.has('bar')||!['pull','hang'].includes(t.id)));}
+function setupAvailableCount(){return setupAvailableTracks().length;}
+function setupPreviewLevel(t){
+  const start=(START[setupDraft.level]||{})[t.id];
+  return start!==undefined&&!state.log.some(e=>e.t===t.id)?Math.min(start,t.steps.length-1):lvlOf(t);
+}
+function setupPlanPreview(){
+  const tracks=setupAvailableTracks();
+  return `<details class="onboard-plan"><summary><b>Explore your plan</b><span>Exercises, starting steps & technique</span></summary><div class="onboard-plan-content"><p class="cue">These are your available exercise ladders. Today picks a smaller workout based on your time and recent training.</p>${SETUP_GROUPS.map(([g,label])=>{const ts=tracks.filter(t=>groupOf(t)===g);if(!ts.length)return '';return `<h3 class="label">${label}</h3>${ts.map(t=>{const lvl=setupPreviewLevel(t),st=spec(t,lvl);return `<details class="plan-exercise" data-preview-track="${t.id}" data-preview-step="${lvl}"><summary>${movementMark(t)}<span><b>${esc(t.name)}</b><small>${esc(st[0])} · Step ${lvl+1}/${t.steps.length}</small></span></summary><div class="plan-exercise-body"><p class="plan-prescription">${targetText(st)}</p><p class="cue">${esc(st[5])}</p>${st[6]!=='None'?`<p class="plan-gear">Needs: ${esc(st[6])}</p>`:''}<img src="${imgOf(t,lvl)}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy" width="900" height="600"><a class="video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial ↗</a>${t.steps.length>1?`<details class="plan-progression"><summary>See all ${t.steps.length} steps</summary><ol>${t.steps.map((s,i)=>`<li${i===lvl?' aria-current="step"':''}><span>${esc(s[0])}</span>${i===lvl?'<small>Your starting step</small>':''}</li>`).join('')}</ol></details>`:''}</div></details>`;}).join('')}`;}).join('')}</div></details>`;
+}
 
 const SETUP_GROUPS=[['Strength','Strength','Push, pull and build control.'],['Tendon','Tendons & joints','Controlled strength for smaller movements.'],['Mobility','Mobility','Move through a wider range.'],['Stretch','Stretching','Make room to move.'],['Weights','Carries & swings','Add weight to your training.']];
 let setupStage=0,setupError='',setupIntro=false;
@@ -1656,7 +1697,7 @@ function viewSetup(){
   if(stage===1)html+=`<div class="onboard-options" role="group" aria-label="Training focus">${SETUP_GROUPS.map(([value,label,description])=>choice('groups',value,label,description)).join('')}</div>`;
   if(stage===2)html+=`<div class="onboard-options" role="group" aria-label="Available equipment">${choice('none','','No extra equipment','A wall, a chair and some floor space.')}${choice('gear','bar','Pull-up bar','Include hanging and pulling movements.')}${choice('gear','weights','Weights','A jug, kettlebell or other suitable weight.')}</div>`;
   if(stage===3)html+=`<div class="onboard-options" role="group" aria-label="Starting level">${redo?choice('level','keep','Keep my current steps','Use the exercise levels I have now.'):''}${choice('level','new','New to this','Start with easier variations.')}${choice('level','some','Some experience','Use the standard starting steps.')}${choice('level','strong','Already training','Begin further along the exercise ladders.')}</div>${redo?'<p class="onboard-footnote">Exercises you have already logged keep their current step.</p>':''}`;
-  if(stage===4){const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<div class="onboard-pool">${uiGlyph('keep')}<div><b>${setupAvailableCount()}</b><span>exercise ladders match your choices</span></div></div><dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
+  if(stage===4){const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<div class="onboard-pool">${uiGlyph('keep')}<div><b>${setupAvailableCount()}</b><span>exercise ladders match your choices</span></div></div>${setupPlanPreview()}<dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
   html+=`<p id="setupError" class="onboard-error" role="alert" tabindex="-1">${esc(setupError)}</p><div class="onboard-actions"><button class="primary" data-ui="${stage===4?'finish':'onext'}">${stage===0?'Set up my workout':stage===4?(redo?'Save changes':'Start my workout'):'Continue'}</button>${stage>0?'<button class="onboard-back" data-ui="oback">Back</button>':''}<button class="onboard-skip" data-ui="skip">${redo?'Cancel':'Set up later'}</button></div><p class="onboard-footnote">${redo?'Your saved workouts stay with you.':'No account required. Progress saves in this browser.'}</p></section>`;
   return html;
 }
