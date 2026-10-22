@@ -396,6 +396,47 @@ nav button[aria-current="true"]{border:0;background:var(--chip);color:var(--acce
  body.in-setup .wrap{margin:0 auto;max-width:640px;padding-top:42px}
  body.in-setup header.top img{display:block}.setup-intro h2{font-size:42px}
 }
+/* Progress is a training record: factual counts, quiet comparisons, no scores. */
+.progress-page{display:flex;flex-direction:column;gap:32px}
+.progress-week>.label{margin:0 0 16px}
+.progress-stats{display:flex;gap:48px}
+.progress-stats>div{display:flex;flex-direction:column;gap:8px}
+.progress-stats b{font-size:44px;line-height:1;letter-spacing:-1.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.progress-stats span{font-size:13px;color:var(--muted)}
+.progress-columns{display:grid;gap:32px}
+.progress-section{border-top:1px solid var(--line);padding-top:22px;min-width:0}
+.progress-section h2{font-size:20px;margin:0 0 8px}
+.progress-caption{font-size:13px;line-height:1.5;color:var(--muted);margin:0 0 16px}
+.training-ladder{list-style:none;margin:0;padding:0}
+.training-day{position:relative;display:flex;gap:20px;align-items:center;min-height:66px;padding:10px 0}
+.training-rung{position:relative;width:26px;align-self:stretch;flex:0 0 26px}
+.training-rung::before{content:"";position:absolute;left:4px;right:4px;top:-10px;bottom:-10px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.training-rung::after{content:"";position:absolute;left:0;right:0;height:2px;top:50%;background:var(--muted)}
+.training-day:first-child .training-rung::before{top:50%}
+.training-day:last-child .training-rung::before{bottom:50%}
+.training-day:first-child .training-rung::after{background:var(--accent)}
+.training-day time{font-size:14px;font-weight:600}
+.training-day div>span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.personal-best{padding:16px 0;border-bottom:1px solid var(--line)}
+.personal-best:last-child{border-bottom:0;padding-bottom:0}
+.personal-best h3{font-size:14px;font-weight:600;line-height:1.4;margin:0 0 8px;overflow-wrap:anywhere}
+.record-value{font-size:28px;line-height:1.2;font-weight:600;letter-spacing:-.6px;margin:0;font-variant-numeric:tabular-nums}
+.record-value>span{font-size:13px;letter-spacing:0;font-weight:400;color:var(--muted)}
+.record-context{font-size:12px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+.records-empty{font-size:14px;line-height:1.7;color:var(--muted);margin:24px 0 0;max-width:34ch}
+.progress-exercises .prow{padding:18px 0;gap:20px;align-items:center}
+.progress-note.positive{color:var(--good)!important}
+.progress-log{border-top:1px solid var(--line);padding-top:8px}
+.progress-log>summary{cursor:pointer;font-size:15px;font-weight:600;padding:14px 0;min-height:48px}
+.progress-log>summary>span{display:block;font-size:12px;font-weight:400;color:var(--muted);margin:4px 0 0 17px}
+.progress-log .erow{min-height:48px;padding:12px 0;line-height:1.5;overflow-wrap:anywhere}
+.progress-empty{max-width:400px;padding:42px 0}
+.progress-empty h2{font-size:28px;letter-spacing:-.8px;line-height:1.2}
+.progress-empty p{line-height:1.7;color:var(--muted);margin:16px 0 28px}
+.progress-empty .primary{min-height:52px}
+@media(min-width:700px){.progress-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}}
+@media(max-width:420px){.progress-exercises .prow{flex-wrap:wrap;gap:12px}.progress-exercises .prow>.mini-t{flex:1 0 100%}.progress-exercises .spark{width:100%;max-width:220px;height:44px}}
+
 /* Focus: one decision at a time. The full editor stays behind a disclosure. */
 body[data-view="today"]{background:var(--surface)}
 body[data-view="today"] .top{margin-bottom:0}
@@ -952,7 +993,7 @@ const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d
 let minutes = +store.get("bwl-min","20");
 const MIN_OPTS=[5,10,20,30,60,0];
 if(!MIN_OPTS.includes(minutes)) minutes=20;
-let showMore=false, showDone=false, sheetOpen=false;
+let showMore=false, showDone=false, sheetOpen=false, progressLogOpen=false;
 const expandedEx=new Set();
 const holdNext={};            // trackId -> next set to time
 let setupDraft=null, routinesOpen=false, setupWanted=false, exQuery="";
@@ -1270,48 +1311,65 @@ function spark(entries){
   const marks=entries.map((e,i)=>i>0&&e.k!==entries[i-1].k?`<line x1="${x(i)}" x2="${x(i)}" y1="2" y2="${H-2}" stroke="var(--good)" stroke-dasharray="2 2"/>`:"").join("");
   return `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true">${marks}<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/><circle cx="${x(vals.length-1)}" cy="${y(vals[vals.length-1])}" r="3" fill="var(--accent)"/></svg>`;
 }
-function viewHistory(){
-  if(!state.log.length) return `<div class="card empty"><img src="img/cheer.webp" alt="Rung celebrating"><h2>No workouts yet</h2><p>Log your first sets and your progress shows up here.</p><button class="primary" data-ui="gotoday" style="flex:0 0 auto;margin-top:8px">Go to Today</button></div>`;
-  const days=[...new Set(state.log.map(e=>dayOf(e.ts)))].sort();
-  const weeks=12, now=weekStart(new Date());
-  const counts=Array(weeks).fill(0); const allWeeks=new Map();
-  days.forEach(k=>{ const [y,m,d]=k.split("-").map(Number); const ws=weekStart(new Date(y,m-1,d)).getTime(); allWeeks.set(ws,(allWeeks.get(ws)||0)+1); const w=Math.round((now-ws)/(7*DAY)); if(w>=0&&w<weeks) counts[weeks-1-w]++; });
-  let streak=0; for(let i=weeks-1;i>=0;i--){ if(counts[i]>=2) streak++; else if(i===weeks-1) continue; else break; }
-  let best=0, run=0; const wks=[...allWeeks.keys()].sort((a,b)=>a-b);
-  for(let i=0;i<wks.length;i++){ const okW=allWeeks.get(wks[i])>=2; const contig=i>0&&Math.round((wks[i]-wks[i-1])/(7*DAY))===1; run = okW ? (contig&&run?run+1:1) : 0; best=Math.max(best,run); }
-  const W=340,H=150,pl=22,pb=22,pt=10,max=Math.max(4,...counts),bw=(W-pl)/weeks;
-  const y=v=>pt+(H-pt-pb)*(1-v/max);
-  let svg=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Training days per week, last 12 weeks">`;
-  for(let v=0;v<=max;v+=2){ svg+=`<line x1="${pl}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${v}</text>`; }
-  counts.forEach((c,i)=>{ const x=pl+i*bw+3; svg+=`<rect x="${x}" y="${y(c)}" width="${bw-6}" height="${Math.max(y(0)-y(c),0)}" rx="3" fill="${i===weeks-1?"var(--accent)":"var(--muted)"}" opacity="${i===weeks-1?1:.45}"/>`; });
-  svg+=`<text x="${pl}" y="${H-6}" font-size="10" fill="var(--muted)">12 wks ago</text><text x="${W}" y="${H-6}" text-anchor="end" font-size="10" fill="var(--muted)">This week</text></svg>`;
-  // per exercise progress
-  const prog=allTracks().map(t=>{ const es=state.log.filter(e=>e.t===t.id); return es.length?{t,es}:null; }).filter(Boolean).sort((a,b)=>b.es[b.es.length-1].ts-a.es[a.es.length-1].ts);
-  const progHtml=prog.map(({t,es})=>{
-    const lvl=lvlOf(t), cur=keyOf(t,lvl), atCur=es.filter(e=>e.k===cur), lastE=es[es.length-1];
-    const since=atCur[0]; const f=stepByKey(lastE.k);
-    const sum=e=>e.sets.reduce((a,b)=>a+b,0), u=f?unit(f.st[4]):"";
-    let change, note="";
-    if(atCur.length>=2){
-      const gain=sum(atCur[atCur.length-1])-sum(atCur[0]);
-      change=`${atCur[0].sets.join("·")} → ${atCur[atCur.length-1].sets.join("·")}`;
-      note = gain>0 ? `+${gain}${u||" reps"} since you started this step` : gain===0 ? "Holding steady. Aim for one more next time." : "A lighter day. That's normal, keep showing up.";
-    } else { change=`${lastE.sets.join("·")}${u}`; note = atCur.length ? "First session on this step. Nice start." : ""; }
-    return `<div class="prow"><img src="${thumbOf(t,lvl)}" alt="" width="40" height="40" loading="lazy"><span class="mini-t"><b>${esc(t.steps[lvl][0])}</b><span>${esc(change)}</span>${note?`<span class="cheerline">${esc(note)}</span>`:""}<span>${since?`On this step since ${fmtDate(dayOf(since.ts))}`:`Moved up to this step`} · ${es.length} ${es.length===1?"session":"sessions"}</span></span>${spark(es.slice(-12))}</div>`;
-  }).join("");
-  const recent=days.slice(-14).reverse().map(k=>{
-    const es=state.log.filter(e=>dayOf(e.ts)===k).sort((a,b)=>b.ts-a.ts);
-    return `<div class="hist-day"><span class="d">${fmtDate(k)}</span>${es.map(e=>{const f=stepByKey(e.k); const id=entryId(e); const tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}); const sel=confirmDel==="e:"+id; return `<div class="e${sel?" sel":""}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):"Removed exercise"}: ${e.sets.join(" · ")}${f?unit(f.st[4]):""}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:""}</div>`}).join("")}</div>`;
-  }).join("");
-  return `<div class="stack">
-    <div class="stats"><div class="stat"><b>${counts[weeks-1]}</b><span>${counts[weeks-1]===1?"day":"days"} this week</span></div>
-    <div class="stat"><b>${streak}</b><span>weeks in a row</span></div>
-    <div class="stat"><b>${best}</b><span>best run</span></div></div>
-    <p class="muted" style="margin:0">A week counts when you train on 2 or more days.</p>
-    <section class="card"><div class="label">Your progress</div><div>${progHtml}</div></section>
-    <section class="card"><div class="label">Training days per week</div>${svg}</section>
-    <section class="card"><div class="label">Recent workouts</div><p class="muted" style="margin:0">Logged something by mistake? Tap it to delete.</p><div>${recent}</div></section></div>`;
+// Compare totals only within the same step and recorded set count.
+function personalBests(log=state.log){
+  const groups=new Map();
+  for(const e of [...log].sort((a,b)=>a.ts-b.ts)){
+    if(!stepByKey(e.k))continue;
+    const key=e.k+'|'+e.sets.length;
+    if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);
+  }
+  const records=[];
+  for(const entries of groups.values()){
+    const total=e=>e.sets.reduce((a,b)=>a+b,0);
+    let best=entries[0];
+    for(const e of entries.slice(1))if(total(e)>total(best))best=e;
+    if(best!==entries[0])records.push({entry:best,total:total(best),gain:total(best)-total(entries[0]),count:best.sets.length});
+  }
+  return records.sort((a,b)=>b.entry.ts-a.entry.ts);
 }
+function trainingDays(log=state.log){
+  const days=new Map();
+  for(const e of log){const key=dayOf(e.ts);if(!days.has(key))days.set(key,[]);days.get(key).push(e);}
+  return [...days].sort((a,b)=>b[0].localeCompare(a[0])).map(([date,entries])=>({date,entries,exercises:new Set(entries.map(e=>e.t)).size,sets:entries.reduce((n,e)=>n+e.sets.length,0)}));
+}
+function viewHistory(){
+  if(!state.log.length)return `<section class="progress-empty"><h2>A record of your training.</h2><p>Complete an exercise to start your history. Personal bests appear when you improve on a previous result.</p><button class="primary" data-ui="gotoday">Go to Today</button></section>`;
+  const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
+  const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
+  const records=personalBests();
+  const timeline=days.slice(0,5).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
+  const bestHtml=records.slice(0,4).map(({entry,total,count})=>{
+    const f=stepByKey(entry.k),measure=isSec(f.st[4])?'seconds':'reps',side=f.st[4].includes('each')?' per side':'';
+    return `<div class="personal-best" data-record="${esc(entry.k)}" data-count="${count}"><h3>${esc(f.st[0])}</h3><p class="record-value">${total} <span>${measure}${side}</span></p><p class="record-context">${count}-set total · <time datetime="${dayOf(entry.ts)}">${fmtDate(dayOf(entry.ts))}</time></p></div>`;
+  }).join('');
+  const prog=allTracks().map(t=>{const es=state.log.filter(e=>e.t===t.id).sort((a,b)=>a.ts-b.ts);return es.length?{t,es}:null;}).filter(Boolean).sort((a,b)=>b.es.at(-1).ts-a.es.at(-1).ts);
+  const progHtml=prog.map(({t,es})=>{
+    const lvl=lvlOf(t),st=t.steps[lvl],atCur=es.filter(e=>e.k===keyOf(t,lvl)),last=atCur.at(-1);
+    const comparable=last?atCur.filter(e=>e.sets.length===last.sets.length):[],first=comparable[0];
+    let change='No saved sets on this step yet.',note='',positive=false;
+    if(last){
+      change=last.sets.join(' · ')+(isSec(st[4])?'s':' reps')+(st[4].includes('each')?' per side':'');
+      if(comparable.length>=2){
+        const gain=last.sets.reduce((a,b)=>a+b,0)-first.sets.reduce((a,b)=>a+b,0),measure=isSec(st[4])?'seconds':'reps',side=st[4].includes('each')?' per side':'';
+        change=first.sets.join(' · ')+' → '+last.sets.join(' · ')+(isSec(st[4])?'s':' reps')+side;
+        const baseline=first===atCur[0]?'since you started this step':'since your first '+last.sets.length+'-set result';
+        note=gain>0?'+'+gain+' '+measure+side+' '+baseline:gain===0?'Holding steady. Same total as your first matching result.':Math.abs(gain)+' fewer '+measure+side+' than your first matching result.';positive=gain>0;
+      }else note='First recorded '+last.sets.length+'-set result on this step.';
+    }
+    return `<div class="prow"><span class="mini-t"><b>${esc(st[0])}</b><span>${esc(change)}</span>${note?`<span class="progress-note${positive?' positive':''}">${esc(note)}</span>`:''}<span>${last?`${comparable.length} ${comparable.length===1?'matching result':'matching results'} · ${last.sets.length} ${last.sets.length===1?'set':'sets'}`:`Last logged: ${esc(stepByKey(es.at(-1).k)?.st[0]||'previous step')}`}</span></span>${comparable.length?spark(comparable.slice(-12)):''}</div>`;
+  }).join('');
+  const recent=days.slice(0,14).map(({date,entries})=>`<div class="hist-day"><span class="d">${fmtDate(date)}</span>${[...entries].sort((a,b)=>b.ts-a.ts).map(e=>{
+    const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
+    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):'Removed exercise'}: ${e.sets.join(' · ')}${f?unit(f.st[4]):''}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
+  }).join('')}</div>`).join('');
+  return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div></section>
+    <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">A best appears when you exceed a previous total. Your first result sets the baseline.</p>'}</section>
+    <section class="progress-section"><h2>Training days</h2><p class="progress-caption">${days.length} ${days.length===1?'day':'days'} recorded${days.length>5?' · Most recent five':''}</p><ol class="training-ladder">${timeline}</ol></section></div>
+    <section class="progress-section progress-exercises"><h2>Your progress</h2><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</section>
+    <details class="progress-log" id="progressLog" ${progressLogOpen?'open':''}><summary>Workout log <span>View or correct saved entries</span></summary><p class="progress-caption">Tap an entry to delete it.</p>${recent}</details></div>`;
+}
+
 
 /* ---------- first-time setup ---------- */
 const GEAR=[["bar","Pull-up bar"],["weights","Weights (jug, kettlebell)"]];
@@ -1371,6 +1429,7 @@ function render(){
   document.body.classList.toggle("in-setup", tab==="setup");
   document.body.dataset.view=tab;
   $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"Progress",setup:"Welcome"}[tab];
+  const logDisclosure=$("#progressLog");if(logDisclosure)progressLogOpen=logDisclosure.open;
   const previousStage=$(".focus-stage")?.dataset.stage;
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
