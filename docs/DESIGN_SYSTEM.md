@@ -89,3 +89,7 @@ Library dialogs contain keyboard focus, lock background scrolling, close with Es
 ## Navigation inset contract
 
 `syncAppInsets()` measures bottom navigation into `--app-nav-height`. A ResizeObserver and viewport resize update the value; desktop and landscape rails contribute zero bottom inset. Routine actions, timers and toasts consume the shared inset instead of assuming a fixed bar height. Dynamic CSS-variable injection is deliberate here because safe areas and text sizing affect the rendered height.
+
+## First portable-control migration
+
+Time, readiness, effort, display and exercise-frequency groups now consume the library's choice markup and state styling. App callbacks remain the sole owner of their stored values. Training settings use an editable, bounded number field with stepper actions; custom exercise creation uses shared labeled fields and inline recovery errors. Invalid values keep the draft and do not mutate saved preferences or create an exercise. Dialog close actions use the same SVG anatomy. Portable fields align their content to the top so adjacent validation messages cannot stretch neighboring inputs.

@@ -36,11 +36,19 @@ function applyAppControls(root=document){
   else if(button.matches('.appearance-toggle,[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
   else if(button.matches('.focus-stepper')||button.closest('.pm,.mini-step'))role='stepper';
   else if(button.matches('.onboard-choice'))role='selection';
-  else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options'))role='choice';
+  else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice'))role='choice';
   else if(button.matches('.exrow,.mini,.opt'))role='row';
   else if(button.matches('.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
   button.dataset.control=role;
+  if(role==='choice'){
+   const group=button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice');
+   if(group){group.classList.add('lui','lui-choice');group.classList.remove('seg');group.dataset.luiManaged='app';button.classList.add('lui-button');}
+  }
+  if(role==='icon'&&button.closest('.preferences-head,.workout-tools-head,.photo-credits header')){
+   button.classList.add('lui-button');button.dataset.icon='';button.parentElement.classList.add('lui');
+   if(!button.querySelector('svg')&&['×','✕'].includes(button.textContent.trim()))button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>';
+  }
  }
 }
- global.LadderControls={version:'1.0.0',bind,refresh,openDialog,setBusy,fieldError,toast,applyAppControls};
+ global.LadderControls={version:'1.0.1',bind,refresh,openDialog,setBusy,fieldError,toast,applyAppControls};
 })(window);

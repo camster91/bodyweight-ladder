@@ -4,7 +4,7 @@ const d=dom.window.document,click=s=>{d.querySelector(s).focus();d.querySelector
 try{
  click('#tab-ladders');click('[data-ui="ex"][data-t="push"]');
  assert(d.querySelector('.library-current h3').textContent.includes('Push-up'));assert(!d.querySelector('.exopen .ctl'));
- click('[data-panel="settings-push"]');const inc=()=>d.querySelector('#librarySheet [data-act="setsInc"]');inc().focus();inc().click();assert.equal(d.activeElement,inc());assert.equal(d.querySelector('#librarySheet .mini-step b').textContent,'4');
+ click('[data-panel="settings-push"]');const inc=()=>d.querySelector('#librarySheet [data-act="setsInc"]');inc().focus();inc().click();assert.equal(d.activeElement,inc());assert.equal(d.querySelector('#librarySheet [data-set-count]').value,'4');
  click('[data-ui="libraryclose"]');assert.equal(d.activeElement,d.querySelector('[data-panel="settings-push"]'));assert(!d.body.classList.contains('library-sheet-open'));
  console.log('PASS current step precedes settings and settings preserve focus after changes and dismissal');
  click('[data-panel="hidden"]');click('#librarySheet [data-act="show"]');assert(!d.querySelector('#librarySheet'));assert.equal(d.activeElement,d.querySelector('[data-ui="ex"][data-t="pull"]'));assert(!d.body.classList.contains('library-sheet-open'));
