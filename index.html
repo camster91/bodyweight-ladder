@@ -1055,6 +1055,20 @@ header.top .date{flex:1;text-align:right}
 .appearance-options button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent);font-weight:650}
 .app-preferences .appearance-note{font-size:12px;margin:var(--space-panel) 0 0}
 .focus-meta>span{line-height:1.5}
+.workout-tools-body .tool-section{margin:0;padding:16px 0;border:0;border-bottom:1px solid var(--line);background:transparent;border-radius:0}
+.tool-heading{font-size:15px;font-weight:650;margin:0 0 12px;color:var(--ink)}
+.workout-tools-body .tool-action{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;text-align:left;padding:16px 0;margin:0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--accent);font-size:15px;font-weight:600}
+.workout-tools-body .planbar{position:static;max-width:none;width:100%;border:0;padding:0;margin:0;box-shadow:none;gap:12px}
+.workout-tools-body .minrow{display:block}.workout-tools-body .minrow>.label{display:none}
+.workout-tools-body .mins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:0;gap:8px;overflow:visible}
+.workout-tools-body .mins button{min-height:48px;border:1px solid var(--line);border-radius:12px;font-size:15px}
+.workout-tools-body .mins button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent)}
+.workout-tools-body .readiness-body{padding:0}.workout-tools-body .readiness-options{gap:8px}
+.workout-tools-body .readiness-options button{min-height:52px;font-size:13px;padding:10px 6px}
+.workout-tools-body .readiness-note{margin:12px 0 0}.workout-tools-body .readiness-reset{min-height:48px}
+.workout-tools-body .tool-back{min-height:48px;margin-bottom:12px;color:var(--accent)}
+.workout-tools-body .focus-ex-row button{min-height:48px;min-width:76px;border:1px solid var(--line);border-radius:12px}
+.workout-tools-body .focus-edit .planbar{padding:0}
 :root[data-theme="dark"]{color-scheme:dark}
 :root[data-theme="light"]{color-scheme:light}
 .library-brand>img{object-fit:contain}
@@ -1790,7 +1804,7 @@ function applyReadiness(kind){
  focusRun.items=p.items;focusRun.at=0;focusRun.readiness={kind,base,...(p.budget?{budget:p.budget}:{} )};
  if(kind==='low')focusRun.items.forEach(x=>delete x.value);
  readinessChoice=null;focusUndo=null;persistFocus();render();$('#focusAnnouncement').textContent=kind==='low'?'Lighter targets applied for this workout.':kind==='short'?'Short workout applied.':'Original workout ready.';
- document.querySelector('.readiness-check>summary')?.focus({preventScroll:true});
+ $('#focusPrimary')?.focus({preventScroll:true});
 }
 function handleReadiness(b){
  if(!canAdjustReadiness())return;
@@ -1801,7 +1815,7 @@ function handleReadiness(b){
  }
  if(action==='apply'){applyReadiness(readinessChoice);return;}
  if(action==='reset'){applyReadiness('ready');return;}
- if(action==='cancel'){readinessChoice=null;render();document.querySelector('.readiness-check>summary')?.focus({preventScroll:true});}
+ if(action==='cancel'){readinessChoice=null;render();document.querySelector('.readiness-options button')?.focus({preventScroll:true});}
 }
 function lightSessionItem(t,lvl=sessionLevel(t)){
  return focusRun?.items.find(x=>x.mode==='light'&&x.id===t.id&&x.key===keyOf(t,lvl))||null;
@@ -1881,14 +1895,15 @@ function handleSwap(b){
   swapChoice={id,lvl};render();document.querySelector(`[data-swap="choose"][data-t="${id}"][data-level="${lvl}"]`)?.focus({preventScroll:true});return;
  }
  if(b.dataset.swap==='apply'&&swapChoice){applySwap(swapChoice.id,swapChoice.lvl);return;}
- if(b.dataset.swap==='cancel'){swapChoice=null;render();document.querySelector('.swap-picker>summary')?.focus({preventScroll:true});}
+ if(b.dataset.swap==='cancel'){swapChoice=null;render();document.querySelector('[data-swap="choose"]')?.focus({preventScroll:true});}
 }
 
 // One secondary surface; the active set and its primary action stay on Today.
 let workoutToolsOpen=false;
+let workoutToolsPanel='main';
 let workoutToolsReturn='workoutToolsButton';
 function closeWorkoutTools(){
- workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');const d=$('#workoutTools');if(d?.open&&typeof d.close==='function')d.close();else d?.removeAttribute('open');
+ workoutToolsOpen=false;workoutToolsPanel='main';document.body.classList.remove('workout-tools-open');const d=$('#workoutTools');if(d?.open&&typeof d.close==='function')d.close();else d?.removeAttribute('open');
  $('#workoutToolsButton')?.setAttribute('aria-expanded','false');
  (document.getElementById(workoutToolsReturn)||$('#workoutToolsButton'))?.focus({preventScroll:true});
 }
@@ -1925,7 +1940,20 @@ function mountWorkoutTools(previous={}){
  const body=dialog.querySelector('.workout-tools-body');
  // Move existing controls so their data, event handlers, and IDs have a single owner.
  for(const el of [$('.readiness-check'),settings,$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
- if(settings){settings.querySelector('summary').textContent='Time & workout settings';}
+ if(settings){settings.querySelector('summary').textContent='Time & workout settings';settings.querySelectorAll('[data-ui="min"]').forEach(b=>b.textContent=+b.dataset.m?b.dataset.m+' min':'All');}
+ // Common controls are sections and direct actions, not nested accordions.
+ const reveal=(details,title)=>{if(!details)return;const section=document.createElement('section');section.className=details.className+' tool-section';const heading=document.createElement('h3');heading.className='tool-heading';heading.textContent=title;section.append(heading);for(const child of [...details.children])if(child.tagName!=='SUMMARY')section.append(child);details.replaceWith(section);return section;};
+ reveal(body.querySelector('.readiness-check'),'How are you feeling?');
+ reveal(settings,'Workout length');
+ reveal(body.querySelector('.focus-workout'),'Your workout');
+ const technique=body.querySelector('.focus-technique');if(technique){const action=document.createElement('button');action.className='focus-technique tool-action';action.dataset.ui='technique';action.innerHTML='<span>How to do this exercise</span><span aria-hidden="true">↗</span>';technique.replaceWith(action);}
+ const alternatives=body.querySelector('.swap-picker');
+ if(alternatives){
+  const section=reveal(alternatives,'Choose an alternative');
+  const action=document.createElement('button');action.className='tool-action';action.dataset.ui='toolalternatives';action.innerHTML='<span>Change this exercise</span><span aria-hidden="true">→</span>';section.before(action);
+  const back=document.createElement('button');back.className='tool-back';back.dataset.ui='toolmain';back.textContent='← Back to options';section.prepend(back);
+  const active=workoutToolsPanel==='alternatives';for(const child of [...body.children])child.hidden=active?child!==section:child===section;
+ }
  const restControls=[...shell.querySelectorAll('.focus-rest [data-focus="add"],.focus-rest [data-focus="undo"],.focus-actions [data-focus="another"]')];
  if(restControls.length){const controls=document.createElement('div');controls.className='workout-tool-actions';restControls.forEach(el=>controls.append(el));body.prepend(controls);}
  const returning=shell.querySelector(':scope>.focus-next');if(returning)body.prepend(returning);
@@ -2489,6 +2517,8 @@ $("#view").addEventListener("click",e=>{
   const u=e.target.closest("[data-ui]");
   if(u){
     const a=u.dataset.ui;
+    if(a==='toolalternatives'){workoutToolsPanel='alternatives';render();$('#workoutTools .workout-tools-body').scrollTop=0;document.querySelector('.tool-back')?.focus({preventScroll:true});return;}
+    if(a==='toolmain'){workoutToolsPanel='main';render();$('#workoutTools .workout-tools-body').scrollTop=0;document.querySelector('[data-ui="toolalternatives"]')?.focus({preventScroll:true});return;}
     if(a==='workouttools'){workoutToolsReturn='workoutToolsButton';workoutToolsOpen=true;render();return;}
     if(a==='technique'){openTechnique();return;}
     if(a==='techniqueclose'){closeTechnique();return;}
