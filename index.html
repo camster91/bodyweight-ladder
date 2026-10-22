@@ -610,6 +610,29 @@ body[data-view="today"] .top{margin-bottom:4px}
 .focus-stage .effort-check>div>p{margin-bottom:10px}
 .focus-stage:has(.effort-check) .focus-rest{gap:12px;padding:4px 0}
 .feedback-reason{margin-top:8px}
+.readiness-check{margin:0 0 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden;text-align:left}
+.readiness-check>summary{position:relative;list-style:none;cursor:pointer;padding:14px 40px 14px 16px;min-height:44px}
+.readiness-check>summary::-webkit-details-marker{display:none}
+.readiness-check>summary>span{display:block;font-size:14px;font-weight:600;line-height:1.4}
+.readiness-check>summary>small{display:block;font-size:11px;color:var(--muted);line-height:1.5;margin-top:3px}
+.readiness-check>summary::after{content:"";position:absolute;right:18px;top:22px;width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg)}
+.readiness-check[open]>summary::after{transform:rotate(225deg);top:26px}
+.readiness-check>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:14px}
+.readiness-body{padding:0 16px 16px}
+.readiness-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.readiness-options button{font-size:12px;font-weight:500;min-height:48px;padding:8px 4px;border-width:1px;white-space:normal;line-height:1.4}
+.readiness-options button[aria-pressed="true"]{color:var(--accent);background:var(--chip);border-color:var(--accent)}
+.readiness-preview{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
+.readiness-preview>b{font-size:14px;font-weight:600}
+.readiness-preview p,.readiness-note{font-size:12px;color:var(--muted);line-height:1.6;margin:8px 0 12px}
+.readiness-preview ul{list-style:none;margin:12px 0;padding:0}
+.readiness-preview li{font-size:12px;display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.readiness-preview li small{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.readiness-actions{display:flex;flex-direction:column;gap:4px}
+.readiness-actions button{min-height:44px;font-size:13px}
+.readiness-actions button:not(.primary),.readiness-reset{border:0;color:var(--muted);font-size:12px}
+.readiness-reset{min-height:44px;padding-left:0}
+body[data-view="today"] .focus-shell:has(.readiness-check) .focus-stage{min-height:min(590px,calc(100svh - 315px))}
 .focus-saved{top:9px}
 .focus-workout .focus-advanced .session-main{min-width:0}
 .progress-week{background:#18232F;color:#F5F7FA;border-radius:24px;padding:24px}
@@ -1012,7 +1035,7 @@ function normalize(d){
     if(!k) continue;
     const sets=(Array.isArray(e.sets)?e.sets:[]).map(Number).filter(n=>Number.isFinite(n)&&n>=0).slice(0,8);
     if(!sets.length) continue;
-    log.push({ts, t:k.split(":")[0], k, sets, ...(Number.isSafeInteger(e.effortAt)&&e.effortAt>0?{effortAt:e.effortAt,...(["easy","steady","hard"].includes(e.effort)?{effort:e.effort}:{})}:{})});
+    log.push({ts, t:k.split(":")[0], k, sets, ...(e.mode==='light'?{mode:'light'}:{}), ...(Number.isSafeInteger(e.effortAt)&&e.effortAt>0?{effortAt:e.effortAt,...(["easy","steady","hard"].includes(e.effort)?{effort:e.effort}:{})}:{})});
   }
   out.deleted = (Array.isArray(d.deleted)?d.deleted:[]).filter(x=>typeof x==="string").slice(-TOMB_KEEP);
   const tomb = new Set(out.deleted);
@@ -1086,7 +1109,8 @@ function unflatten(f, order){
 function dedupe(log){
   const m=new Map(); for(const e of log){
     const id=entryId(e),old=m.get(id),a=old?.effortAt||0,b=e.effortAt||0;
-    if(!old||b>a||(b===a&&(!a||String(e.effort||'')>=String(old.effort||''))))m.set(id,e);
+    const winner=!old||b>a||(b===a&&(!a||String(e.effort||'')>=String(old.effort||'')))?e:old;
+    m.set(id,old?.mode==='light'||e.mode==='light'?{...winner,mode:'light'}:winner);
   }
   return [...m.values()].sort((a,b)=>a.ts-b.ts).slice(-LOG_KEEP);
 }
@@ -1172,7 +1196,7 @@ const DAY = 864e5;
 function hitTarget(entry, st){ return entry.sets.length>=st[1] && entry.sets.slice(0,st[1]).every(v=>v>=st[3]); }
 // Transparent heuristics, not a readiness diagnosis. Compare the same step and set count.
 function progression(t,lvl=lvlOf(t),st=spec(t,lvl)){
- const history=state.log.filter(e=>e.k===keyOf(t,lvl)).sort((a,b)=>b.ts-a.ts);
+ const history=state.log.filter(e=>e.mode!=='light'&&e.k===keyOf(t,lvl)).sort((a,b)=>b.ts-a.ts);
  const last=history[0],inc=stepInc(st),clamp=v=>Math.min(st[3],Math.max(st[2],v));
  if(!last)return {kind:'start',title:'Start with control',reason:'Begin at the low end. Adjust the number to match what you actually do.',goals:Array(st[1]).fill(st[2])};
  const base=Array.from({length:st[1]},(_,i)=>clamp(last.sets[i]??last.sets.at(-1)));
@@ -1201,6 +1225,7 @@ function progression(t,lvl=lvlOf(t),st=spec(t,lvl)){
 }
 function coachTargets(p,st){return p.goals.join(' · ')+(isSec(st[4])?' sec':' reps')+(st[4].includes('each')?' each side':'');}
 function workCoach(t,x){
+ if(lightSessionItem(t)||focusRun?.readiness?.kind==='short')return '';
  let p=progression(t);if(p.kind==='start')return '';
  if(JSON.stringify(x.goals)!==JSON.stringify(p.goals))p={title:'Targets kept for this workout',reason:'Your latest results will shape the next workout. This one keeps the targets it started with.',goals:x.goals};
  return `<div class="coach-inline"><details><summary>${esc(p.title)}</summary><p>${esc(p.reason)}</p><span>${esc(coachTargets(p,spec(t)))}</span></details>${p.level!==undefined?`<button data-coach="level" data-t="${t.id}" data-level="${p.level}">Try ${esc(t.steps[p.level][0])}</button>`:''}</div>`;
@@ -1209,7 +1234,7 @@ function focusFeedback(){
  const entries=(focusRun?.items||[]).filter(x=>x.entry).map(x=>state.log.find(e=>entryId(e)===x.entry)).filter(Boolean).sort((a,b)=>b.ts-a.ts);
  const e=entries[0];if(!e)return '';
  const t=findTrack(e.t),step=stepByKey(e.k);if(!t||!step)return '';const p=progression(t);
- return `<section class="effort-check" aria-label="Exercise effort"><div><span class="label">${esc(step.st[0])} saved</span><h3>How did it feel?</h3><p>Optional. Helps set your next target.</p></div><div class="effort-options" role="group" aria-label="How ${esc(step.st[0])} felt">${[['easy','Easy'],['steady','Steady'],['hard','Hard']].map(([value,label])=>`<button data-coach="effort" data-entry="${esc(entryId(e))}" data-effort="${value}" aria-pressed="${e.effort===value}">${label}</button>`).join('')}</div>${e.effort?`<details class="feedback-reason"><summary>Next time: ${esc(p.title)}</summary><p>${esc(p.reason)}</p><span>${esc(coachTargets(p,spec(t)))}</span></details>`:""}</section>`;
+ return `<section class="effort-check" aria-label="Exercise effort"><div><span class="label">${esc(step.st[0])} saved</span><h3>How did it feel?</h3><p>${e.mode==='light'?'Optional. Saved with this lighter workout.':'Optional. Helps set your next target.'}</p></div><div class="effort-options" role="group" aria-label="How ${esc(step.st[0])} felt">${[['easy','Easy'],['steady','Steady'],['hard','Hard']].map(([value,label])=>`<button data-coach="effort" data-entry="${esc(entryId(e))}" data-effort="${value}" aria-pressed="${e.effort===value}">${label}</button>`).join('')}</div>${e.effort?`<details class="feedback-reason"><summary>Next time: ${esc(p.title)}</summary><p>${esc(p.reason)}</p><span>${esc(coachTargets(p,spec(t)))}</span></details>`:""}</section>`;
 }
 function handleCoach(b){
  if(b.dataset.coach==='effort'){
@@ -1218,7 +1243,7 @@ function handleCoach(b){
   commit();render();document.querySelector(`[data-coach="effort"][data-effort="${value}"]`)?.focus({preventScroll:true});return;
  }
  if(b.dataset.coach==='level'){
-  const t=findTrack(b.dataset.t),x=focusItem();if(!t||hold||focusRun?.phase!=='work'||x?.id!==t.id||x.values.length||x.entry)return;
+  const t=findTrack(b.dataset.t),x=focusItem();if(!t||hold||lightSessionItem(t)||focusRun?.readiness?.kind==='short'||focusRun?.phase!=='work'||x?.id!==t.id||x.values.length||x.entry)return;
   const p=progression(t);if(p.level===undefined||p.level!==+b.dataset.level)return;
   setLevel(t.id,p.level);toast(`New step: ${spec(t)[0]}`);
  }
@@ -1251,11 +1276,11 @@ let lastSaveAt=0, confirmZero=null;
 function saveSets(t,options={}){
   if(!options.focus && Date.now()-lastSaveAt<900) return;          // ignore an accidental double tap
   const lvl=lvlOf(t), st=spec(t,lvl);
-  const vals=(drafts[t.id]||goals(t,lvl,st).map(String)).map(v=>parseInt(v,10)).filter(v=>!isNaN(v)&&v>=0);
+  const vals=(drafts[t.id]||sessionGoals(t,lvl,st).map(String)).map(v=>parseInt(v,10)).filter(v=>!isNaN(v)&&v>=0);
   if(!vals.length){ toast("Enter at least one set"); return; }
   if(vals.every(v=>v===0) && confirmZero!==t.id){ confirmZero=t.id; toast(options.focus?"All sets are 0. Tap Complete set again to confirm.":"All sets are 0. Tap Save again to log it anyway."); return; }
   confirmZero=null; lastSaveAt=Date.now();
-  const entry={ts:Date.now(), t:t.id, k:keyOf(t,lvl), sets:vals};
+  const entry={ts:Date.now(), t:t.id, k:keyOf(t,lvl), sets:vals,...(lightSessionItem(t,lvl)?{mode:'light'}:{})};
   state.log.push(entry); state.log=state.log.slice(-LOG_KEEP);
   delete drafts[t.id]; delete holdNext[t.id]; delete completedSets[t.id]; opened.delete(t.id);
   if(hold && hold.tid===t.id) stopTimer();
@@ -1316,9 +1341,9 @@ function ensureFocus(plan){
       plan=[...partial,...plan.filter(t=>!partial.some(p=>p.id===t.id))];
     }}catch(e){}
     focusRun={v:1,signature,started:Date.now(),at:0,phase:'work',restEnd:0,items:plan.map(t=>{
-      const key=keyOf(t,lvlOf(t)),g=goals(t,lvlOf(t),spec(t)),old=previous.find(x=>x&&x.id===t.id&&x.key===key&&!x.entry&&Array.isArray(x.values)&&x.values.length<g.length&&x.values.every(v=>Number.isFinite(v)&&v>=0&&v<=9999));
-      return {id:t.id,key,goals:g,values:old?old.values.slice():[]};
-    })};focusUndo=null;persistFocus();
+      const key=keyOf(t,lvlOf(t)),g=goals(t,lvlOf(t),spec(t)),old=previous.find(x=>x&&x.id===t.id&&x.key===key&&!x.entry&&Array.isArray(x.values)&&x.values.length<g.length&&x.values.every(v=>Number.isFinite(v)&&v>=0&&v<=9999)&&Array.isArray(x.goals)&&x.goals.length===g.length&&x.goals.every(v=>Number.isFinite(v)&&v>=0&&v<=9999));
+      return {id:t.id,key,goals:old?.values.length?old.goals.slice():g,values:old?old.values.slice():[],...(old?.values.length&&old.mode==='light'?{mode:'light'}:{})};
+    })};focusUndo=null;readinessChoice=null;persistFocus();
   }
   // A synced or manually saved result completes this exercise without logging it twice.
   focusRun.items.forEach(x=>{
@@ -1378,12 +1403,74 @@ function addFocusRest(){
   focusRun.restDuration=Math.max(left,focusRun.restDuration||left)+30;
   restEnd+=30000;focusRun.restEnd=restEnd;persistFocus();tick();
 }
+// Optional, reversible changes to this device's current workout, never saved preferences.
+let readinessChoice=null;
+function canAdjustReadiness(){
+ return !!focusRun&&focusRun.phase==='work'&&!hold&&focusRun.items.length>0&&focusRun.items.every(x=>!x.entry&&!x.values.length&&!completedSets[x.id]?.size&&!holdNext[x.id]);
+}
+function readinessBase(){
+ const base=focusRun?.readiness?.base;
+ if(Array.isArray(base)&&base.length>0&&base.length<=100&&base.every(x=>{
+  const t=findTrack(x?.id);return t&&x.key===keyOf(t,lvlOf(t))&&Array.isArray(x.goals)&&x.goals.length===spec(t)[1]&&x.goals.every(v=>Number.isFinite(v)&&v>=0&&v<=9999)&&Array.isArray(x.values)&&!x.values.length&&!x.entry;
+ }))return JSON.parse(JSON.stringify(base));
+ return JSON.parse(JSON.stringify(focusRun?.items||[]));
+}
+function plannedMinutes(x){
+ const t=findTrack(x.id),st=spec(t),sides=st[4].includes('each')?2:1;
+ return (x.goals.reduce((n,v)=>n+v,0)*(isSec(st[4])?1:3)*sides+(st[1]-1)*restOf(t,st))/60+1;
+}
+function readinessPreview(kind){
+ const base=readinessBase();
+ if(kind==='low')return {items:base.map(x=>({...x,mode:'light',goals:x.goals.map(v=>v===0?0:Math.max(1,Math.floor(v*.8)))}))};
+ if(kind==='short'){
+  const budget=minutes&&minutes<=10?5:10,items=[];let used=0;
+  for(const x of base){const cost=plannedMinutes(x);if(items.length&&used+cost>budget)break;items.push(x);used+=cost;}
+  return {items,budget,estimate:Math.ceil(used)};
+ }
+ return {items:base};
+}
+function readinessView(){
+ if(!canAdjustReadiness())return '';
+ const kind=focusRun.readiness?.kind,label=kind==='low'?'Lighter workout today':kind==='short'?'Short workout today':kind==='ready'?'Ready for this workout':'How are you feeling today?';
+ let html=`<details class="readiness-check"${readinessChoice?' open':''}><summary><span>${label}</span><small>${kind?'Change before your first set':'Optional check-in'}</small></summary><div class="readiness-body"><div class="readiness-options" role="group" aria-label="Before your workout">${[['ready','Ready'],['low','Low energy'],['short','Short on time']].map(([value,text])=>`<button data-readiness="choose" data-kind="${value}" aria-pressed="${(readinessChoice||kind)===value}">${text}</button>`).join('')}</div>`;
+ if(readinessChoice){
+  const p=readinessPreview(readinessChoice),low=readinessChoice==='low',same=p.items.length===readinessBase().length;
+  html+=`<div class="readiness-preview" role="status"><b>${low?'Lower targets for today':same?'Your plan is already short':'Keep the priority exercises'}</b><p>${low?'Use your original exercises and sets with about 20% lower targets, keeping at least one rep or second. Your usual progression stays separate.':`Use your original targets and keep ${p.items.length} ${p.items.length===1?'exercise':'exercises'} in the current plan order. Estimated ${p.estimate} minutes including rests; actual time varies.`}</p><ul>${p.items.slice(0,3).map(x=>`<li><span>${esc(spec(findTrack(x.id))[0])}</span>${low?`<small>${esc(x.goals.join(' · '))}${isSec(spec(findTrack(x.id))[4])?' sec':' reps'}</small>`:''}</li>`).join('')}</ul>${p.items.length>3?`<p class="readiness-more">And ${p.items.length-3} more exercises.</p>`:''}<div class="readiness-actions"><button class="primary" data-readiness="apply">${low?'Use lighter targets':same?'Keep this short workout':'Use shorter workout'}</button><button data-readiness="cancel">Keep current plan</button></div></div>`;
+ }else if(kind){html+=`<p class="readiness-note">${kind==='low'?'Targets are lower for this workout. Your usual progression is unchanged.':kind==='short'?'Priority exercises kept in plan order. Your usual time setting is unchanged.':'Your planned targets are unchanged.'}</p>${kind!=='ready'?'<button class="readiness-reset" data-readiness="reset">Restore original workout</button>':''}`;}
+ return html+'</div></details>';
+}
+function applyReadiness(kind){
+ if(!canAdjustReadiness()||!['ready','low','short'].includes(kind))return;
+ const base=readinessBase(),p=readinessPreview(kind);
+ for(const x of base){delete drafts[x.id];delete completedSets[x.id];delete holdNext[x.id];}
+ focusRun.items=p.items;focusRun.at=0;focusRun.readiness={kind,base,...(p.budget?{budget:p.budget}:{} )};
+ if(kind==='low')focusRun.items.forEach(x=>delete x.value);
+ readinessChoice=null;focusUndo=null;persistFocus();render();$('#focusAnnouncement').textContent=kind==='low'?'Lighter targets applied for this workout.':kind==='short'?'Short workout applied.':'Original workout ready.';
+ document.querySelector('.readiness-check>summary')?.focus({preventScroll:true});
+}
+function handleReadiness(b){
+ if(!canAdjustReadiness())return;
+ const action=b.dataset.readiness;
+ if(action==='choose'){
+  const kind=b.dataset.kind;if(kind==='ready'){applyReadiness('ready');return;}
+  if(!['low','short'].includes(kind))return;readinessChoice=kind;render();document.querySelector(`[data-readiness="choose"][data-kind="${kind}"]`)?.focus({preventScroll:true});return;
+ }
+ if(action==='apply'){applyReadiness(readinessChoice);return;}
+ if(action==='reset'){applyReadiness('ready');return;}
+ if(action==='cancel'){readinessChoice=null;render();document.querySelector('.readiness-check>summary')?.focus({preventScroll:true});}
+}
+function lightSessionItem(t,lvl=lvlOf(t)){
+ return focusRun?.items.find(x=>x.mode==='light'&&x.id===t.id&&x.key===keyOf(t,lvl))||null;
+}
+function sessionGoals(t,lvl,st){return lightSessionItem(t,lvl)?.goals||goals(t,lvl,st);}
+
 function focusView(plan,top,more,recent){
   const r=ensureFocus(plan),x=focusItem(),t=x&&findTrack(x.id),st=t&&spec(t),timed=st&&isSec(st[4]);
   const runningHold=hold?.focus&&hold.tid===x?.id;
   document.body.classList.toggle('focus-timing',r.phase==='rest'||!!runningHold);
   const saved=r.items.filter(x=>x.entry).length;
-  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.items.length} exercises${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
+  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.items.length} ${r.items.length===1?'exercise':'exercises'}${r.readiness?.kind==='low'?' · Lighter day':r.readiness?.kind==='short'?' · Short workout':''}${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${r.readiness?.kind==='short'?'Short workout':minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
+  html+=readinessView();
   const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
   if(away>=7)html+=`<p class="focus-next">Welcome back. Targets repeat your last results within the exercise range, so ease back in.</p>`;
   if(!t){return html+`<section class="focus-stage"><div class="focus-rest"><h2>All caught up.</h2><p class="focus-next">Nothing due here. Rest, or choose another workout.</p></div></section></div>`+sheet();}
@@ -1392,7 +1479,7 @@ function focusView(plan,top,more,recent){
   if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="focus-next finish-totals">${r.items.length} exercises · ${r.items.reduce((n,x)=>n+x.values.length,0)} sets saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
-  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} exercises</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(spec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
   if(more.length)html+=`<button class="fold" data-ui="more" aria-expanded="${showMore}">More exercises <span>${more.length}</span></button>${showMore?'<p class="label">Try something new</p>'+more.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'plan')).join(''):''}`;
@@ -1445,17 +1532,17 @@ function fullCard(t, first){
   const lvl=lvlOf(t), st=spec(t,lvl), timed=isSec(st[4]);
   const last=lastFor(t.id);
   const advice=progression(t,lvl,st);
-  const canUp = advice.kind==='up';
+  const canUp = !lightSessionItem(t,lvl)&&advice.kind==='up';
   const tooHard = advice.kind==='down';
   const lastStep = last ? stepByKey(last.k) : null;
-  const g=goals(t,lvl,st), d=drafts[t.id] || g.map(String), rest=restOf(t,st);
+  const g=sessionGoals(t,lvl,st), d=drafts[t.id] || g.map(String), rest=restOf(t,st);
   const hn = holdNext[t.id] ?? 0;
   const cols = st[1]===4 ? 2 : Math.min(st[1],3);
   const checked=completedSets[t.id]||new Set();
   const activeSet=Array.from({length:st[1]},(_,i)=>i).find(i=>!checked.has(i));
   return `<section class="card${first?" first":""}" id="card-${t.id}">
     <div class="track-head"><div><div class="label">${first?`<span class="next">Current</span> · `:""}${esc(t.name)}${t.steps.length<2?"":` · step ${lvl+1}/${t.steps.length}`}</div>${t.steps.length<2?"":rungs(t,lvl)}</div>
-      <span class="target">${targetText(st)}</span>${first?"":`<button class="icon" data-act="close" data-t="${t.id}" aria-label="Close ${esc(t.name)}">✕</button>`}</div>
+      <span class="target">${lightSessionItem(t,lvl)?'Lighter targets today':targetText(st)}</span>${first?"":`<button class="icon" data-act="close" data-t="${t.id}" aria-label="Close ${esc(t.name)}">✕</button>`}</div>
     <div class="move workout-title"><div class="move-text"><h2 class="step-name" tabindex="-1">${esc(st[0])}</h2><p class="cue">${esc(st[5])}${st[6]!=="None"?` <span class="gear">Needs: ${esc(st[6])}</span>`:""}</p></div></div>
     <p class="set-progress" role="status">${checked.size} of ${st[1]} sets marked done${activeSet===undefined?" · Ready to save":""}</p>
     ${timed && hn<st[1] ? `<button class="holdbtn" data-act="hold" data-t="${t.id}">▶ Start hold · set ${hn+1} of ${st[1]} · goal ${g[hn]}s</button>` : ""}
@@ -1689,7 +1776,7 @@ function viewHistory(){
   }).join('');
   const recent=days.slice(0,14).map(({date,entries})=>`<div class="hist-day"><span class="d">${fmtDate(date)}</span>${[...entries].sort((a,b)=>b.ts-a.ts).map(e=>{
     const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
-    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):'Removed exercise'}: ${e.sets.join(' · ')}${f?unit(f.st[4]):''}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
+    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}">${tm} · ${f?esc(f.st[0]):'Removed exercise'}: ${e.sets.join(' · ')}${f?unit(f.st[4]):''}${e.mode==='light'?' · Lighter day':''}</button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
   return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">A best appears when you exceed a previous total. Your first result sets the baseline.</p>'}</section>
@@ -1866,6 +1953,7 @@ $("#view").addEventListener("change",e=>{
   const n=$("#rCount"); if(n) n.textContent=editing.items.size;
 });
 $("#view").addEventListener("click",e=>{
+  const readinessButton=e.target.closest("[data-readiness]");if(readinessButton){handleReadiness(readinessButton);return;}
   const coachButton=e.target.closest("[data-coach]");if(coachButton){handleCoach(coachButton);return;}
   const focusButton=e.target.closest("[data-focus]"); if(focusButton){handleFocus(focusButton);return;}
   // whole-page controls
@@ -1936,7 +2024,7 @@ $("#view").addEventListener("click",e=>{
     render(); document.querySelector(`[data-act="complete"][data-t="${t.id}"][data-i="${i}"]`)?.focus({preventScroll:true}); return;
   }
   if(act==="inc"||act==="dec"){
-    const g=goals(t,lvl,st); drafts[t.id]=drafts[t.id]||g.map(String);
+    const g=sessionGoals(t,lvl,st); drafts[t.id]=drafts[t.id]||g.map(String);
     const i=+b.dataset.i;
     drafts[t.id][i]=String(Math.max(0,(parseInt(drafts[t.id][i],10)||0)+(act==="inc"?stepInc(st):-stepInc(st))));
     const inp=document.getElementById(`in-${t.id}-${i}`); inp.value=drafts[t.id][i]; inp.classList.toggle("hit",+inp.value>=g[i]); return; }
@@ -1979,7 +2067,7 @@ function startRest(sec){
 }
 function startHold(t, side){
   primeAudio();
-  const lvl=lvlOf(t), st=spec(t,lvl), i=holdNext[t.id]??0, g=goals(t,lvl,st)[i];
+  const lvl=lvlOf(t), st=spec(t,lvl), i=holdNext[t.id]??0, g=sessionGoals(t,lvl,st)[i];
   const sides = st[4].includes("each") ? 2 : 1;
   hold={tid:t.id, i, goal:g, start:Date.now()+3000, side:side||1, sides, first:hold?.first}; buzzed=false;
   const label = `Set ${i+1}${sides>1?` · side ${hold.side}`:""}`;
