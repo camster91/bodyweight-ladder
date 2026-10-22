@@ -29,8 +29,8 @@ pass('readiness previews stay in options and applying returns to the active work
 pass('manual editor disclosures survive a rerender inside the sheet',()=>{
  click('#workoutToolsButton');d.querySelector('.focus-advanced').open=true;click('[data-act="complete"][data-t="push"][data-i="0"]');assert(d.querySelector('#workoutTools').open);assert.equal(d.querySelector('.focus-workout').tagName,'SECTION');assert(d.querySelector('.focus-advanced').open);click('[data-act="complete"][data-t="push"][data-i="0"]');click('[data-ui="workouttoolsclose"]');
 });
-pass('rest controls remain available in options and return to the main timer',()=>{
- click('[data-focus="complete"]');assert.equal(w.eval('focusRun.phase'),'rest');assert(d.querySelector('#workoutTools [data-focus="undo"]'));click('#workoutToolsButton');click('[data-focus="undo"]');assert(!d.querySelector('#workoutTools').open);assert.equal(w.eval('focusRun.phase'),'work');assert.equal(w.eval('focusItem().values.length'),0);
+pass('rest controls are directly available without opening options',()=>{
+ click('[data-focus="complete"]');assert.equal(w.eval('focusRun.phase'),'rest');assert(d.querySelector('.rest-quick-actions [data-focus="undo"]'));assert(d.querySelector('.rest-quick-actions [data-focus="add"]'));assert(!d.querySelector('#workoutTools [data-focus="undo"]'));click('[data-focus="undo"]');assert(!d.querySelector('#workoutTools').open);assert.equal(w.eval('focusRun.phase'),'work');assert.equal(w.eval('focusItem().values.length'),0);
 });
 pass('cancel restores focus and changing tabs clears the modal state',()=>{
  click('#workoutToolsButton');d.querySelector('#workoutTools').dispatchEvent(new w.Event('cancel',{cancelable:true}));assert(!d.querySelector('#workoutTools').open);assert.equal(d.activeElement.id,'workoutToolsButton');click('#workoutToolsButton');click('#tab-ladders');assert.equal(w.eval('workoutToolsOpen'),false);assert(!d.body.classList.contains('workout-tools-open'));
