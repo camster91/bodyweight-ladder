@@ -36,7 +36,7 @@ const ids=d=>[...d.querySelectorAll('#view .card[id], #view .mini')].map(e=>e.id
   // setup
   w=boot(null); await sleep(50); d=w.document;
   ok(d.querySelector('.setup'),'new user sees setup');
-  d.querySelector('[data-ui=stog][data-v=Mobility]').click(); d.querySelector('[data-ui=stog][data-v=new]').click(); d.querySelector('[data-ui=finish]').click();
+  d.querySelector('[data-ui=onext]').click();d.querySelector('[data-ui=stog][data-v=Mobility]').click();d.querySelector('[data-ui=onext]').click();d.querySelector('[data-ui=onext]').click();d.querySelector('[data-ui=stog][data-v=new]').click();d.querySelector('[data-ui=onext]').click();d.querySelector('[data-ui=finish]').click();
   let st=JSON.parse(w.localStorage.getItem('bwl-state'));
   ok(st.prefs.hidden.frog && st.prefs.hidden.pull && st.prefs.hidden.carry && !st.prefs.hidden.push,'setup hides unchosen types, bar-only and weights');
   ok(st.levels.push==='push:incline-push-up','beginner starts at incline push-up');

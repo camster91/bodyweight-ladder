@@ -437,6 +437,61 @@ nav button[aria-current="true"]{border:0;background:var(--chip);color:var(--acce
 @media(min-width:700px){.progress-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}}
 @media(max-width:420px){.progress-exercises .prow{flex-wrap:wrap;gap:12px}.progress-exercises .prow>.mini-t{flex:1 0 100%}.progress-exercises .spark{width:100%;max-width:220px;height:44px}}
 
+/* A focused introduction with one question on each screen. */
+body.in-setup{background:var(--surface)}
+body.in-setup .wrap{max-width:600px;padding:24px 24px 28px;margin:0 auto}
+body.in-setup header.top,body.in-setup #saveNote{display:none}
+.setup.onboard{gap:0;padding:0;min-height:calc(100svh - 52px)}
+.onboard-meta{display:flex;justify-content:space-between;gap:16px;font-size:12px;color:var(--muted);margin-bottom:24px}
+.onboard-progress{display:flex;gap:6px;margin-bottom:32px}
+.onboard-progress span{height:3px;flex:1;border-radius:3px;background:var(--line)}
+.onboard-progress .on{background:var(--accent)}
+.onboard-symbol{width:100px;height:100px;color:var(--accent);margin:30px 0 32px}
+.onboard-symbol svg{display:block;width:100%;height:100%;stroke:currentColor;stroke-width:3;stroke-linecap:round}
+.onboard-heading h2{font-size:clamp(30px,7.6vw,42px);line-height:1.12;letter-spacing:-1.4px;margin:0 0 16px;max-width:17ch}
+.onboard-heading h2:focus{outline:none}
+.onboard-heading p{font-size:15px;color:var(--muted);line-height:1.6;margin:0 0 28px;max-width:40ch}
+.onboard-preview{display:flex;flex-direction:column;gap:0;counter-reset:setup;max-width:340px;margin-bottom:32px}
+.onboard-preview span{display:flex;align-items:center;gap:14px;padding:13px 0;font-size:14px;border-bottom:1px solid var(--line)}
+.onboard-preview span::before{counter-increment:setup;content:counter(setup);color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.onboard-options{display:flex;flex-direction:column;gap:10px}
+.onboard-choice{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);min-height:70px}
+.onboard-choice>span:first-child{min-width:0}
+.onboard-choice b{display:block;font-size:15px;font-weight:600;line-height:1.4}
+.onboard-choice small{display:block;font-size:12px;font-weight:400;color:var(--muted);line-height:1.5;margin-top:3px}
+.onboard-choice[aria-pressed="true"]{border-color:var(--accent)}
+.onboard-select{width:22px;height:22px;flex:0 0 22px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center}
+.onboard-select svg{width:18px;height:18px;fill:none;stroke:var(--accent-ink);stroke-width:2;opacity:0}
+.onboard-choice[aria-pressed="true"] .onboard-select{background:var(--accent);border-color:var(--accent)}
+.onboard-choice[aria-pressed="true"] .onboard-select svg{opacity:1}
+.onboard-actions{display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:6px;margin-top:auto;padding-top:24px}
+.onboard-actions .primary{grid-column:2;min-height:54px;border-radius:14px;font-size:16px;width:100%}
+.onboard-actions .primary:first-child{grid-column:1 / -1}
+.onboard-back{grid-column:1;min-height:48px;padding:8px 12px;background:none;color:var(--muted);border:0}
+.onboard-skip{grid-column:1 / -1;background:none;color:var(--muted);border:0;min-height:44px;font-size:13px}
+.onboard-footnote{font-size:12px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+.onboard>p.onboard-footnote:last-child{text-align:center}
+.onboard-review{margin:0 0 16px}
+.onboard-review>div{position:relative;border-top:1px solid var(--line);padding:18px 52px 18px 0}
+.onboard-review dt{font-size:12px;color:var(--muted);margin-bottom:6px}
+.onboard-review dd{font-size:15px;line-height:1.5;margin:0}
+.onboard-review button{position:absolute;top:18px;right:0;background:none;border:0;color:var(--accent);font-size:13px;min-height:44px;padding:0 4px}
+.onboard-error{font-size:13px;line-height:1.5;color:var(--bad);margin:12px 0 0}
+.onboard-error:empty{display:none}
+@media(min-width:700px){body.in-setup .wrap{padding-top:40px}.setup.onboard{min-height:min(820px,calc(100svh - 80px))}.onboard-symbol{margin-top:54px}.onboard-heading{margin-top:12px}}
+@media(prefers-reduced-motion:no-preference){
+ .onboard-enter .onboard-heading,.onboard-enter .onboard-options,.onboard-enter .onboard-review{animation:onboard-next .32s cubic-bezier(.22,1,.36,1) both}
+ .onboard-enter .onboard-options,.onboard-enter .onboard-review{animation-delay:.06s}
+ .onboard-enter.onboard-reverse .onboard-heading,.onboard-enter.onboard-reverse .onboard-options,.onboard-enter.onboard-reverse .onboard-review{animation-name:onboard-back}
+ .onboard[data-step="0"] .onboard-rung{animation:onboard-rung .45s cubic-bezier(.22,1,.36,1) both;transform-origin:30px center}
+ .onboard .rung-two{animation-delay:.09s}.onboard .rung-three{animation-delay:.18s}
+ .onboard-choice{transition:border-color .15s,transform .1s cubic-bezier(.4,0,.2,1)}
+ .onboard-choice:active{transform:scale(.99)}
+ @keyframes onboard-next{from{opacity:.45;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+ @keyframes onboard-back{from{opacity:.45;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+ @keyframes onboard-rung{from{opacity:0;transform:scaleX(.2)}to{opacity:1;transform:scaleX(1)}}
+}
+
 /* Focus: one decision at a time. The full editor stays behind a disclosure. */
 body[data-view="today"]{background:var(--surface)}
 body[data-view="today"] .top{margin-bottom:0}
@@ -1373,26 +1428,38 @@ function viewHistory(){
 
 /* ---------- first-time setup ---------- */
 const GEAR=[["bar","Pull-up bar"],["weights","Weights (jug, kettlebell)"]];
-function viewSetup(){
-  const redo = state.prefs.setupDone || state.log.length>0;
-  const d=setupDraft || (setupDraft = redo ? {
-      groups:new Set(["Strength","Tendon","Mobility","Stretch","Weights"].filter(g=>TRACKS.some(t=>groupOf(t)===g&&!isHidden(t.id)))),
-      gear:new Set([...(!isHidden("pull")?["bar"]:[]), ...(TRACKS.some(t=>groupOf(t)==="Weights"&&!isHidden(t.id))?["weights"]:[])]),
-      level:"keep"}
-    : {groups:new Set(["Strength","Tendon","Mobility","Stretch"]), gear:new Set(), level:"some"});
-  const tog=(kind,val,label)=>`<button class="tog" data-ui="stog" data-kind="${kind}" data-v="${val}" aria-pressed="${kind==="level"?d.level===val:d[kind].has(val)}">${label}</button>`;
-  return `<div class="setup">
-    <div class="setup-intro"><span class="label">Bodyweight Ladder</span><h2>Plan your workout.</h2><p class="cue">Choose your focus, equipment and starting level. Change these anytime.</p></div>
-    <div class="label sect">1. What do you want to train?</div>
-    <div class="togs">${tog("groups","Strength","Strength")}${tog("groups","Tendon","Tendons &amp; joints")}${tog("groups","Mobility","Mobility")}${tog("groups","Stretch","Stretching")}${tog("groups","Weights","Carries &amp; swings")}</div>
-    <div class="label sect">2. What do you have? (Most moves need only a wall, a chair or the floor.)</div>
-    <div class="togs">${GEAR.map(([v,l])=>tog("gear",v,l)).join("")}</div>
-    <div class="label sect">3. Where are you starting?</div>
-    <div class="togs col">${redo?tog("level","keep","Keep my current steps"):""}${tog("level","new","New to this · start easy")}${tog("level","some","Some experience")}${tog("level","strong","Already strong · start further up")}</div>
-    ${redo?`<p class="muted">Exercises you've already logged keep their step either way.</p>`:""}
-    <div class="sticky-actions"><button class="ghost" data-ui="skip">Skip</button><button class="primary" data-ui="finish">Start training</button></div>
-  </div>`;
+const SETUP_GROUPS=[['Strength','Strength','Push, pull and build control.'],['Tendon','Tendons & joints','Controlled strength for smaller movements.'],['Mobility','Mobility','Move through a wider range.'],['Stretch','Stretching','Make room to move.'],['Weights','Carries & swings','Add weight to your training.']];
+let setupStage=0,setupError='';
+function saveSetupDraft(){if(state.prefs.setupDone||state.log.length)return;store.set('bwl-onboarding',JSON.stringify({v:1,stage:setupStage,groups:[...setupDraft.groups],gear:[...setupDraft.gear],level:setupDraft.level}));}
+function clearSetupDraft(){store.set('bwl-onboarding','null');setupDraft=null;setupStage=0;setupError='';}
+function setupHasExercises(){return TRACKS.some(t=>setupDraft.groups.has(groupOf(t))&&(setupDraft.gear.has('weights')||groupOf(t)!=='Weights')&&(setupDraft.gear.has('bar')||!['pull','hang'].includes(t.id)));}
+function setupMove(stage){
+  if(stage>setupStage&&setupStage===1&&!setupDraft.groups.size){setupError='Choose at least one focus to continue.';render();$('#setupError')?.focus();return;}
+  if(stage>setupStage&&setupStage===2&&!setupHasExercises()){setupError='Carries and swings need weights. Choose weights, or go back and add another focus.';render();$('#setupError')?.focus();return;}
+  setupStage=Math.max(0,Math.min(4,stage));setupError='';saveSetupDraft();render();window.scrollTo(0,0);$('#setupTitle')?.focus({preventScroll:true});
 }
+function viewSetup(){
+  const redo=state.prefs.setupDone||state.log.length>0;
+  if(!setupDraft){
+    setupDraft=redo?{groups:new Set(['Strength','Tendon','Mobility','Stretch','Weights'].filter(g=>TRACKS.some(t=>groupOf(t)===g&&!isHidden(t.id)))),gear:new Set([...(!isHidden('pull')?['bar']:[]),...(TRACKS.some(t=>groupOf(t)==='Weights'&&!isHidden(t.id))?['weights']:[])]),level:'keep'}:{groups:new Set(['Strength','Tendon','Mobility','Stretch']),gear:new Set(),level:'some'};
+    setupStage=redo?1:0;setupError='';
+    if(!redo)try{const d=JSON.parse(store.get('bwl-onboarding','null'));if(d?.v===1&&Number.isInteger(d.stage)&&d.stage>=0&&d.stage<=4&&Array.isArray(d.groups)&&d.groups.every(g=>SETUP_GROUPS.some(x=>x[0]===g))&&Array.isArray(d.gear)&&d.gear.every(g=>['bar','weights'].includes(g))&&['new','some','strong'].includes(d.level)){setupDraft={groups:new Set(d.groups),gear:new Set(d.gear),level:d.level};setupStage=d.stage;}}catch(e){}
+  }
+  const d=setupDraft,stage=setupStage;
+  const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
+  const headings=['Your workout.\nOne set at a time.','What would you like to work on?','What do you have available?','Where are you starting?',redo?'Review your changes.':'Ready for your first set.'];
+  const subtitles=['A plan that fits your time, with clear steps as you get stronger.','Choose the areas you want in your workouts.','Most moves use a wall, a chair or the floor. Extra equipment is optional.','Choose a starting point. You can change individual exercises later.','Your plan will use these choices. Change them anytime in Exercises.'];
+  const symbol=`<div class="onboard-symbol" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none"><path class="onboard-rail" d="M30 86V14M70 86V14"/><path class="onboard-rung rung-one" d="M30 70H70"/><path class="onboard-rung rung-two" d="M30 50H70"/><path class="onboard-rung rung-three" d="M30 30H70"/></svg></div>`;
+  let html=`<section class="setup onboard" data-step="${stage}"><div class="onboard-meta"><span>Bodyweight Ladder</span>${stage>0?`<span>${stage<4?'Step '+stage+' of 3':'Review'}</span>`:''}</div>${stage>0?`<div class="onboard-progress" aria-hidden="true">${[1,2,3].map(i=>`<span class="${stage>=i?'on':''}"></span>`).join('')}</div>`:symbol}<div class="onboard-heading"><h2 id="setupTitle" tabindex="-1">${headings[stage].split('\n').map(esc).join('<br>')}</h2><p>${subtitles[stage]}</p></div>`;
+  if(stage===0)html+=`<div class="onboard-preview"><span>Set your focus</span><span>Choose your equipment</span><span>Find your starting point</span></div>`;
+  if(stage===1)html+=`<div class="onboard-options" role="group" aria-label="Training focus">${SETUP_GROUPS.map(([value,label,description])=>choice('groups',value,label,description)).join('')}</div>`;
+  if(stage===2)html+=`<div class="onboard-options" role="group" aria-label="Available equipment">${choice('none','','No extra equipment','A wall, a chair and some floor space.')}${choice('gear','bar','Pull-up bar','Include hanging and pulling movements.')}${choice('gear','weights','Weights','A jug, kettlebell or other suitable weight.')}</div>`;
+  if(stage===3)html+=`<div class="onboard-options" role="group" aria-label="Starting level">${redo?choice('level','keep','Keep my current steps','Use the exercise levels I have now.'):''}${choice('level','new','New to this','Start with easier variations.')}${choice('level','some','Some experience','Use the standard starting steps.')}${choice('level','strong','Already training','Begin further along the exercise ladders.')}</div>${redo?'<p class="onboard-footnote">Exercises you have already logged keep their current step.</p>':''}`;
+  if(stage===4){const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
+  html+=`<p id="setupError" class="onboard-error" role="alert" tabindex="-1">${esc(setupError)}</p><div class="onboard-actions">${stage>0?'<button class="onboard-back" data-ui="oback">Back</button>':''}<button class="primary" data-ui="${stage===4?'finish':'onext'}">${stage===0?'Set up my workout':stage===4?(redo?'Save changes':'Start my workout'):'Continue'}</button><button class="onboard-skip" data-ui="skip">${redo?'Cancel':'Set up later'}</button></div><p class="onboard-footnote">${redo?'Your saved workouts stay with you.':'No account required. Progress saves in this browser.'}</p></section>`;
+  return html;
+}
+
 const START = {
   new:   {push:1,dip:0,pull:0,row:0,squat:0,core:1,hinge:0},
   some:  {},
@@ -1411,10 +1478,10 @@ function finishSetup(skip){
     const used=new Set(state.log.map(e=>e.t));
     for(const [id,i] of Object.entries(START[d.level]||{})){ const t=findTrack(id); if(t && !used.has(id)) state.levels[id]=keyOf(t,Math.min(i,t.steps.length-1)); }
   }
-  state.prefs.setupDone=true; setupDraft=null; setupWanted=false; tab="today"; filter="All"; store.set("bwl-filter","All");
+  state.prefs.setupDone=true; clearSetupDraft(); setupWanted=false; tab="today"; filter="All"; store.set("bwl-filter","All");
   // If your account hasn't loaded, these answers only fill gaps and never replace saved settings
   commit(sync!=="ok" && sync!=="local"); render(); window.scrollTo(0,0);
-  if(!skip) toast("You're set. Here's your first plan.");
+  if(!skip){$("#focusAnnouncement").textContent="Your workout is ready.";const h=$(".focus-stage h2");if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
 }
 
 function render(){
@@ -1430,9 +1497,12 @@ function render(){
   document.body.dataset.view=tab;
   $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"Progress",setup:"Welcome"}[tab];
   const logDisclosure=$("#progressLog");if(logDisclosure)progressLogOpen=logDisclosure.open;
+  const previousOnboard=$(".onboard")?.dataset.step;
   const previousStage=$(".focus-stage")?.dataset.stage;
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
+  const onboarding=$(".onboard");if(onboarding&&previousOnboard!==undefined&&onboarding.dataset.step!==previousOnboard){onboarding.classList.add("onboard-enter");if(+onboarding.dataset.step<+previousOnboard)onboarding.classList.add("onboard-reverse");}
+  if(previousOnboard!==undefined&&stage)stage.classList.add("focus-enter");
   const number=$("#focusValue");if(number)number.dataset.wide=String(focusValue()>=1000);
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
@@ -1499,9 +1569,13 @@ $("#view").addEventListener("click",e=>{
     if(a==="done"){ showDone=!showDone; render(); return; }
     if(a==="ex"){ const id=u.dataset.t; expandedEx.has(id)?expandedEx.delete(id):expandedEx.add(id); confirmDel=null; render(); return; }
     if(a==="setup"){ setupDraft=null; setupWanted=true; go("setup"); return; }
-    if(a==="stog"){ const k=u.dataset.kind, v=u.dataset.v; if(k==="level") setupDraft.level=v; else setupDraft[k].has(v)?setupDraft[k].delete(v):setupDraft[k].add(v); render(); return; }
-    if(a==="finish"){ if(!setupDraft.groups.size){ toast("Pick at least one thing to train"); return; } finishSetup(false); return; }
-    if(a==="skip"){ finishSetup(true); return; }
+    if(a==="onext"){setupMove(setupStage+1);return;}
+    if(a==="oback"){setupMove(setupStage-1);return;}
+    if(a==="oedit"){setupMove(+u.dataset.step);return;}
+    if(a==="onone"){setupDraft.gear.clear();setupError="";saveSetupDraft();render();document.querySelector('[data-ui="onone"]')?.focus({preventScroll:true});return;}
+    if(a==="stog"){ const k=u.dataset.kind,v=u.dataset.v;if(k==="level")setupDraft.level=v;else setupDraft[k].has(v)?setupDraft[k].delete(v):setupDraft[k].add(v);setupError="";saveSetupDraft();render();document.querySelector(`[data-ui="stog"][data-kind="${k}"][data-v="${v}"]`)?.focus({preventScroll:true});return; }
+    if(a==="finish"){if(setupStage!==4)return;if(!setupDraft.groups.size||!setupHasExercises()){setupStage=!setupDraft.groups.size?1:2;setupError="Choose a focus and matching equipment before continuing.";render();return;}finishSetup(false);return;}
+    if(a==="skip"){if(state.prefs.setupDone||state.log.length){setupDraft=null;setupStage=0;setupError="";setupWanted=false;go("today");}else finishSetup(true);return;}
     if(a==="gotoday"){ go("today"); return; }
     if(a==="forcesetup"){ setupWanted=true; go("setup"); return; }
     if(a==="selentry"){ const id=u.dataset.id; confirmDel = confirmDel==="e:"+id ? null : "e:"+id; render(); return; }
