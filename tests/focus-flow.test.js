@@ -17,14 +17,24 @@ try{
  const before=run(w).restEnd;click(w,'[data-focus=add]');assert.equal(run(w).restEnd,before+30000);
  click(w,'[data-focus=undo]');assert.equal(run(w).phase,'work');assert.equal(run(w).items[0].values.length,0);assert.equal(+d.querySelector('#focusValue').textContent,reps);
  console.log('PASS set completion starts rest without saving a full exercise; adding time and Undo work');
+ const ring=boot();click(ring,'[data-focus=complete]');assert.equal(ring.document.querySelector('#focusSaved').textContent,'');
+ ring.eval('focusRun.restDuration=90;focusRun.restEnd=restEnd=Date.now()+45000;persistFocus();tick()');
+ const arc=()=>+ring.document.querySelector('#focusArc').getAttribute('stroke-dashoffset');assert(Math.abs(arc()-50)<.1);
+ const resumedRing=boot(storage(ring));assert(Math.abs(+resumedRing.document.querySelector('#focusArc').getAttribute('stroke-dashoffset')-50)<1);
+ click(ring,'[data-focus=add]');assert.equal(run(ring).restDuration,120);assert(Math.abs(arc()-37.5)<.1);
+ click(ring,'#tab-history');click(ring,'#timer [data-tm=add]');assert.equal(run(ring).restDuration,150);click(ring,'#tab-today');assert(Math.abs(arc()-30)<.1);
+ console.log('PASS countdown ring tracks elapsed rest, survives refresh, and handles both add-time controls');
  click(w,'[data-focus=complete]');const saved=storage(w);w.close();w=boot(saved);d=w.document;
  assert.equal(run(w).phase,'rest');assert.equal(run(w).items[0].values[0],reps);assert(!d.querySelector('#timer').hidden);click(w,'[data-focus=skip]');assert.equal(d.querySelector('.focus-eyebrow').textContent,'Set 2 of 3');
  console.log('PASS refresh resumes partial sets and the real rest deadline');
  click(w,'[data-focus=complete]');click(w,'[data-focus=skip]');click(w,'[data-focus=complete]');
  assert.equal(log(w).length,1);assert.equal(run(w).items[0].entry,log(w)[0].ts+'|'+initial[0]);assert.deepEqual(run(w).items.map(x=>x.id),initial);assert.equal(run(w).at,1);
+ assert(d.querySelector('#focusSaved').textContent.includes('Push-up saved'));assert.equal(d.querySelector('#focusAnnouncement').textContent,'Push-up saved');assert.equal(d.querySelector('#focusAnnouncement').getAttribute('role'),'status');
+ console.log('PASS only a saved exercise gets the quiet accessible confirmation');
  // A second completion call during rest cannot write another entry.
  w.eval('completeFocus()');assert.equal(log(w).length,1);
  click(w,'[data-focus=undo]');assert.equal(log(w).length,0);assert.equal(run(w).at,0);assert.equal(run(w).items[0].values.length,2);assert.equal(run(w).phase,'work');
+ assert.equal(d.querySelector('#focusSaved').textContent,'');
  click(w,'[data-focus=complete]');assert.equal(log(w).length,1);assert.notEqual(log(w)[0].ts,JSON.parse(saved['bwl-state']).log[0]?.ts);
  console.log('PASS final set saves once, advances a frozen plan, and Undo removes that saved entry');
  // Timed and unilateral work uses the existing elapsed-time and weaker-side rules.

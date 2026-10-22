@@ -406,7 +406,7 @@ body[data-view="today"] #saveNote{font-size:11px;margin-top:20px}
 .focus-meta summary{color:var(--accent);cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:flex-end}
 .focus-meta>span{flex:1}.focus-edit .planbar{padding:12px 0;margin:0;flex-direction:column;align-items:stretch}
 .focus-edit[open]{position:relative}.focus-edit[open] .planbar{position:absolute;right:0;top:44px;width:min(340px,calc(100vw - 40px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px #0002;padding:20px;z-index:8}
-.focus-stage{min-height:min(590px,calc(100svh - 245px));display:flex;flex-direction:column;text-align:center;padding-top:42px}
+.focus-stage{position:relative;min-height:min(590px,calc(100svh - 245px));display:flex;flex-direction:column;text-align:center;padding-top:42px}
 .focus-stage h2{font-size:clamp(28px,7vw,38px);line-height:1.15;letter-spacing:-1.2px;margin:0}
 .focus-eyebrow{font-size:14px;color:var(--muted);margin:0 0 14px}
 .focus-target{font-size:15px;color:var(--muted);margin:12px 0 0}
@@ -420,7 +420,16 @@ body[data-view="today"] #saveNote{font-size:11px;margin-top:20px}
 .focus-actions .primary{width:100%;min-height:56px;border-radius:16px;font-size:17px}
 .focus-rest{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:12px 0}
 .focus-clock{font-size:clamp(60px,18vw,88px);letter-spacing:-4px;font-variant-numeric:tabular-nums;line-height:1.1;font-weight:500}
-.focus-ring{width:224px;height:224px;display:grid;place-items:center;border:5px solid var(--line);border-top-color:var(--accent);border-right-color:var(--accent);border-radius:50%}
+.focus-ring{position:relative;width:224px;height:224px;display:grid;place-items:center}
+.focus-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);pointer-events:none}
+.focus-ring circle{fill:none;stroke:var(--line);stroke-width:2.2}
+.focus-ring .focus-arc{stroke:var(--accent);stroke-linecap:round}
+.focus-saved{position:absolute;top:4px;left:0;right:0;margin:0;font-size:13px;line-height:18px;color:var(--good);pointer-events:none}
+@media(prefers-reduced-motion:no-preference){
+  .focus-enter{animation:focus-arrive .18s ease-out}
+  .focus-arc{transition:stroke-dashoffset .25s linear}
+  @keyframes focus-arrive{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+}
 .focus-next{font-size:14px;line-height:1.7;color:var(--muted);margin:0}.focus-next strong{display:block;font-weight:500;color:var(--ink)}
 .focus-check{font-size:48px;color:var(--good);line-height:1}
 .focus-workout{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}.focus-workout>summary,.focus-advanced>summary{cursor:pointer;font-size:14px;color:var(--muted);padding:14px 0;min-height:48px}
@@ -449,6 +458,7 @@ body.focus-timing #timer{display:none}body.focus-timing{padding-bottom:0}
 </div></nav>
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button id="toastUndo" hidden>Undo</button></div>
 <div class="timer" id="timer" hidden role="timer"></div>
+<p class="sr" id="focusAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
 
 <script>
 // [name, sets, minReps, maxReps, unit, cue, gear]
@@ -914,9 +924,15 @@ const holdNext={};            // trackId -> next set to time
 let setupDraft=null, routinesOpen=false, setupWanted=false, exQuery="";
 
 // Unfinished sessions belong to this browser. Completed exercises use the existing log/sync.
-let focusRun=null, focusUndo=null;
+let focusRun=null, focusUndo=null, focusNotice=null, focusNoticeTimer=null;
 try{const r=JSON.parse(store.get('bwl-focus','null'));if(r?.v===1&&Array.isArray(r.items)&&r.items.length<=100)focusRun=r;}catch(e){}
 function persistFocus(){store.set('bwl-focus',JSON.stringify(focusRun));}
+function clearFocusNotice(){clearTimeout(focusNoticeTimer);focusNotice=null;const el=$('#focusSaved');if(el)el.textContent='';$('#focusAnnouncement').textContent='';}
+function showFocusSaved(name){
+  clearFocusNotice();focusNotice={text:name+' saved',until:Date.now()+3500};
+  $('#focusAnnouncement').textContent=focusNotice.text;
+  focusNoticeTimer=setTimeout(clearFocusNotice,3500);
+}
 function focusSignature(){return JSON.stringify([new Date().toDateString(),filter,minutes,state.levels,state.prefs.sets,state.prefs.hidden,state.routines]);}
 function ensureFocus(plan){
   const signature=focusSignature();
@@ -924,6 +940,7 @@ function ensureFocus(plan){
     const t=x&&findTrack(x.id);return t&&x.key===keyOf(t,lvlOf(t))&&Array.isArray(x.values)&&Array.isArray(x.goals)&&x.goals.length===spec(t)[1]&&x.values.length<=x.goals.length&&[...x.values,...x.goals,...(x.value===undefined?[]:[x.value])].every(v=>Number.isFinite(v)&&v>=0&&v<=9999);
   });
   if(!valid){
+    clearFocusNotice();
     if(hold?.focus||focusRun?.phase==='rest')stopTimer();
     const previous=focusRun?.items||[];
     // Midnight refreshes completed plans, but never drops an exercise already in progress.
@@ -946,13 +963,26 @@ function ensureFocus(plan){
   if(!['work','rest','finished'].includes(focusRun.phase))focusRun.phase='work';
   if(focusRun.phase==='rest'){
     if(!Number.isFinite(focusRun.restEnd)||focusRun.restEnd<=Date.now()||focusRun.restEnd>Date.now()+3600000){focusRun.phase='work';focusRun.restEnd=0;}
-    else if(!restTick){startRest((focusRun.restEnd-Date.now())/1000);}
+    else{
+      const remaining=(focusRun.restEnd-Date.now())/1000;
+      if(!Number.isFinite(focusRun.restDuration)||focusRun.restDuration<=0)focusRun.restDuration=remaining;
+      if(!restTick)startRest(remaining);
+    }
   }
   persistFocus();return focusRun;
 }
 function focusItem(){return focusRun?.items[focusRun.at];}
 function focusValue(){const x=focusItem();return x?.value??x?.goals[x.values.length]??0;}
 function focusTime(s){return Math.floor(s/60)+':'+pad2(s%60);}
+function focusRestOffset(){
+  const left=Math.max(0,(focusRun.restEnd-Date.now())/1000);
+  return 100-Math.min(100,Math.max(0,left/(focusRun.restDuration||left||1)*100));
+}
+function addFocusRest(){
+  const left=Math.max(0,(restEnd-Date.now())/1000);
+  focusRun.restDuration=Math.max(left,focusRun.restDuration||left)+30;
+  restEnd+=30000;focusRun.restEnd=restEnd;persistFocus();tick();
+}
 function focusView(plan,top,more,recent){
   const r=ensureFocus(plan),x=focusItem(),t=x&&findTrack(x.id),st=t&&spec(t),timed=st&&isSec(st[4]);
   const runningHold=hold?.focus&&hold.tid===x?.id;
@@ -962,9 +992,10 @@ function focusView(plan,top,more,recent){
   const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
   if(away>=7)html+=`<p class="focus-next">Welcome back. Goals match your last numbers today, so ease back in.</p>`;
   if(!t){return html+`<section class="focus-stage"><div class="focus-rest"><h2>All caught up.</h2><p class="focus-next">Nothing due here. Rest, or choose another workout.</p></div></section></div>`+sheet();}
-  html+=`<section class="focus-stage" aria-label="Current set">`;
+  const stageKey=[r.phase,r.at,x.values.length,runningHold?'hold-'+hold.side:'work'].join(':');
+  html+=`<section class="focus-stage" data-stage="${stageKey}" aria-label="Current set"><p class="focus-saved" id="focusSaved" aria-hidden="true">${focusNotice&&focusNotice.until>Date.now()?esc(focusNotice.text)+' ✓':''}</p>`;
   if(r.phase==='finished')html+=`<div class="focus-rest"><span class="focus-check" aria-hidden="true">✓</span><h2>Workout complete.</h2><p class="focus-next">${r.items.length} exercises · ${r.items.reduce((n,x)=>n+x.values.length,0)} sets saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
-  else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
+  else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
   else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
@@ -985,13 +1016,14 @@ function completeFocus(value=focusValue()){
   x.values=vals;delete x.value;focusUndo={before,entry};
   if(!entry){drafts[t.id]=x.goals.map((v,i)=>String(x.values[i]??v));completedSets[t.id]=new Set(x.values.map((_,i)=>i));}
   if(entry){const next=focusRun.items.findIndex(a=>!a.entry);if(next<0)focusRun.phase='finished';else focusRun.at=next;}
-  if(focusRun.phase!=='finished'){focusRun.phase='rest';focusRun.restEnd=Date.now()+restOf(t,st)*1000;startRest(restOf(t,st));}
+  if(entry)showFocusSaved(st[0]);else clearFocusNotice();
+  if(focusRun.phase!=='finished'){focusRun.phase='rest';focusRun.restDuration=restOf(t,st);focusRun.restEnd=Date.now()+focusRun.restDuration*1000;startRest(focusRun.restDuration);}
   persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});
   // The rest/completion screen already confirms the action and keeps Undo available.
   hideToast();
 }
 function undoFocus(){
-  if(!focusUndo)return;stopTimer();const u=focusUndo;focusUndo=null;
+  if(!focusUndo)return;clearFocusNotice();stopTimer();const u=focusUndo;focusUndo=null;
   if(u.entry){state.log=state.log.filter(e=>entryId(e)!==entryId(u.entry));state.deleted=[...state.deleted,entryId(u.entry)].slice(-TOMB_KEEP);commit();}
   focusRun=u.before;focusRun.phase='work';focusRun.restEnd=0;delete drafts[focusItem().id];delete completedSets[focusItem().id];persistFocus();hideToast();render();$('#focusPrimary')?.focus({preventScroll:true});
 }
@@ -1001,7 +1033,7 @@ function handleFocus(b){
   if(a==='another'){stopTimer();focusRun=null;focusUndo=null;persistFocus();render();return;}
   if(a==='undo'){undoFocus();return;}
   if(a==='skip'){resumeFocus();return;}
-  if(a==='add'){restEnd+=30000;focusRun.restEnd=restEnd;persistFocus();tick();return;}
+  if(a==='add'){addFocusRest();return;}
   if(a==='choose'){if(hold){toast('Finish or cancel the running hold first.');return;}stopTimer();focusRun.at=+b.dataset.i;focusRun.phase='work';persistFocus();render();return;}
   if(!t)return;
   if(a==='plus'||a==='minus'){x.value=Math.min(9999,Math.max(0,focusValue()+(a==='plus'?1:-1)*stepInc(spec(t))));persistFocus();$('#focusValue').textContent=x.value;return;}
@@ -1277,7 +1309,9 @@ function render(){
   document.body.classList.toggle("in-setup", tab==="setup");
   document.body.dataset.view=tab;
   $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"Progress",setup:"Welcome"}[tab];
+  const previousStage=$(".focus-stage")?.dataset.stage;
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
+  const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add("focus-enter");
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
@@ -1457,7 +1491,10 @@ function tick(){
   }
   const left=Math.max(0,Math.ceil((restEnd-Date.now())/1000));
   tx.textContent=Math.floor(left/60)+":"+pad2(left%60);
-  if(focusRun?.phase==="rest"){const clock=$("#focusClock");if(clock)clock.textContent=focusTime(left);}
+  if(focusRun?.phase==="rest"){
+    const clock=$("#focusClock");if(clock)clock.textContent=focusTime(left);
+    const arc=$("#focusArc");if(arc)arc.setAttribute("stroke-dashoffset",String(focusRestOffset()));
+  }
   if(left===0){ const focusRest=focusRun?.phase==="rest";stopTimer(); buzz([200,100,200]);if(focusRest)resumeFocus();toast("Rest done. Next set."); }
 }
 function finishHold(){
@@ -1484,7 +1521,7 @@ function stopTimer(){ clearInterval(restTick); restTick=null; hold=null; const e
 $("#timer").addEventListener("click",e=>{
   const b=e.target.closest("[data-tm]"); if(!b) return;
   const a=b.dataset.tm;
-  if(a==="add"){ restEnd+=30000;if(focusRun?.phase==="rest"){focusRun.restEnd=restEnd;persistFocus();} tick(); }
+  if(a==="add"){if(focusRun?.phase==="rest")addFocusRest();else{restEnd+=30000;tick();}}
   if(a==="stop"||a==="cancel"){if(focusRun?.phase==="rest")resumeFocus();else{const focused=hold?.focus;stopTimer();if(focused)render();}}
   if(a==="done") finishHold();
 });

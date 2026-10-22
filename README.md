@@ -6,7 +6,7 @@ A phone-first training app for bodyweight strength, tendon health, mobility and 
 
 ## What it does
 - **Plans your session from the time you have.** Pick 5, 10, 20, 30, 60 min or All. Overdue moves come first, with at most one new move when you already train.
-- **One set at a time.** Adjust the suggested number, then Complete set. Rest fills the screen before the next set. The final set saves the exercise and advances the workout. Undo is available during rest and on the completion screen.
+- **One set at a time.** Adjust the suggested number, then Complete set. Rest fills the screen with a countdown ring before the next set. The final set saves the exercise, briefly confirms the save, and advances the workout. Subtle transitions respect Reduce Motion. Undo is available during rest and on the completion screen.
 - **Details when you need them.** Technique, the workout list, and an editor for all sets stay collapsed. Time and routine choices live under Edit workout. Unfinished sets and rest deadlines resume after refreshing this browser.
 - **Hold timer** for timed moves (3-2-1, counts up, buzz and beep at the goal, both sides for per-side moves) and **rest timer** with each move's own rest.
 - **26 exercises** in groups: Strength (Push, Dip, Pull, Row, Squat, Core, Hinge), Tendon, Mobility, Stretch and Weights, plus your own custom moves.
