@@ -23,6 +23,30 @@ try {
   }
   console.log(`PASS all ${images.length} exercise steps have existing detail images and single-pose thumbnails`);
 
+  const photoSources = JSON.parse(fs.readFileSync(path.join(root, 'assets/exercises/photo-sources.json'), 'utf8'));
+  const credited = new Set(photoSources.map(p => 'assets/exercises/' + p.file));
+  const mapped = dom.window.eval('Object.values(EXERCISE_PHOTOS).concat(Object.values(EXERCISE_FAMILY_PHOTOS))');
+  for (const file of mapped) {
+    assert(credited.has(file), `Uncredited exercise photo: ${file}`);
+    const data = fs.readFileSync(path.join(root, file));
+    assert.equal(data.toString('ascii', 0, 4), 'RIFF');
+    assert.equal(data.toString('ascii', 8, 12), 'WEBP');
+    assert(data.length < 100000, `Oversized thumbnail: ${file}`);
+  }
+  for (const p of photoSources) assert(p.author && p.source.startsWith('https://') && p.license_url.startsWith('https://'));
+  console.log('PASS all exercise photographs have source credits, licenses and compact local WebP assets');
+
+  const libraryPull = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"))'));
+  const workoutPull = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"),2,false)'));
+  assert(libraryPull.querySelector('.is-photo'));
+  assert.equal(workoutPull.querySelector('img').getAttribute('src'), 'img/pull-jump.webp');
+  const workoutPush = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),3,false)'));
+  const inclinePush = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),1,false)'));
+  assert.notEqual(workoutPush.querySelector('img').getAttribute('src'), inclinePush.querySelector('img').getAttribute('src'));
+  assert(!dom.window.eval('exerciseThumbnail({custom:true})').includes('<img'));
+  assert(dom.window.eval('viewLadders()').includes('assets/exercises/credits.html'));
+  console.log('PASS workout images follow the actual variation while library family photos and custom placeholders stay separate');
+
   const card = dom.window.eval('fullCard(TRACKS.find(t=>t.id==="ankle"), true)');
   const fragment = JSDOM.fragment(card);
   assert(fragment.querySelector('.exercise-figure figcaption').textContent.includes('3 sec down'));

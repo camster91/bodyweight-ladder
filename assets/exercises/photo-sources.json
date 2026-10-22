@@ -1,0 +1,159 @@
+[
+  {
+    "author": "Vitaly Gariev",
+    "source": "https://unsplash.com/photos/woman-doing-a-push-up-on-a-yoga-mat-indoors-ChQzCFlNJDE",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "original": "https://images.unsplash.com/photo-1758599878868-52cced2f8154?w=1200&q=90&fit=max",
+    "file": "push-up-photo-v1.webp",
+    "exercise_keys": [
+      "push:push-up",
+      "hold:push-up-bottom-hold"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 18036,
+    "library_family": "push"
+  },
+  {
+    "author": "SUNDAY II SUNDAY",
+    "source": "https://unsplash.com/photos/a-woman-squatting-on-the-floor-in-a-gym-snM3yEpvklU",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "original": "https://images.unsplash.com/photo-1649887974297-4be052375a67?w=1200&q=90&fit=max",
+    "file": "bodyweight-squat-photo-v1.webp",
+    "exercise_keys": [
+      "squat:bodyweight-squat"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 14670,
+    "library_family": "squat"
+  },
+  {
+    "author": "Monika Kab",
+    "source": "https://unsplash.com/photos/a-woman-in-a-black-sports-bra-top-and-leggings-is-sitting-on-a-ir_l5NT00-U",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "original": "https://images.unsplash.com/photo-1638820878820-b0196527e309?w=1200&q=90&fit=max",
+    "file": "straight-leg-bench-dip-photo-v1.webp",
+    "exercise_keys": [
+      "dip:bench-dip-legs-straight"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 82780,
+    "library_family": "dip"
+  },
+  {
+    "author": "Micha\u0142 Parzuchowski",
+    "source": "https://unsplash.com/photos/a-man-standing-on-a-surfboard-in-the-grass-BLOe0XvremI",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "original": "https://images.unsplash.com/photo-1638128839799-4035c03df5f3?w=1200&q=90&fit=max",
+    "file": "hip-flexor-stretch-photo-v1.webp",
+    "exercise_keys": [
+      "hipflex:half-kneeling-hip-flexor-stretch"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 59888,
+    "library_family": null
+  },
+  {
+    "author": "Pam loves pie",
+    "source": "https://commons.wikimedia.org/wiki/File:Push_up_in_the_park.jpg",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Push_up_in_the_park.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "incline-push-up-photo-v1.webp",
+    "exercise_keys": [
+      "push:incline-push-up"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 56594,
+    "library_family": null
+  },
+  {
+    "author": "Nenad Stojkovic",
+    "source": "https://commons.wikimedia.org/wiki/File:Woman_doing_push-up_on_yogi_mat_in_the_forest_with_sunset_background_-_51525476019.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Woman_doing_push-up_on_yogi_mat_in_the_forest_with_sunset_background_-_51525476019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "forearm-plank-photo-v1.webp",
+    "exercise_keys": [
+      "core:plank"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 58846,
+    "library_family": "core"
+  },
+  {
+    "author": "Tyler  Read",
+    "source": "https://commons.wikimedia.org/wiki/File:Girl_exercising_side_plank.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/2/20/Girl_exercising_side_plank.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "side-plank-photo-v1.webp",
+    "exercise_keys": [
+      "core:side-plank"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 52864,
+    "author_url": "https://www.ptpioneer.com/",
+    "library_family": null
+  },
+  {
+    "author": "PTPioneer",
+    "source": "https://commons.wikimedia.org/wiki/File:Girl_doing_pull_up_top_position.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Girl_doing_pull_up_top_position.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "pull-up-photo-v1.webp",
+    "exercise_keys": [
+      "pull:pull-up",
+      "pull:flexed-arm-hang",
+      "pull:negative-pull-up"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 40642,
+    "author_url": "https://www.ptpioneer.com/",
+    "library_family": "pull"
+  },
+  {
+    "author": "Taco fleur",
+    "source": "https://commons.wikimedia.org/wiki/File:Kettlebell_swing_with_arms_fully_extended.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Kettlebell_swing_with_arms_fully_extended.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "kettlebell-swing-photo-v1.webp",
+    "exercise_keys": [
+      "swing:kettlebell-swing"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 30790,
+    "library_family": null
+  },
+  {
+    "author": "Colossus Fitness",
+    "source": "https://commons.wikimedia.org/wiki/File:Inverted_row.jpg",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/8/81/Inverted_row.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "inverted-row-photo-v1.webp",
+    "exercise_keys": [],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 19022,
+    "library_family": "row"
+  },
+  {
+    "author": "Helisusa",
+    "source": "https://commons.wikimedia.org/wiki/File:Pilates-hamstring-stretch.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Pilates-hamstring-stretch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "file": "hamstring-stretch-photo-v1.webp",
+    "exercise_keys": [
+      "hams:contract-relax-hamstring-stretch"
+    ],
+    "changes": "Resized and converted to WebP; no pose changes or AI generation.",
+    "bytes": 39054,
+    "library_family": null
+  }
+]
