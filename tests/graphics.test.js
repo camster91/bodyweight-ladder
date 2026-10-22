@@ -23,8 +23,8 @@ try {
   }
   console.log(`PASS all ${images.length} exercise steps have existing detail images and single-pose thumbnails`);
 
-  const photoSources = JSON.parse(fs.readFileSync(path.join(root, 'assets/exercises/photo-sources.json'), 'utf8'));
-  const credited = new Set(photoSources.map(p => 'assets/exercises/' + p.file));
+  const photoSources = JSON.parse(fs.readFileSync(path.join(root, 'assets/brand/exercises/photo-sources.json'), 'utf8'));
+  const credited = new Set(photoSources.map(p => 'assets/brand/exercises/' + p.file));
   const mapped = dom.window.eval('Object.values(EXERCISE_PHOTOS).concat(Object.values(EXERCISE_FAMILY_PHOTOS))');
   for (const file of mapped) {
     assert(credited.has(file), `Uncredited exercise photo: ${file}`);
@@ -44,7 +44,7 @@ try {
   const inclinePush = JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="push"),1,false)'));
   assert.notEqual(workoutPush.querySelector('img').getAttribute('src'), inclinePush.querySelector('img').getAttribute('src'));
   assert(!dom.window.eval('exerciseThumbnail({custom:true})').includes('<img'));
-  assert(dom.window.eval('viewLadders()').includes('assets/exercises/credits.html'));
+  assert(dom.window.eval('viewLadders()').includes('data-photo-credits'));
   console.log('PASS workout images follow the actual variation while library family photos and custom placeholders stay separate');
 
   const card = dom.window.eval('fullCard(TRACKS.find(t=>t.id==="ankle"), true)');
