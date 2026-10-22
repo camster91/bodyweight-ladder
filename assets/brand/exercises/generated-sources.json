@@ -63,7 +63,7 @@
     "exercise_keys": [
       "curl:towel-curl-hold-at-90"
     ],
-    "name": "Towel curl hold at 90°",
+    "name": "Towel curl hold at 90\u00b0",
     "files": {
       "thumb": "assets/brand/exercises/generated/curl-towel-curl-hold-at-90-v2-thumb.webp",
       "detail": "assets/brand/exercises/generated/curl-towel-curl-hold-at-90-v2-detail.webp"
@@ -72,7 +72,7 @@
     "synthetic": true,
     "subject": "fictional adult athlete",
     "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
-    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Towel curl hold at 90°. Required mechanics: Standing isometric biceps towel curl, three-quarter side view. Athlete stands with both feet pinning CENTER OF ONE LONG TOWEL to floor. Each hand grips one end of same towel, palms facing up; upper arms stay beside ribs, elbows bent about 90 degrees, forearms horizontal. Towel runs taut from under feet to both hands. No weights, no unattached towels. Show full continuous towel and feet.. Equipment: Towel. Preserve the correct points of contact and support; no floating equipment."
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Towel curl hold at 90\u00b0. Required mechanics: Standing isometric biceps towel curl, three-quarter side view. Athlete stands with both feet pinning CENTER OF ONE LONG TOWEL to floor. Each hand grips one end of same towel, palms facing up; upper arms stay beside ribs, elbows bent about 90 degrees, forearms horizontal. Towel runs taut from under feet to both hands. No weights, no unattached towels. Show full continuous towel and feet.. Equipment: Towel. Preserve the correct points of contact and support; no floating equipment."
   },
   {
     "exercise_keys": [
@@ -917,5 +917,112 @@
     "subject": "fictional adult athlete",
     "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
     "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Single-leg pogo hops. Required mechanics: Full-body side-three-quarter view of a SMALL single-leg pogo hop. One leg nearly straight under hips with that forefoot hovering about an inch above floor ready for quiet ball-of-foot landing. Other knee bent with foot lifted behind. Torso upright, arms relaxed for balance. Only one foot is poised to land, no deep jumping squat.. Equipment: None. Preserve the correct points of contact and support; no floating equipment. Fictional adult male athlete."
+  },
+  {
+    "exercise_keys": [
+      "push:push-up"
+    ],
+    "name": "Studio push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-push-up-studio-v3-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/push-up-photo-v1.webp",
+    "brand_reference": "assets/brand/studio-reset-v2-small.webp",
+    "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. Movement: standard full push-up, held near the bottom. Side view. Hands flat just wider than shoulders, fingers naturally spread, elbows bent approximately 90 degrees and angled about 45 degrees from torso. Chest a fist-height above the mat. Legs straight, only toes and palms support the body, head/spine/hips/heels in one straight line. Neither knees nor abdomen touches the mat. Clearly separate both forearms and show anatomically credible weight-bearing hand contact. Keep the floor level.",
+    "source_sha256": "6caf8912091ee85b259f2c66848fc40eb25f9dd3d001464207e648b7b6ef5f8f",
+    "export": "Resized and encoded as WebP; original composition preserved."
+  },
+  {
+    "exercise_keys": [
+      "squat:bodyweight-squat"
+    ],
+    "name": "Studio bodyweight squat",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/squat-bodyweight-squat-studio-v3-thumb.webp",
+      "detail": "assets/brand/exercises/generated/squat-bodyweight-squat-studio-v3-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "brand_reference": "assets/brand/studio-reset-v2-small.webp",
+    "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. Movement: an ordinary bodyweight squat, paused with thighs approximately parallel to the floor. Three-quarter side view, full body centered vertically in the image, feet about shoulder-width and entirely flat on the mint mat, heels down, knees track in the direction of toes, torso naturally inclined with a neutral back, hips moved back, hands gently together in front of chest. No weight or equipment. This is a squat, not a lunge. Athletic but attainable, no exaggerated musculature.",
+    "source_sha256": "64eccb8d06f3a239793c9d887cd2620e25f6dbc1fcdca7b94cbe875a9c33a934",
+    "export": "Resized and encoded as WebP; original composition preserved."
+  },
+  {
+    "exercise_keys": [
+      "core:plank"
+    ],
+    "name": "Studio forearm plank",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-plank-studio-v3-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-plank-studio-v3-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
+    "brand_reference": "assets/brand/studio-reset-v2-small.webp",
+    "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. Movement: a standard forearm plank. Clear full side view with whole body centered vertically in the image and all hands/feet visible. Both elbows are on the mat directly below shoulders; forearms lie on the mat pointing forward and hands relaxed. Legs straight and supported on toes. Hips lifted exactly in line with shoulders and heels; head neutral, gaze down at mat. Knees and abdomen do not touch the mat. Distinct from push-up: body is supported by forearms, not palms. Frame the human tightly enough to read at card size; reduce excess blank wall above the subject.",
+    "source_sha256": "c08f9d146de6d8f39eb755893a7861d64c1469cde78b1148dec9d13a39695a0b",
+    "export": "Resized and encoded as WebP; original composition preserved."
+  },
+  {
+    "exercise_keys": [
+      "core:side-plank"
+    ],
+    "name": "Studio side plank",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/core-side-plank-studio-v3-thumb.webp",
+      "detail": "assets/brand/exercises/generated/core-side-plank-studio-v3-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/side-plank-photo-v1.webp",
+    "brand_reference": "assets/brand/studio-reset-v2-small.webp",
+    "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. Movement: forearm side plank, one complete side-view still. Body straight and side-on to camera; lower elbow and forearm on mat directly under supporting shoulder. Legs fully extended, feet stacked with outer edge of lower foot on mat. Hips lifted, shoulders/hips/ankles in one straight line and hips stacked vertically, upper hand resting on upper hip. Supporting forearm points forward across mat, lower hand relaxed. No knees on floor. All limbs, both feet and all supporting contacts fully visible with comfortable margins. Make the pose unambiguous and anatomically credible.",
+    "source_sha256": "09451ca40c5048ea2f3197556fe347d55e86d7062f68a2cfee1f153194927786",
+    "export": "Resized and encoded as WebP; original composition preserved."
+  },
+  {
+    "exercise_keys": [
+      "dip:bench-dip-legs-straight"
+    ],
+    "name": "Studio straight-leg bench dip",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/dip-bench-dip-legs-straight-studio-v3-thumb.webp",
+      "detail": "assets/brand/exercises/generated/dip-bench-dip-legs-straight-studio-v3-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/straight-leg-bench-dip-photo-v1.webp",
+    "brand_reference": "assets/brand/studio-reset-v2-small.webp",
+    "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. Movement: straight-leg bench dip near the lowered position, clear side/three-quarter camera view. A single sturdy low wood exercise bench stands on the floor behind the woman. Both palms support her on the FRONT EDGE of the bench with fingers wrapping forward over that edge. Her hips are off the bench and close in front of its edge. Elbows bent approximately 90 degrees pointing backward, torso upright. Both legs straight out in front, both heels contact the floor, toes angled upward. Head, entire bench including its floor supports, both hands, legs and both feet are in frame. The woman is not sitting on the bench and is not doing a squat. All supports and load contacts physically credible. No extra equipment.",
+    "source_sha256": "8eb2b0bf39ae90a6c031dae2198f27db1d7567fc85fe41779ba4b854cf1b15f7",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "edit_prompt": "Edit target: this generated studio bench-dip photograph. Preserve the fictional adult woman, cobalt/navy outfit, natural photographic texture, ivory/mint/coral studio, soft daylight and landscape 3:2 framing. Correct the equipment and exercise support ONLY: the athlete must be visibly suspended IN FRONT of the bench, supported only by both hands on the upper front seat edge and both heels on the floor. Remove the wood member currently directly beneath her hips; no bench part or block should touch or appear to support her hips or thighs. Use a simple sturdy flat-seat bench with two outer legs, no central brace under the athlete. Keep both legs straight and heels grounded. Adjust to a clear three-quarter SIDE angle so both bent elbows and both hands gripping the bench edge can be seen. Elbows roughly 90 degrees, torso upright close to bench, hips a little below the bench seat but well clear of equipment. Anatomically realistic shoulders, wrists and fingers; two hands, two arms, two legs, two feet. Whole bench and body in frame with breathing room. No text, arrows, watermark or new props."
+  },
+  {
+    "exercise_keys": [],
+    "name": "Studio recovery header",
+    "files": {
+      "thumb": "assets/brand/studio-recovery-v3-small.webp",
+      "detail": "assets/brand/studio-recovery-v3.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/bodyweight-squat-photo-v1.webp",
+    "brand_reference": "assets/brand/studio-reset-v2-small.webp",
+    "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. This asset is a lifestyle RECOVERY HEADER, not an exercise-technique guide. One fictional adult athlete sits upright on the front edge of a low pale-mint studio platform after a workout. Both feet resting naturally flat on the floor, forearms resting lightly on her thighs, shoulders relaxed, calm small satisfied smile, looking slightly off camera. Full seated body visible, no forced exercise pose, no medical or performance claim. Wide 3:2 editorial composition. Subject centered slightly right to stay visible in the app's image half. Ivory, mint and subtle coral studio setting, soft window daylight. No props, dumbbells, graphics, medals, text, badges or decorative icons.",
+    "source_sha256": "1c7e1f61a386fd18dfffd53894c2b9acb78833091e35b5987419e7d2300e2d04",
+    "export": "Resized and encoded as WebP; original composition preserved."
   }
 ]

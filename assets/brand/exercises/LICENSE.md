@@ -142,4 +142,11 @@ The original photographs also supplied photographic references for the generated
 
 ## Generated pose-reference imagery
 
-61 images in `generated/` cover 65 exercise steps. Created using the ChatGPT built-in image generation tool at the user's request. They depict fictional adults, not real photographed models. Freely licensed photographs credited above were supplied as references; their original licenses remain unchanged. Prompts and per-image references are recorded in `generated-sources.json`. The app identifies generated images in technique-guide captions and credits. These are still pose references, not start-to-finish motion sequences.
+66 exercise photographs in `generated/` cover 70 exercise steps. A separately generated studio recovery header is saved as `assets/brand/studio-recovery-v3.webp` with a compact sibling. Created using the ChatGPT built-in image generation tool at the user's request. They depict fictional adults, not real photographed models. Freely licensed photographs credited above were supplied as references; their original licenses remain unchanged. Prompts and per-image references are recorded in `generated-sources.json`. The app identifies generated images in technique-guide captions and credits. These are still pose references, not start-to-finish motion sequences.
+
+
+## Studio set v3
+
+Five additional exercise photographs cover the standard push-up, bodyweight squat, forearm plank, side plank and straight-leg bench dip. One lifestyle recovery photograph joins the rotating Exercises header. All were generated with ChatGPT built-in image generation using the credited licensed originals for movement/photographic grounding and the existing studio asset for visual style. The people depicted are fictional. The dip image received a targeted image-tool correction to remove ambiguous bench support beneath the hips.
+
+`generated-sources.json` records the exact prompts, correction prompt where relevant, source-original SHA-256, reference paths and WebP derivatives. Export only resized and encoded the generated image; the selected originals are preserved in the task's asset output folder. The original licensed files remain available and credited.

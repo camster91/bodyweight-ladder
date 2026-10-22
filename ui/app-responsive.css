@@ -1,4 +1,5 @@
 /* App layouts: space changes the composition, not just the scale. */
+.exercise-thumb img[src*="-studio-v3-"]{object-fit:cover}
 body[data-view="ladders"] .library-brand .library-setup{border:0;box-shadow:none;background:transparent;color:var(--accent);padding:8px 0;justify-content:flex-start;text-align:left;font-size:var(--type-control)}
 body[data-view="ladders"] .library-brand h2{margin-bottom:4px;line-height:1.18}
 .recent-exercise{display:flex;align-items:center;gap:var(--space-control);padding-top:var(--space-control);min-width:0}
