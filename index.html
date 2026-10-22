@@ -873,6 +873,19 @@ body[data-view="today"] .focus-stage:has(.focus-howto) .focus-set-path{margin-to
 body img.technique-art{filter:grayscale(1) contrast(.92) brightness(1.04);background:#eef0f2;border:1px solid var(--line);border-radius:12px}
 @media(min-width:1100px){body[data-view="today"] .focus-shell>.focus-stage{min-height:min(540px,calc(100svh - 160px))}}
 
+
+body.technique-open{overflow:hidden}
+.focus-howto svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.technique-sheet .workout-tools-head{padding:18px 20px;align-items:flex-start}
+.technique-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 6px}
+.technique-sheet .workout-tools-head h2{font-size:24px;line-height:1.2;letter-spacing:-.035em}
+.technique-sheet .workout-tools-body{padding:20px}
+.technique-sheet img{display:block;width:100%;height:auto}
+.technique-cue{font-size:16px;line-height:1.65;margin:22px 0 12px}
+.technique-equipment{font-size:13px;line-height:1.6;color:var(--muted)}
+.technique-video{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin-top:22px;padding:12px 0;color:var(--accent);border-top:1px solid var(--line);text-decoration:none;font-size:14px}
+body img.technique-art[src$=".svg"]{filter:none;border:0}
+
 </style>
 
 <div class="wrap">
@@ -1065,7 +1078,8 @@ const WIDE = {"push:diamond-push-up": "w/push-diamond-push-up-clear", "push:arch
 const isWide = (t,i) => !t.custom && !!WIDE[keyOf(t,i)];
 // Compact lists use a single pose; full exercise cards retain the movement diagram.
 const thumbOf = (t,i) => t.custom ? "img/rung.webp" : t.img ? `img/${t.img[i]}.webp` : `img/${t.id}-${i}.webp`;
-const imgOf = (t,i) => isWide(t,i) ? `img/${WIDE[keyOf(t,i)]}.webp` : thumbOf(t,i);
+const TECHNIQUE_ART = Object.fromEntries(['wall-push-up','incline-push-up','knee-push-up','push-up'].map(k=>['push:'+k,'assets/brand/technique/'+k+'-v1.svg']).concat([['squat:bodyweight-squat','assets/brand/technique/bodyweight-squat-v1.svg'],['core:plank','assets/brand/technique/plank-v1.svg'],['hinge:glute-bridge','assets/brand/technique/glute-bridge-v1.svg']]));
+const imgOf = (t,i) => TECHNIQUE_ART[keyOf(t,i)] || (isWide(t,i) ? `img/${WIDE[keyOf(t,i)]}.webp` : thumbOf(t,i));
 function spec(t, lvl=lvlOf(t)){ const st=t.steps[lvl].slice(); const n=state.prefs.sets[t.id]; if(n) st[1]=n; return st; }
 const groupOf = t => t.custom ? "Custom" : (t.group || "Strength");
 let filter = "All"; try{ filter = localStorage.getItem("bwl-filter") || "All"; }catch(e){}
@@ -1599,7 +1613,7 @@ function swapView(){
  const options=swapOptions(x);if(!options.length)return '';
  let html=`<details class="swap-picker"${swapChoice?' open':''}><summary>Need an alternative?</summary><div class="swap-body"><p>Choose an earlier step or another movement. Equipment is listed below. Your usual ladder step stays unchanged.</p><div class="swap-options">${options.map(o=>{const t=findTrack(o.id),st=spec(t,o.lvl);return `<button data-swap="choose" data-t="${o.id}" data-level="${o.lvl}" aria-pressed="${swapChoice?.id===o.id&&swapChoice?.lvl===o.lvl}"><b>${esc(st[0])}</b><span>${o.id===x.id?'Earlier step':'Different movement'} · ${st[6]==='None'?'No extra equipment':'Needs: '+esc(st[6])}</span></button>`;}).join('')}</div>`;
  const p=swapChoice&&swapPreview(swapChoice.id,swapChoice.lvl);
- if(p)html+=`<div class="swap-preview" role="status"><h3>${esc(p.st[0])}</h3><p>${esc(p.st[5])}</p><b>${p.goals.length} sets · ${esc(coachTargets(p,p.st))}${p.light?' · lighter targets':''}</b>${p.existing?'<p>This exercise is already in your plan. Use it once in place of this move, rather than logging it twice.</p>':''}<img class="technique-art" src="${imgOf(p.t,p.lvl)}" alt="${esc(p.st[0])} demonstrated by Rung" loading="lazy" width="900" height="600"><div class="swap-actions"><button class="primary" data-swap="apply">Use this for today</button><button data-swap="cancel">Keep current exercise</button></div></div>`;
+ if(p)html+=`<div class="swap-preview" role="status"><h3>${esc(p.st[0])}</h3><p>${esc(p.st[5])}</p><b>${p.goals.length} sets · ${esc(coachTargets(p,p.st))}${p.light?' · lighter targets':''}</b>${p.existing?'<p>This exercise is already in your plan. Use it once in place of this move, rather than logging it twice.</p>':''}<img class="technique-art" src="${imgOf(p.t,p.lvl)}" alt="${esc(p.st[0])} technique illustration" loading="lazy" width="900" height="600"><div class="swap-actions"><button class="primary" data-swap="apply">Use this for today</button><button data-swap="cancel">Keep current exercise</button></div></div>`;
  return html+'</div></details>';
 }
 function applySwap(id,lvl){
@@ -1642,6 +1656,29 @@ function closeWorkoutTools(){
  workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');const d=$('#workoutTools');if(d?.open&&typeof d.close==='function')d.close();else d?.removeAttribute('open');
  $('#workoutToolsButton')?.setAttribute('aria-expanded','false');
  (document.getElementById(workoutToolsReturn)||$('#workoutToolsButton'))?.focus({preventScroll:true});
+}
+function closeTechnique(restore=true){
+ const d=$('#techniqueSheet');if(!d)return;
+ if(d.open&&typeof d.close==='function')d.close();d.remove();
+ document.body.classList.remove('technique-open');
+ if(restore)$('#focusHowTo')?.focus({preventScroll:true});
+}
+function openTechnique(){
+ const x=focusItem(),t=x&&findTrack(x.id);if(!t)return;
+ closeWorkoutTools();closeTechnique(false);
+ const st=sessionSpec(t),d=document.createElement('dialog');
+ d.id='techniqueSheet';d.className='workout-tools technique-sheet';d.setAttribute('aria-labelledby','techniqueTitle');
+ d.innerHTML=`<div class="workout-tools-head"><div><p class="technique-kicker">Technique</p><h2 id="techniqueTitle" tabindex="-1">${esc(st[0])}</h2></div><button data-ui="techniqueclose" aria-label="Close technique guide" autofocus>×</button></div><div class="workout-tools-body"><img class="technique-art" src="${imgOf(t,sessionLevel(t))}" alt="Technique illustration for ${esc(st[0])}" width="900" height="540"><p class="technique-cue">${esc(st[5])}</p>${st[6]!=='None'?`<p class="technique-equipment">Equipment · ${esc(st[6])}</p>`:''}<a class="technique-video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Find video tutorials <span aria-hidden="true">↗</span></a></div>`;
+ d.addEventListener('cancel',e=>{e.preventDefault();closeTechnique();});
+ d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeTechnique();});
+ d.addEventListener('keydown',e=>{
+   if(e.key!=='Tab')return;const first=d.querySelector('button'),last=d.querySelector('a');
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+ });
+ $('.focus-shell').append(d);document.body.classList.add('technique-open');
+ if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');
+ d.querySelector('#techniqueTitle').focus({preventScroll:true});
 }
 function mountWorkoutTools(previous={}){
  const shell=$('.focus-shell');if(!shell)return;
@@ -1694,7 +1731,7 @@ function focusView(plan,top,more,recent){
   if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="focus-next finish-totals">${r.items.length} ${r.items.length===1?'exercise':'exercises'} · ${r.items.reduce((n,x)=>n+x.values.length,0)} ${r.items.reduce((n,x)=>n+x.values.length,0)===1?'set':'sets'} saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
-  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="workoutTools" aria-label="How to do ${esc(st[0])}">How to <span aria-hidden="true">↗</span></button>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps completed'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img class="technique-art" src="${imgOf(t,sessionLevel(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy" width="900" height="600"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps completed'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img class="technique-art" src="${imgOf(t,sessionLevel(t))}" alt="${esc(st[0])} technique illustration" loading="lazy" width="900" height="600"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+='<div class="workout-secondary">';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} ${r.items.length===1?'exercise':'exercises'}</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
@@ -1911,7 +1948,7 @@ function viewLadders(){
       if(!open) return row;
       const list=t.custom ? "" : `<ol class="ladder">${t.steps.map((s2,i)=>`
         <li class="${i===lvl?"cur":i<lvl?"past":""}"><span class="n">${i<lvl?"✓":i+1}</span>
-        <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><details class="step-guide"><summary>Technique guide</summary><p>${esc(s2[5])}</p><img class="technique-art" src="${imgOf(t,i)}" alt="${esc(s2[0])} demonstrated by Rung" loading="lazy" width="900" height="600"><a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">Watch video tutorial ↗</a></details></div>
+        <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><details class="step-guide"><summary>Technique guide</summary><p>${esc(s2[5])}</p><img class="technique-art" src="${imgOf(t,i)}" alt="${esc(s2[0])} technique illustration" loading="lazy" width="900" height="600"><a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">Watch video tutorial ↗</a></details></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}">Start here</button>`}</li>`).join("")}</ol>`;
       return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}${controls(t)}${list}</section>`;
     }).join("");
@@ -2033,7 +2070,7 @@ function setupPreviewLevel(t){
 }
 function setupPlanPreview(){
   const tracks=setupAvailableTracks();
-  return `<details class="onboard-plan"><summary><b>Explore your plan</b><span>Exercises, starting steps & technique</span></summary><div class="onboard-plan-content"><p class="cue">These are your available exercise ladders. Today picks a smaller workout based on your time and recent training.</p>${SETUP_GROUPS.map(([g,label])=>{const ts=tracks.filter(t=>groupOf(t)===g);if(!ts.length)return '';return `<h3 class="label">${label}</h3>${ts.map(t=>{const lvl=setupPreviewLevel(t),st=spec(t,lvl);return `<details class="plan-exercise" data-preview-track="${t.id}" data-preview-step="${lvl}"><summary>${movementMark(t)}<span><b>${esc(t.name)}</b><small>${esc(st[0])} · Step ${lvl+1}/${t.steps.length}</small></span></summary><div class="plan-exercise-body"><p class="plan-prescription">${targetText(st)}</p><p class="cue">${esc(st[5])}</p>${st[6]!=='None'?`<p class="plan-gear">Needs: ${esc(st[6])}</p>`:''}<img class="technique-art" src="${imgOf(t,lvl)}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy" width="900" height="600"><a class="video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial ↗</a>${t.steps.length>1?`<details class="plan-progression"><summary>See all ${t.steps.length} steps</summary><ol>${t.steps.map((s,i)=>`<li${i===lvl?' aria-current="step"':''}><span>${esc(s[0])}</span>${i===lvl?'<small>Your starting step</small>':''}</li>`).join('')}</ol></details>`:''}</div></details>`;}).join('')}`;}).join('')}</div></details>`;
+  return `<details class="onboard-plan"><summary><b>Explore your plan</b><span>Exercises, starting steps & technique</span></summary><div class="onboard-plan-content"><p class="cue">These are your available exercise ladders. Today picks a smaller workout based on your time and recent training.</p>${SETUP_GROUPS.map(([g,label])=>{const ts=tracks.filter(t=>groupOf(t)===g);if(!ts.length)return '';return `<h3 class="label">${label}</h3>${ts.map(t=>{const lvl=setupPreviewLevel(t),st=spec(t,lvl);return `<details class="plan-exercise" data-preview-track="${t.id}" data-preview-step="${lvl}"><summary>${movementMark(t)}<span><b>${esc(t.name)}</b><small>${esc(st[0])} · Step ${lvl+1}/${t.steps.length}</small></span></summary><div class="plan-exercise-body"><p class="plan-prescription">${targetText(st)}</p><p class="cue">${esc(st[5])}</p>${st[6]!=='None'?`<p class="plan-gear">Needs: ${esc(st[6])}</p>`:''}<img class="technique-art" src="${imgOf(t,lvl)}" alt="${esc(st[0])} technique illustration" loading="lazy" width="900" height="600"><a class="video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial ↗</a>${t.steps.length>1?`<details class="plan-progression"><summary>See all ${t.steps.length} steps</summary><ol>${t.steps.map((s,i)=>`<li${i===lvl?' aria-current="step"':''}><span>${esc(s[0])}</span>${i===lvl?'<small>Your starting step</small>':''}</li>`).join('')}</ol></details>`:''}</div></details>`;}).join('')}`;}).join('')}</div></details>`;
 }
 
 const SETUP_GROUPS=[['Strength','Strength','Push, pull and build control.'],['Tendon','Tendons & joints','Controlled strength for smaller movements.'],['Mobility','Mobility','Move through a wider range.'],['Stretch','Stretching','Make room to move.'],['Weights','Carries & swings','Add weight to your training.']];
@@ -2114,6 +2151,7 @@ function render(){
   const previousOnboard=$(".onboard")?.dataset.step;
   const previousStage=$(".focus-stage")?.dataset.stage;
   const oldTools=$('#workoutTools .workout-tools-body');const toolsState=workoutToolsOpen&&oldTools?{scroll:oldTools.scrollTop,open:[...oldTools.querySelectorAll('details[open]')].map(d=>d.dataset.toolKey)}:{};
+  closeTechnique(false);
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
   if(tab==='today')mountWorkoutTools(toolsState);else{workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');}
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
@@ -2180,12 +2218,8 @@ $("#view").addEventListener("click",e=>{
   if(u){
     const a=u.dataset.ui;
     if(a==='workouttools'){workoutToolsReturn='workoutToolsButton';workoutToolsOpen=true;render();return;}
-    if(a==='technique'){
-      workoutToolsReturn='focusHowTo';workoutToolsOpen=true;render();
-      const guide=$('#workoutTools .focus-technique');
-      if(guide){guide.open=true;const body=guide.closest('.workout-tools-body');body.scrollTop+=guide.getBoundingClientRect().top-body.getBoundingClientRect().top;guide.querySelector('summary')?.focus({preventScroll:true});}
-      return;
-    }
+    if(a==='technique'){openTechnique();return;}
+    if(a==='techniqueclose'){closeTechnique();return;}
     if(a==='workouttoolsclose'){closeWorkoutTools();return;}
     if(a==='min'||a==='sheet')closeWorkoutTools();
     if(a==="min"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); minutes=+u.dataset.m; store.set("bwl-min",String(minutes)); showMore=false; render(); return; }
