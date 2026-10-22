@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),fs=require('fs'),path=require('path')
 const {JSDOM}=require('jsdom');
 const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
 const windows=[];
-function boot(storage={}){const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://ladder.test/',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.localStorage.setItem('bwl-state',JSON.stringify({v:2,log:[],prefs:{setupDone:true}}));for(const [k,v]of Object.entries(storage))w.localStorage.setItem(k,v);}});windows.push(dom.window);return dom.window;}
+function boot(storage={},now=null){const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://ladder.test/',pretendToBeVisual:true,beforeParse(w){if(now!==null)w.Date.now=()=>now;w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.localStorage.setItem('bwl-state',JSON.stringify({v:2,log:[],prefs:{setupDone:true}}));for(const [k,v]of Object.entries(storage))w.localStorage.setItem(k,v);}});windows.push(dom.window);return dom.window;}
 const click=(w,s)=>{const b=w.document.querySelector(s);assert(b,s);b.click();};
 const run=w=>JSON.parse(w.localStorage.getItem('bwl-focus'));
 const log=w=>JSON.parse(w.localStorage.getItem('bwl-state')).log;
@@ -17,10 +17,10 @@ try{
  const before=run(w).restEnd;click(w,'[data-focus=add]');assert.equal(run(w).restEnd,before+30000);
  click(w,'[data-focus=undo]');assert.equal(run(w).phase,'work');assert.equal(run(w).items[0].values.length,0);assert.equal(+d.querySelector('#focusValue').textContent,reps);
  console.log('PASS set completion starts rest without saving a full exercise; adding time and Undo work');
- const ring=boot();click(ring,'[data-focus=complete]');assert.equal(ring.document.querySelector('#focusSaved').textContent,'');
+ const ring=boot({},Date.now());click(ring,'[data-focus=complete]');assert.equal(ring.document.querySelector('#focusSaved').textContent,'');
  ring.eval('focusRun.restDuration=90;focusRun.restEnd=restEnd=Date.now()+45000;persistFocus();tick()');
  const arc=()=>+ring.document.querySelector('#focusArc').getAttribute('stroke-dashoffset');assert(Math.abs(arc()-50)<.1);
- const resumedRing=boot(storage(ring));assert(Math.abs(+resumedRing.document.querySelector('#focusArc').getAttribute('stroke-dashoffset')-50)<1);
+ const resumedRing=boot(storage(ring),ring.Date.now());assert(Math.abs(+resumedRing.document.querySelector('#focusArc').getAttribute('stroke-dashoffset')-50)<1);
  click(ring,'[data-focus=add]');assert.equal(run(ring).restDuration,120);assert(Math.abs(arc()-37.5)<.1);
  click(ring,'#tab-history');click(ring,'#timer [data-tm=add]');assert.equal(run(ring).restDuration,150);click(ring,'#tab-today');assert(Math.abs(arc()-30)<.1);
  console.log('PASS countdown ring tracks elapsed rest, survives refresh, and handles both add-time controls');
