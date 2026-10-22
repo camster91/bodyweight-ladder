@@ -425,13 +425,46 @@ body[data-view="today"] #saveNote{font-size:11px;margin-top:20px}
 .focus-ring circle{fill:none;stroke:var(--line);stroke-width:2.2}
 .focus-ring .focus-arc{stroke:var(--accent);stroke-linecap:round}
 .focus-saved{position:absolute;top:4px;left:0;right:0;margin:0;font-size:13px;line-height:18px;color:var(--good);pointer-events:none}
+.focus-number{position:relative;overflow:hidden}
+.focus-number[data-wide="true"]{font-size:clamp(48px,14vw,72px);letter-spacing:-3px}
+.focus-number-current{display:block}
+.focus-number-previous{display:none;position:absolute;inset:0;pointer-events:none}
+.focus-number-previous::before{content:attr(data-value)}
+.focus-effects{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:15}
+.focus-pulse{position:absolute;width:160px;height:160px;border:1px solid var(--accent);background:var(--chip);border-radius:50%;opacity:0}
+.finish-mark{position:relative;display:block;width:80px;height:80px;flex-shrink:0;border-radius:50%;background:var(--good-bg)}
+.finish-mark span{position:absolute;display:block;height:4px;border-radius:4px;background:var(--good);transform-origin:left center}
+.finish-check-short{width:17px;left:23px;top:38px;transform:rotate(45deg)}
+.finish-check-long{width:31px;left:35px;top:50px;transform:rotate(-48deg)}
 @media(prefers-reduced-motion:no-preference){
   .focus-enter{animation:focus-arrive .18s ease-out}
   .focus-arc{transition:stroke-dashoffset .25s linear}
+  .focus-stepper,.focus-actions .primary{transition:transform .1s cubic-bezier(.4,0,.2,1),background-color .16s}
+  .focus-number-previous{display:block}
+  .focus-stepper:active:not(:disabled){transform:scale(.94)}
+  .focus-actions .primary:active:not(:disabled){transform:scale(.985)}
+  .number-up .focus-number-previous{animation:number-out-up .22s cubic-bezier(.22,1,.36,1) both}
+  .number-up .focus-number-current{animation:number-in-up .22s cubic-bezier(.22,1,.36,1) both}
+  .number-down .focus-number-previous{animation:number-out-down .22s cubic-bezier(.22,1,.36,1) both}
+  .number-down .focus-number-current{animation:number-in-down .22s cubic-bezier(.22,1,.36,1) both}
+  .focus-pulse{animation:focus-pulse .44s cubic-bezier(.22,1,.36,1) both}
+  .focus-celebrate .finish-mark{animation:finish-mark .48s cubic-bezier(.22,1,.36,1) both}
+  .focus-celebrate .finish-check-short{animation:finish-short .16s cubic-bezier(.4,0,.2,1) .14s both}
+  .focus-celebrate .finish-check-long{animation:finish-long .24s cubic-bezier(.4,0,.2,1) .26s both}
+  .focus-celebrate .finish-title{animation:focus-arrive .32s cubic-bezier(.22,1,.36,1) .14s both}
+  .focus-celebrate .finish-totals{animation:focus-arrive .32s cubic-bezier(.22,1,.36,1) .24s both}
   @keyframes focus-arrive{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes number-in-up{from{opacity:0;transform:translateY(.16em)}to{opacity:1;transform:translateY(0)}}
+  @keyframes number-out-up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-.16em)}}
+  @keyframes number-in-down{from{opacity:0;transform:translateY(-.16em)}to{opacity:1;transform:translateY(0)}}
+  @keyframes number-out-down{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(.16em)}}
+  @keyframes focus-pulse{from{opacity:.32;transform:translate(-50%,-50%) scale(.25)}to{opacity:0;transform:translate(-50%,-50%) scale(2.6)}}
+  @keyframes finish-mark{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  @keyframes finish-short{from{transform:rotate(45deg) scaleX(0)}to{transform:rotate(45deg) scaleX(1)}}
+  @keyframes finish-long{from{transform:rotate(-48deg) scaleX(0)}to{transform:rotate(-48deg) scaleX(1)}}
 }
+@media(prefers-reduced-motion:reduce){.focus-effects{display:none}}
 .focus-next{font-size:14px;line-height:1.7;color:var(--muted);margin:0}.focus-next strong{display:block;font-weight:500;color:var(--ink)}
-.focus-check{font-size:48px;color:var(--good);line-height:1}
 .focus-workout{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}.focus-workout>summary,.focus-advanced>summary{cursor:pointer;font-size:14px;color:var(--muted);padding:14px 0;min-height:48px}
 .focus-workout .session-queue{border:0;background:transparent;padding:0}.focus-workout .mini{box-shadow:none}.focus-advanced .card{margin-top:12px}.focus-ex-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.focus-ex-row>span{flex:1;font-size:14px}.focus-ex-row small{display:block;color:var(--muted);font-size:12px;margin-top:5px}
 body.focus-timing #timer{display:none}body.focus-timing{padding-bottom:0}
@@ -459,6 +492,7 @@ body.focus-timing #timer{display:none}body.focus-timing{padding-bottom:0}
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button id="toastUndo" hidden>Undo</button></div>
 <div class="timer" id="timer" hidden role="timer"></div>
 <p class="sr" id="focusAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
+<div class="focus-effects" id="focusEffects" aria-hidden="true"></div>
 
 <script>
 // [name, sets, minReps, maxReps, unit, cue, gear]
@@ -974,6 +1008,34 @@ function ensureFocus(plan){
 function focusItem(){return focusRun?.items[focusRun.at];}
 function focusValue(){const x=focusItem();return x?.value??x?.goals[x.values.length]??0;}
 function focusTime(s){return Math.floor(s/60)+':'+pad2(s%60);}
+const focusMotionQuery=window.matchMedia?.('(prefers-reduced-motion: no-preference)');
+function focusMotionAllowed(){return focusMotionQuery?.matches===true;}
+focusMotionQuery?.addEventListener?.('change',e=>{
+  if(e.matches)return;
+  $('#focusEffects').replaceChildren();
+  if($('#focusValue'))rollFocusNumber(focusValue(),focusValue());
+  document.querySelectorAll('.focus-enter,.focus-celebrate').forEach(el=>el.classList.remove('focus-enter','focus-celebrate'));
+});
+function rollFocusNumber(previous,value){
+  const el=$('#focusValue');if(!el)return;
+  el.onanimationend=null;
+  el.dataset.wide=String(value>=1000);
+  el.classList.remove('number-up','number-down');el.textContent=String(value);
+  if(previous===value||!focusMotionAllowed())return;
+  const current=document.createElement('span');current.className='focus-number-current';current.textContent=String(value);
+  const old=document.createElement('span');old.className='focus-number-previous';old.dataset.value=String(previous);old.setAttribute('aria-hidden','true');
+  el.replaceChildren(old,current);
+  // Fresh decorative layers can animate without delaying the actual value or forcing layout.
+  el.classList.add(value>previous?'number-up':'number-down');
+  el.onanimationend=e=>{if(e.target!==current)return;el.classList.remove('number-up','number-down');el.textContent=String(value);el.onanimationend=null;};
+}
+function pulseFocusCompletion(){
+  if(!focusMotionAllowed())return;
+  const button=$('#focusPrimary');if(!button)return;
+  const rect=button.getBoundingClientRect(),pulse=document.createElement('span');pulse.className='focus-pulse';
+  pulse.style.left=(rect.left+rect.width/2)+'px';pulse.style.top=(rect.top+rect.height/2)+'px';
+  $('#focusEffects').replaceChildren(pulse);pulse.addEventListener('animationend',()=>pulse.remove(),{once:true});
+}
 function focusRestOffset(){
   const left=Math.max(0,(focusRun.restEnd-Date.now())/1000);
   return 100-Math.min(100,Math.max(0,left/(focusRun.restDuration||left||1)*100));
@@ -993,8 +1055,8 @@ function focusView(plan,top,more,recent){
   if(away>=7)html+=`<p class="focus-next">Welcome back. Goals match your last numbers today, so ease back in.</p>`;
   if(!t){return html+`<section class="focus-stage"><div class="focus-rest"><h2>All caught up.</h2><p class="focus-next">Nothing due here. Rest, or choose another workout.</p></div></section></div>`+sheet();}
   const stageKey=[r.phase,r.at,x.values.length,runningHold?'hold-'+hold.side:'work'].join(':');
-  html+=`<section class="focus-stage" data-stage="${stageKey}" aria-label="Current set"><p class="focus-saved" id="focusSaved" aria-hidden="true">${focusNotice&&focusNotice.until>Date.now()?esc(focusNotice.text)+' ✓':''}</p>`;
-  if(r.phase==='finished')html+=`<div class="focus-rest"><span class="focus-check" aria-hidden="true">✓</span><h2>Workout complete.</h2><p class="focus-next">${r.items.length} exercises · ${r.items.reduce((n,x)=>n+x.values.length,0)} sets saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
+  html+=`<section class="focus-stage" data-stage="${stageKey}" data-phase="${r.phase}" aria-label="Current set"><p class="focus-saved" id="focusSaved" aria-hidden="true">${focusNotice&&focusNotice.until>Date.now()?esc(focusNotice.text)+' ✓':''}</p>`;
+  if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="focus-next finish-totals">${r.items.length} exercises · ${r.items.reduce((n,x)=>n+x.values.length,0)} sets saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
   else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'seconds':'reps'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img src="${imgOf(t,lvlOf(t))}" alt="${esc(st[0])} demonstrated by Rung" loading="lazy"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
@@ -1018,12 +1080,12 @@ function completeFocus(value=focusValue()){
   if(entry){const next=focusRun.items.findIndex(a=>!a.entry);if(next<0)focusRun.phase='finished';else focusRun.at=next;}
   if(entry)showFocusSaved(st[0]);else clearFocusNotice();
   if(focusRun.phase!=='finished'){focusRun.phase='rest';focusRun.restDuration=restOf(t,st);focusRun.restEnd=Date.now()+focusRun.restDuration*1000;startRest(focusRun.restDuration);}
-  persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});
+  persistFocus();pulseFocusCompletion();render();$('#focusPrimary')?.focus({preventScroll:true});
   // The rest/completion screen already confirms the action and keeps Undo available.
   hideToast();
 }
 function undoFocus(){
-  if(!focusUndo)return;clearFocusNotice();stopTimer();const u=focusUndo;focusUndo=null;
+  if(!focusUndo)return;$('#focusEffects').replaceChildren();clearFocusNotice();stopTimer();const u=focusUndo;focusUndo=null;
   if(u.entry){state.log=state.log.filter(e=>entryId(e)!==entryId(u.entry));state.deleted=[...state.deleted,entryId(u.entry)].slice(-TOMB_KEEP);commit();}
   focusRun=u.before;focusRun.phase='work';focusRun.restEnd=0;delete drafts[focusItem().id];delete completedSets[focusItem().id];persistFocus();hideToast();render();$('#focusPrimary')?.focus({preventScroll:true});
 }
@@ -1036,7 +1098,7 @@ function handleFocus(b){
   if(a==='add'){addFocusRest();return;}
   if(a==='choose'){if(hold){toast('Finish or cancel the running hold first.');return;}stopTimer();focusRun.at=+b.dataset.i;focusRun.phase='work';persistFocus();render();return;}
   if(!t)return;
-  if(a==='plus'||a==='minus'){x.value=Math.min(9999,Math.max(0,focusValue()+(a==='plus'?1:-1)*stepInc(spec(t))));persistFocus();$('#focusValue').textContent=x.value;return;}
+  if(a==='plus'||a==='minus'){const previous=focusValue();x.value=Math.min(9999,Math.max(0,previous+(a==='plus'?1:-1)*stepInc(spec(t))));persistFocus();rollFocusNumber(previous,x.value);return;}
   if(a==='complete'){completeFocus();return;}
   if(a==='hold'){if(hold)return;holdNext[t.id]=x.values.length;startHold(t);hold.focus=true;hold.goal=focusValue();render();return;}
   if(a==='finish'){finishHold();return;}
@@ -1311,7 +1373,8 @@ function render(){
   $("#viewTitle").textContent={today:"Today",ladders:"Exercises",history:"Progress",setup:"Welcome"}[tab];
   const previousStage=$(".focus-stage")?.dataset.stage;
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
-  const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add("focus-enter");
+  const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
+  const number=$("#focusValue");if(number)number.dataset.wide=String(focusValue()>=1000);
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
