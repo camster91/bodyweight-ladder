@@ -10,10 +10,11 @@ pass('opening and closing options preserves targets and history with explicit di
 });
 pass('direct technique access preserves the workout and returns focus to its trigger',()=>{
  const run=w.localStorage.getItem('bwl-focus'),state=w.localStorage.getItem('bwl-state');
- click('#focusHowTo');assert(d.querySelector('#workoutTools').open);assert(d.querySelector('.focus-technique').open);
- assert.equal(d.activeElement,d.querySelector('.focus-technique>summary'));
- d.querySelector('#workoutTools').dispatchEvent(new w.Event('cancel',{cancelable:true}));
- assert(!d.querySelector('#workoutTools').open);assert.equal(d.activeElement.id,'focusHowTo');
+ click('#focusHowTo');assert(d.querySelector('#techniqueSheet').open);assert(!d.querySelector('#workoutTools').open);
+ assert.equal(d.querySelector('#techniqueTitle').textContent,'Push-up');assert(!d.querySelector('#techniqueSheet details'));
+ assert.equal(d.activeElement,d.querySelector('#techniqueTitle'));
+ d.querySelector('#techniqueSheet').dispatchEvent(new w.Event('cancel',{cancelable:true}));
+ assert(!d.querySelector('#techniqueSheet'));assert.equal(d.activeElement.id,'focusHowTo');
  assert.equal(w.localStorage.getItem('bwl-focus'),run);assert.equal(w.localStorage.getItem('bwl-state'),state);
 });
 pass('readiness previews stay in options and applying returns to the active workout',()=>{
