@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="icon" href="img/icon.webp">
-<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="icon" href="assets/brand/ladder-mark-v2.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-v2.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#1F55C9">
+<meta name="theme-color" content="#2555D5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ladder">
 <meta name="description" content="Bodyweight training that plans your session from the time you have. Skill ladders, hold and rest timers, progress tracking.">
@@ -886,6 +886,94 @@ body.technique-open{overflow:hidden}
 .technique-video{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin-top:22px;padding:12px 0;color:var(--accent);border-top:1px solid var(--line);text-decoration:none;font-size:14px}
 body img.technique-art[src$=".svg"]{filter:none;border:0}
 
+
+/* Bodyweight Ladder: warm surfaces, cobalt actions, mint progress. */
+:root{--bg:#f7f6f2;--surface:#ffffff;--ink:#172b30;--muted:#52666c;--line:#d7e1df;--accent:#2555d5;--accent-ink:#ffffff;--chip:#e8efff;--good:#17624c;--good-bg:#d9f2e6;--brand-fresh:#bcebd7;--brand-fresh-ink:#164f40;--brand-soft:#e2f4ec;--brand-coral:#fae2d9;--brand-coral-ink:#753b28;--brand-track:#cddbd5;--brand-photo-bg:#ede7dc;--display:ui-rounded,'SF Pro Rounded',system-ui,-apple-system,'Segoe UI',sans-serif}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101f22;--surface:#182b2e;--ink:#f0f7f3;--muted:#abc1bf;--line:#345052;--accent:#a4bbff;--accent-ink:#102250;--chip:#263e64;--good:#a4e7c8;--good-bg:#1c453a;--brand-fresh:#bcebd7;--brand-fresh-ink:#164f40;--brand-soft:#203e37;--brand-coral:#49342e;--brand-coral-ink:#f3bca7;--brand-track:#43615b;--brand-photo-bg:#263b3b}}
+:root[data-theme="dark"]{--bg:#101f22;--surface:#182b2e;--ink:#f0f7f3;--muted:#abc1bf;--line:#345052;--accent:#a4bbff;--accent-ink:#102250;--chip:#263e64;--good:#a4e7c8;--good-bg:#1c453a;--brand-fresh:#bcebd7;--brand-fresh-ink:#164f40;--brand-soft:#203e37;--brand-coral:#49342e;--brand-coral-ink:#f3bca7;--brand-track:#43615b;--brand-photo-bg:#263b3b}
+body[data-view="today"]{background:var(--bg)}
+.brand-symbol{display:block;width:36px;height:36px;flex:0 0 36px;border-radius:11px}
+.app-brand-mark{display:flex}.app-brand-mark .brand-symbol{width:32px;height:32px;flex-basis:32px;border-radius:10px}
+body[data-view="today"] .app-brand-mark{display:flex}
+header.top{gap:10px}header.top h1{font-weight:750}
+nav .nav-brand .brand-symbol{width:46px;height:46px;margin-bottom:16px;border-radius:14px}
+.nav-brand{font-family:var(--display);font-weight:750;letter-spacing:-.035em}
+nav .tabs button{position:relative;isolation:isolate;font-weight:600;border-radius:18px}
+nav .tabs button::before{content:"";position:absolute;z-index:-1;top:5px;width:58px;height:32px;border-radius:18px;background:transparent}
+nav .tabs button[aria-current="true"]::before{background:var(--chip)}
+nav .tabs button .ui-glyph{height:24px;stroke-width:1.8}
+body[data-view="today"] .focus-shell>.focus-stage{padding-top:12px}
+.focus-exercise{display:flex;align-items:center;justify-content:center;gap:18px;text-align:left}
+.focus-exercise-art .movement-mark{width:82px;height:88px;border-radius:26px;background:var(--brand-fresh);color:var(--brand-fresh-ink)}
+.focus-exercise-art .movement-mark svg{width:66px;height:58px}
+.focus-exercise-copy{min-width:0;max-width:330px}
+body[data-view="today"] .focus-exercise .focus-eyebrow{margin:0 0 5px;font-size:12px}
+body[data-view="today"] .focus-exercise h2{font-size:clamp(24px,6.4vw,34px);line-height:1.12;letter-spacing:-.04em}
+body[data-view="today"] .focus-exercise .focus-target{font-size:13px;margin:7px 0 0;line-height:1.4}
+.focus-exercise .focus-howto{padding:7px 0;min-height:40px;font-size:12px;justify-content:flex-start}
+body[data-view="today"] .focus-stage:has(.focus-howto) .focus-set-path{margin-top:12px}
+.focus-set-path span{background:var(--brand-track);width:44px;height:6px}
+.focus-set-path span.done{background:var(--good)}.focus-set-path span.current{background:var(--accent)}
+body[data-view="today"] .focus-counter{gap:18px;margin:16px 0 10px;min-height:194px}
+.focus-dial{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;width:208px;height:208px;border-radius:50%;background:var(--brand-soft);border:1px solid var(--line)}
+body[data-view="today"] .focus-number{font-family:var(--display);font-size:96px;line-height:1.05;letter-spacing:-.065em;font-weight:650}
+.focus-dial .focus-unit{font-size:12px;max-width:140px;line-height:1.4;color:var(--muted);margin-top:6px}
+.focus-stepper{background:var(--surface);border-color:var(--line);box-shadow:0 3px 0 var(--line);width:46px;height:46px;min-width:46px}
+body[data-view="today"] .focus-actions .primary{border-radius:19px;font-weight:650;box-shadow:0 4px 0 color-mix(in srgb,var(--accent),#000 17%)}
+.finish-mark{background:var(--brand-fresh);border:8px solid var(--brand-soft);width:104px;height:104px;color:var(--brand-fresh-ink)}
+.finish-mark span{background:var(--brand-fresh-ink)}
+.movement-mark{background:var(--brand-soft);color:var(--good);border-radius:17px}
+.movement-mark[data-family="Tendon"]{background:var(--brand-coral);color:var(--brand-coral-ink)}
+.movement-mark[data-family="Weights"]{background:var(--chip);color:var(--accent)}
+body[data-view="ladders"] .library-intro{display:block}
+.library-brand{position:relative;isolation:isolate;overflow:hidden;min-height:104px;border-radius:22px;background:var(--brand-photo-bg);color:#172b30;padding:15px 18px}
+.library-brand>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;z-index:-1}
+.library-brand>div{width:68%;max-width:300px}
+.library-brand .label{font-size:10px;letter-spacing:.08em;color:#334f55;margin:0 0 3px}
+.library-brand h2{display:block;font-size:23px;line-height:1.1;letter-spacing:-.04em;text-wrap:balance;max-width:12ch}
+.library-brand button{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;min-height:36px;padding:6px 0 0;font-size:12px;color:#173c8f;text-align:left}
+.exrow:not(.plain){border-radius:16px;padding-left:8px;padding-right:8px}
+.exrow .mini-t b{font-size:16px}
+.progress-week{background:var(--brand-fresh);color:var(--brand-fresh-ink);border-radius:26px;position:relative;overflow:hidden}
+.progress-week .label,.progress-week .progress-stats span,.week-day>span,.week-legend{color:var(--brand-fresh-ink)}
+.progress-week .progress-stats b{color:var(--brand-fresh-ink);font-family:var(--display)}
+.week-count{background:#d9f4e8;color:#164f40;border-radius:12px}
+.week-day.active .week-count{background:#2555d5;color:#fff}
+.week-day.today .week-count{outline-color:#164f40}
+.personal-best{border-left:3px solid var(--good);padding-left:16px}
+.progress-empty{text-align:center;padding:48px 16px;background:var(--brand-soft);border-radius:26px}
+.progress-empty-art{display:flex;justify-content:center;margin-bottom:24px}
+.progress-empty-art .brand-symbol{width:72px;height:72px;border-radius:22px}
+.progress-empty .primary{margin-top:20px}
+.onboard-meta>span:first-child{font-family:var(--display);font-weight:750;letter-spacing:-.025em}
+.onboard-meta .brand-symbol{width:32px;height:32px;flex-basis:32px;border-radius:10px}
+.onboard[data-step="0"] .onboard-art{border-radius:26px;background:var(--brand-photo-bg)}
+.onboard[data-step="0"] .onboard-art img{object-position:65% center}
+.onboard[data-step="0"] .onboard-heading h2{font-size:clamp(36px,9vw,48px);font-weight:750;letter-spacing:-.055em;line-height:1.04}
+.onboard-preview>div{border:0;background:var(--brand-soft);border-radius:18px}
+.onboard-preview>div:nth-child(2){background:var(--chip)}.onboard-preview>div:nth-child(3){background:var(--brand-coral)}
+.onboard-preview>div:nth-child(3) .ui-glyph{color:var(--brand-coral-ink)}
+.onboard-choice[aria-pressed="true"]{background:var(--brand-soft);border-color:var(--good)}
+.onboard-choice[aria-pressed="true"] .choice-art{background:var(--brand-fresh);color:var(--brand-fresh-ink)}
+.onboard-pool{background:var(--brand-fresh);color:var(--brand-fresh-ink)}.onboard-pool span,.onboard-pool .ui-glyph{color:var(--brand-fresh-ink)}
+@media(min-width:1100px){body[data-view="today"] .app-brand-mark{display:none}nav .tabs button::before{inset:0;width:auto;height:auto;border-radius:16px}nav .tabs button[aria-current="true"]::before{background:var(--brand-soft)}.library-brand{min-height:140px;padding:22px}.library-brand h2{font-size:30px}.onboard[data-step="0"] .onboard-heading h2{font-size:56px}}
+@media(max-height:650px){body[data-view="today"] .focus-shell>.focus-stage{padding-top:4px}.focus-exercise{gap:12px}.focus-exercise-art .movement-mark{width:64px;height:70px;border-radius:20px}.focus-exercise-art .movement-mark svg{width:52px;height:46px}body[data-view="today"] .focus-exercise h2{font-size:24px}.focus-exercise .focus-howto{min-height:36px;padding:5px 0}body[data-view="today"] .focus-counter{min-height:140px;margin:6px 0}.focus-dial{width:150px;height:150px}body[data-view="today"] .focus-number{font-size:70px}.focus-dial .focus-unit{font-size:11px;max-width:110px}.focus-stepper{width:44px;height:44px;min-width:44px}body[data-view="today"] .focus-actions{padding-top:10px}}
+@media(max-width:360px){.focus-exercise{gap:12px}.focus-exercise-art .movement-mark{width:60px;height:68px}.focus-exercise-art .movement-mark svg{width:48px;height:44px}.library-brand h2{font-size:22px}body[data-view="today"] .focus-counter{gap:12px}.focus-dial{width:176px;height:176px}}
+@media(max-width:360px) and (max-height:650px){.focus-dial{width:142px;height:142px}}
+@media(prefers-reduced-motion:no-preference){.focus-stepper:active{transform:translateY(2px);box-shadow:none}.primary:active{transform:translateY(1px)}.focus-dial{transition:background-color .25s ease}.focus-set-path span{transition:background-color .25s ease}.nav-brand .brand-symbol{animation:brand-arrive .4s ease-out both}@keyframes brand-arrive{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}}
+
+/* Keep browsing controls high and the athlete's face in frame. */
+.library-brand{padding:12px 16px;min-height:112px}
+.library-brand>img{object-position:center top}
+.library-brand .label{display:none}
+.library-brand h2{margin:0;max-width:13ch;font-size:22px}
+.library-brand button{min-height:44px;padding:6px 0 0}
+@media(min-width:1100px){.library-brand{padding:12px 18px;min-height:124px}.library-brand h2{font-size:25px}}
+body[data-view="ladders"] .library-intro{padding-bottom:8px}
+body[data-view="today"] .focus-number[data-wide="true"]{font-size:64px;letter-spacing:-.05em}
+.focus-exercise-copy h2{overflow-wrap:anywhere}
+@media(max-height:650px){body[data-view="today"] .focus-number[data-wide="true"]{font-size:44px}}
+@media(min-width:1100px){.library-brand{min-height:112px}.library-brand h2{max-width:none}}
 </style>
 
 <div class="wrap">
@@ -1731,7 +1819,7 @@ function focusView(plan,top,more,recent){
   if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="focus-next finish-totals">${r.items.length} ${r.items.length===1?'exercise':'exercises'} · ${r.items.reduce((n,x)=>n+x.values.length,0)} ${r.items.reduce((n,x)=>n+x.values.length,0)===1?'set':'sets'} saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
-  else html+=`<p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps completed'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img class="technique-art" src="${imgOf(t,sessionLevel(t))}" alt="${esc(st[0])} technique illustration" loading="lazy" width="900" height="600"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${movementMark(t)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps completed'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p><img class="technique-art" src="${imgOf(t,sessionLevel(t))}" alt="${esc(st[0])} technique illustration" loading="lazy" width="900" height="600"><a href="${ytLink(st[0])}" target="_blank" rel="noopener">Watch video tutorial</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+='<div class="workout-secondary">';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} ${r.items.length===1?'exercise':'exercises'}</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?`<button class="focus-link" data-focus="choose" data-i="${i}">${i===r.at?'Current':'Start'}</button>`:''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
@@ -1840,10 +1928,11 @@ const MOVEMENT_POSES={
  ankle:[31,10,'M31 16V30M31 30 27 41 34 41M31 30 40 40 47 40M31 22 43 20','M17 45H51'],
  shin:[31,10,'M31 16V30M31 30 24 43 18 40M31 30 39 43 46 40M31 22 43 20','M14 46H50']
 };
+function brandMark(){return '<img class="brand-symbol" src="assets/brand/ladder-mark-v2.svg" alt="" width="36" height="36">';}
 function movementMark(t){
  const p=MOVEMENT_POSES[t.id];
  const drawing=p?`<circle cx="${p[0]}" cy="${p[1]}" r="4"/><path d="${p[2]}"/>${p[3]?`<path class="movement-equipment" d="${p[3]}"/>`:''}`:'<path d="M20 16H44M20 32H44M20 48H44M20 12V52M44 12V52"/>';
- return `<span class="movement-mark" aria-hidden="true"><svg viewBox="0 0 64 56" focusable="false">${drawing}</svg></span>`;
+ return `<span class="movement-mark" data-family="${esc(groupOf(t))}" aria-hidden="true"><svg viewBox="0 0 64 56" focusable="false">${drawing}</svg></span>`;
 }
 
 function miniRow(t, kind){
@@ -1934,7 +2023,7 @@ function routinesCard(tracks){
 function viewLadders(){
   const tracks=allTracks(), shown=tracks.filter(t=>!isHidden(t.id)), hidden=tracks.filter(t=>isHidden(t.id));
   if(editing) return `<div class="stack">${routinesCard(tracks)}</div>`;
-  let html=`<div class="stack"><section class="library-intro"><p class="label">Movement library</p><h2>Find your next step.</h2><p class="cue">Build on what you can do. Reach the top of the range on every set, then move up.</p><div class="row"><span>${shown.length} exercise ladders</span><button class="ghost small" data-ui="setup">Edit your setup</button></div></section>${routinesCard(tracks)}
+  let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="assets/brand/studio-reset-v2-small.webp" alt="" width="800" height="450"><div><p class="label">Move your way</p><h2>Find your next step.</h2><button data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
     <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise… e.g. plank, calf, pull-up" autocomplete="off" value="${esc(exQuery)}"></div>
     <p class="muted" id="exNone" hidden>No matches. Try another word, or add it as your own below.</p>`;
   for(const g of ["Strength","Tendon","Mobility","Stretch","Weights","Custom"]){
@@ -2001,7 +2090,7 @@ function trainingDays(log=state.log){
   return [...days].sort((a,b)=>b[0].localeCompare(a[0])).map(([date,entries])=>({date,entries,exercises:new Set(entries.map(e=>e.t)).size,sets:entries.reduce((n,e)=>n+e.sets.length,0)}));
 }
 function viewHistory(){
-  if(!state.log.length)return `<section class="progress-empty"><h2>A record of your training.</h2><p>Complete an exercise to start your history. Personal bests appear when you improve on a previous result.</p><button class="primary" data-ui="gotoday">Go to Today</button></section>`;
+  if(!state.log.length)return `<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true">${brandMark()}</div><h2>A record of your training.</h2><p>Complete an exercise to start your history. Personal bests appear when you improve on a previous result.</p><button class="primary" data-ui="gotoday">Go to Today</button></section>`;
   const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
   const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
   const weekActivity=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const key=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===key).reduce((n,e)=>n+e.sets.length,0);return `<div class="week-day${sets?' active':''}${key===dayOf(now)?' today':''}" role="listitem" aria-label="${fmtDate(key)}: ${sets} sets recorded"><span>${d.toLocaleDateString(undefined,{weekday:'short'})}</span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`;}).join('');
@@ -2094,9 +2183,9 @@ function viewSetup(){
   if(setupIntro){setupStage=0;setupIntro=false;}
   const d=setupDraft,stage=setupStage;
   const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span class="choice-art" aria-hidden="true">${uiGlyph(kind==='none'?'none':value==='weights'?'Weights':value)}</span><span class="choice-copy"><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
-  const headings=['Your workout.\nOne set at a time.','What would you like to work on?','What do you have available?','Where are you starting?',redo?'Review your changes.':'Ready for your first set.'];
+  const headings=['Small steps.\nReal strength.','What would you like to work on?','What do you have available?','Where are you starting?',redo?'Review your changes.':'Ready for your first set.'];
   const subtitles=['A plan that fits your time, with clear steps as you get stronger.','Choose the areas you want in your workouts.','Most moves use a wall, a chair or the floor. Extra equipment is optional.','Choose a starting point. You can change individual exercises later.','Your plan will use these choices. Change them anytime in Exercises.'];
-  const symbol=`<figure class="onboard-art"><picture><source media="(max-width:700px)" srcset="assets/brand/editorial-hero-v1-small.webp"><img src="assets/brand/editorial-hero-v1.webp" alt="An athlete training beside blue architectural steps" width="1120" height="1400" fetchpriority="high"></picture></figure>`;
+  const symbol=`<figure class="onboard-art"><picture><source media="(max-width:700px)" srcset="assets/brand/studio-reset-v2-small.webp"><img src="assets/brand/studio-reset-v2.webp" alt="An athlete taking a breath in a bright studio with mint and coral training blocks" width="1440" height="810" fetchpriority="high"></picture></figure>`;
   let html=`<section class="setup onboard" data-step="${stage}"><div class="onboard-meta"><span>Bodyweight Ladder</span>${stage>0?`<span>${stage<4?'Step '+stage+' of 3':'Review'}</span>`:''}</div>${stage>0?`<div class="onboard-progress" aria-hidden="true">${[1,2,3].map(i=>`<span class="${stage>=i?'on':''}"></span>`).join('')}</div>`:symbol}<div class="onboard-heading"><h2 id="setupTitle" tabindex="-1">${headings[stage].split('\n').map(esc).join('<br>')}</h2><p>${subtitles[stage]}</p></div>`;
   if(stage===0)html+=`<div class="onboard-preview" aria-label="How a workout works">${[['work','Work','One set'],['rest','Rest','A timed break'],['repeat','Repeat','The next set']].map(([icon,label,detail])=>`<div>${uiGlyph(icon)}<b>${label}</b><small>${detail}</small></div>`).join('')}</div>`;
   if(stage===1)html+=`<div class="onboard-options" role="group" aria-label="Training focus">${SETUP_GROUPS.map(([value,label,description])=>choice('groups',value,label,description)).join('')}</div>`;
@@ -2156,7 +2245,7 @@ function render(){
   if(tab==='today')mountWorkoutTools(toolsState);else{workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');}
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
   const onboarding=$(".onboard");if(onboarding&&previousOnboard!==undefined&&onboarding.dataset.step!==previousOnboard){onboarding.classList.add("onboard-enter");if(+onboarding.dataset.step<+previousOnboard)onboarding.classList.add("onboard-reverse");}
-  if(onboarding)onboarding.querySelector('.onboard-meta>span').insertAdjacentHTML('afterbegin',uiGlyph('keep'));
+  if(onboarding)onboarding.querySelector('.onboard-meta>span').insertAdjacentHTML('afterbegin',brandMark());
   if(previousOnboard!==undefined&&stage)stage.classList.add("focus-enter");
   const number=$("#focusValue");if(number)number.dataset.wide=String(focusValue()>=1000);
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
@@ -2403,8 +2492,8 @@ setInterval(()=>{ setDate(); if(tab==="today") softRender(); },60000);
 /* ---------- boot ---------- */
 const local = loadLocal(); if(local){ state = local; saveLocal(); } remember();  // saves repaired records right away
 for(const [id,name]of [['tab-today','work'],['tab-ladders','exercises'],['tab-history','progress']])document.getElementById(id).insertAdjacentHTML('afterbegin',uiGlyph(name));
-$('.nav-brand').insertAdjacentHTML('afterbegin',uiGlyph('keep'));
-$('header.top').insertAdjacentHTML('afterbegin',`<span class="app-brand-mark" aria-hidden="true">${uiGlyph('keep')}</span>`);
+$('.nav-brand').insertAdjacentHTML('afterbegin',brandMark());
+$('header.top').insertAdjacentHTML('afterbegin',`<span class="app-brand-mark" aria-hidden="true">${brandMark()}</span>`);
 render(); setNote();
 (async()=>{
   let dbApi=null, uid=null;
