@@ -1279,6 +1279,53 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
 .ctl .mini-step button{width:var(--target-min);height:var(--field-height);flex:none}
 .lui.addform .lui-field{margin:0}.lui.addform .lui-field label{margin:0}.lui.addform [data-lui-error]{font-size:var(--type-control);line-height:1.5}
 .workout-tools-head .lui-button[data-icon] svg,.preferences-head .lui-button[data-icon] svg,.photo-credits header .lui-button[data-icon] svg{width:22px;height:22px}
+
+/* App layouts: space changes the composition, not just the scale. */
+body[data-view="ladders"] .library-brand .library-setup{border:0;box-shadow:none;background:transparent;color:var(--accent);padding:8px 0;justify-content:flex-start;text-align:left;font-size:var(--type-control)}
+body[data-view="ladders"] .library-brand h2{margin-bottom:4px;line-height:1.18}
+.recent-exercise{display:flex;align-items:center;gap:var(--space-control);padding-top:var(--space-control);min-width:0}
+.recent-exercise>.exercise-thumb{width:64px;height:48px;flex:0 0 64px;border-radius:var(--button-radius);margin:0}
+.recent-exercise>div{min-width:0}.recent-exercise strong{font-size:var(--type-control);line-height:1.4;display:block;overflow-wrap:anywhere}
+.recent-exercise p{font-size:var(--type-control);line-height:1.5;margin:4px 0 0;color:var(--muted);overflow-wrap:anywhere}
+body[data-view="history"] .training-day:has(.recent-exercise){align-items:flex-start}.training-day:has(.recent-exercise)>.training-rung{align-self:stretch}
+@media(min-width:375px) and (max-width:699px) and (min-height:700px){
+ .focus-exercise-art .exercise-thumb{width:132px;height:92px;flex-basis:132px}
+ body[data-view="today"] .focus-exercise .focus-target,body[data-view="today"] .focus-exercise .focus-howto{font-size:var(--type-control)}
+}
+@media(min-width:700px){
+ body[data-view="ladders"] .exrow .mini-t b{font-size:18px;line-height:1.3}
+ body[data-view="ladders"] .exrow .mini-t>span{font-size:var(--type-control);line-height:1.5}
+ body[data-view="ladders"] .sect[data-grp]{font-size:var(--type-meta)}
+ body[data-view="history"] .progress-columns{gap:var(--space-section)}
+ body[data-view="history"] .training-day time{font-size:var(--type-body)}
+}
+@media(min-width:700px) and (min-height:700px){
+ body[data-view="today"] .focus-shell{max-width:1000px}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);grid-template-rows:minmax(240px,1fr) auto auto;column-gap:clamp(24px,4vw,64px);row-gap:var(--space-inset);align-items:center;min-height:480px;padding:24px 0}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{grid-column:1;grid-row:1/4;flex-direction:column;align-items:stretch;gap:var(--space-section);text-align:left}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{width:100%;height:clamp(180px,22vw,280px);border-radius:var(--overlay-radius)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-copy{max-width:none}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise h2{font-size:clamp(28px,3.2vw,40px)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-target{font-size:var(--type-body);margin-top:var(--scale-space-2)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-howto{font-size:var(--type-control)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-counter{grid-column:2;grid-row:1;flex:none;margin:0;gap:12px;min-height:0;align-self:end;padding-bottom:var(--space-inset)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:clamp(168px,20vw,228px);height:auto;aspect-ratio:1}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-set-path{grid-column:2;grid-row:2;margin:0}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{grid-column:2;grid-row:3;margin:0;padding:0;align-self:start}
+ body[data-view="today"] .focus-stage:not(:has(.focus-counter)){max-width:640px;margin-inline:auto}
+}
+@media(min-width:600px) and (max-width:999px) and (min-height:501px){
+ nav .tabs{max-width:520px;margin-inline:auto}
+ nav .tabs button[aria-current="true"]{background:transparent}
+}
+@media(min-width:1000px) and (max-width:1099px) and (min-height:501px){
+ :root{--app-rail-compact:88px}
+ nav{left:0;right:auto;top:0;bottom:0;width:var(--app-rail-compact);padding:24px 8px;border:0;border-right:1px solid var(--line)}
+ nav .nav-brand{display:none}nav .tabs{display:flex;flex-direction:column;gap:12px;padding:0;margin:0;max-width:none}
+ nav .tabs button{min-height:72px;flex-direction:column;justify-content:center;width:100%;padding:12px 0}
+ body[data-view]:not(.in-setup) .wrap{width:calc(100% - var(--app-rail-compact));margin-left:var(--app-rail-compact);margin-right:0;padding-bottom:32px}
+ .timer,.toast{left:calc(50% + 44px)}
+}
 /* LADDER_CONTROLS_CSS_END */
 
 /* Exercise discovery: content first, management in focused sheets. */
@@ -2386,7 +2433,7 @@ function viewLadders(){
   if(libraryHeroIndex<0)rotateLibraryHero();
   const tracks=allTracks(), shown=tracks.filter(t=>!isHidden(t.id)), hidden=tracks.filter(t=>isHidden(t.id));
   if(editing) return `<div class="stack">${routinesCard(tracks)}</div>`;
-  let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="${LIBRARY_HERO_IMAGES[libraryHeroIndex]}" alt="" width="800" height="450"><div><p class="label">Move your way</p><h2>Find your next step.</h2><button data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
+  let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="${LIBRARY_HERO_IMAGES[libraryHeroIndex]}" alt="" width="800" height="450"><div><p class="label">Move your way</p><h2>Find your next step.</h2><button class="library-setup" data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
     <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="${esc(exQuery)}"></div>
     <p class="search-status" id="exSearchStatus" role="status" aria-atomic="true" hidden></p>
     <section class="search-empty" id="exNone" hidden><h2>No exercises found.</h2><p>Try a movement like push-up, a muscle like calf, or add your own exercise below.</p><button data-ui="clearsearch">Clear search</button></section>`;
@@ -2461,8 +2508,10 @@ function viewHistory(){
   const weekActivity=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const key=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===key).reduce((n,e)=>n+e.sets.length,0);return `<div class="week-day${sets?' active':''}${key===dayOf(now)?' today':''}" role="listitem" aria-label="${fmtDate(key)}: ${sets} sets recorded"><span>${d.toLocaleDateString(undefined,{weekday:'short'})}</span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`;}).join('');
   const records=personalBests();
   const timeline=days.slice(3,8).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
-  const recentPreview=days.slice(0,3).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
   const latestEntry=[...state.log].sort((a,b)=>b.ts-a.ts)[0],latestStep=stepByKey(latestEntry.k);
+  const latestValues=latestStep?latestEntry.sets.join(' · ')+' '+(isSec(latestStep.st[4])?'sec':'reps')+(latestStep.st[4].includes('each')?' per side':''):'';
+  const recentPreview=days.slice(0,3).map((d,i)=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span>${i===0&&latestStep?`<div class="recent-exercise" data-latest-entry="${esc(entryId(latestEntry))}">${exerciseThumbnail(latestStep.t,latestStep.i)}<div><strong>${esc(latestStep.st[0])}</strong><p data-latest-values>${esc(latestValues)}</p></div></div>`:''}</div></li>`).join('');
+
   const latestSummary=latestStep?'Latest: '+latestStep.st[0]+' · '+latestEntry.sets.join(' · ')+' '+(isSec(latestStep.st[4])?'sec':'reps')+(latestStep.st[4].includes('each')?' per side':''):'Exercise trends and comparisons';
   const bestHtml=records.slice(0,4).map(({entry,total,count})=>{
     const f=stepByKey(entry.k),measure=isSec(f.st[4])?'seconds':'reps',side=f.st[4].includes('each')?' per side':'';

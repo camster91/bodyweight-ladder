@@ -1,0 +1,46 @@
+/* App layouts: space changes the composition, not just the scale. */
+body[data-view="ladders"] .library-brand .library-setup{border:0;box-shadow:none;background:transparent;color:var(--accent);padding:8px 0;justify-content:flex-start;text-align:left;font-size:var(--type-control)}
+body[data-view="ladders"] .library-brand h2{margin-bottom:4px;line-height:1.18}
+.recent-exercise{display:flex;align-items:center;gap:var(--space-control);padding-top:var(--space-control);min-width:0}
+.recent-exercise>.exercise-thumb{width:64px;height:48px;flex:0 0 64px;border-radius:var(--button-radius);margin:0}
+.recent-exercise>div{min-width:0}.recent-exercise strong{font-size:var(--type-control);line-height:1.4;display:block;overflow-wrap:anywhere}
+.recent-exercise p{font-size:var(--type-control);line-height:1.5;margin:4px 0 0;color:var(--muted);overflow-wrap:anywhere}
+body[data-view="history"] .training-day:has(.recent-exercise){align-items:flex-start}.training-day:has(.recent-exercise)>.training-rung{align-self:stretch}
+@media(min-width:375px) and (max-width:699px) and (min-height:700px){
+ .focus-exercise-art .exercise-thumb{width:132px;height:92px;flex-basis:132px}
+ body[data-view="today"] .focus-exercise .focus-target,body[data-view="today"] .focus-exercise .focus-howto{font-size:var(--type-control)}
+}
+@media(min-width:700px){
+ body[data-view="ladders"] .exrow .mini-t b{font-size:18px;line-height:1.3}
+ body[data-view="ladders"] .exrow .mini-t>span{font-size:var(--type-control);line-height:1.5}
+ body[data-view="ladders"] .sect[data-grp]{font-size:var(--type-meta)}
+ body[data-view="history"] .progress-columns{gap:var(--space-section)}
+ body[data-view="history"] .training-day time{font-size:var(--type-body)}
+}
+@media(min-width:700px) and (min-height:700px){
+ body[data-view="today"] .focus-shell{max-width:1000px}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);grid-template-rows:minmax(240px,1fr) auto auto;column-gap:clamp(24px,4vw,64px);row-gap:var(--space-inset);align-items:center;min-height:480px;padding:24px 0}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{grid-column:1;grid-row:1/4;flex-direction:column;align-items:stretch;gap:var(--space-section);text-align:left}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{width:100%;height:clamp(180px,22vw,280px);border-radius:var(--overlay-radius)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-copy{max-width:none}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise h2{font-size:clamp(28px,3.2vw,40px)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-target{font-size:var(--type-body);margin-top:var(--scale-space-2)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-howto{font-size:var(--type-control)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-counter{grid-column:2;grid-row:1;flex:none;margin:0;gap:12px;min-height:0;align-self:end;padding-bottom:var(--space-inset)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:clamp(168px,20vw,228px);height:auto;aspect-ratio:1}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-set-path{grid-column:2;grid-row:2;margin:0}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{grid-column:2;grid-row:3;margin:0;padding:0;align-self:start}
+ body[data-view="today"] .focus-stage:not(:has(.focus-counter)){max-width:640px;margin-inline:auto}
+}
+@media(min-width:600px) and (max-width:999px) and (min-height:501px){
+ nav .tabs{max-width:520px;margin-inline:auto}
+ nav .tabs button[aria-current="true"]{background:transparent}
+}
+@media(min-width:1000px) and (max-width:1099px) and (min-height:501px){
+ :root{--app-rail-compact:88px}
+ nav{left:0;right:auto;top:0;bottom:0;width:var(--app-rail-compact);padding:24px 8px;border:0;border-right:1px solid var(--line)}
+ nav .nav-brand{display:none}nav .tabs{display:flex;flex-direction:column;gap:12px;padding:0;margin:0;max-width:none}
+ nav .tabs button{min-height:72px;flex-direction:column;justify-content:center;width:100%;padding:12px 0}
+ body[data-view]:not(.in-setup) .wrap{width:calc(100% - var(--app-rail-compact));margin-left:var(--app-rail-compact);margin-right:0;padding-bottom:32px}
+ .timer,.toast{left:calc(50% + 44px)}
+}
