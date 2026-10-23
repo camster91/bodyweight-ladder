@@ -42,6 +42,12 @@ The tests run the real page in jsdom: data repair of old saves, Undo, two-device
 - `assets/mascot/rung-reference.png`: the reference image used to keep Rung consistent
 - `tests/`: test files and runner
 
+## Coaching
+
+Planning, progression, readiness and duration estimates share a deterministic browser-based engine. Open **Today → Options → Why this workout** for the selection reasons, goal and weekly-frequency preferences. Started workout targets stay frozen. [Rule details, source reference and review limits](docs/coaching-engine.md).
+
+Development maintenance: `node scripts/sync-coaching.cjs` embeds `ui/coaching-engine.js` into the ready-to-serve HTML. `node scripts/sync-coaching.cjs --check` verifies it. There is no production build step or external coaching service.
+
 ## Back up and restore
 
 Open **Back up or restore progress** on Progress (also available during setup), or use the storage status button on any main screen. Download a JSON backup and keep it private. It contains completed exercise records, effort feedback, exercise levels, custom exercises, routines, preferences and deletion markers. Unfinished sets, workout-time selection and display settings remain on the device.
