@@ -1281,6 +1281,19 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
 .workout-tools-head .lui-button[data-icon] svg,.preferences-head .lui-button[data-icon] svg,.photo-credits header .lui-button[data-icon] svg{width:22px;height:22px}
 
 /* App layouts: space changes the composition, not just the scale. */
+/* Photographic onboarding choices share one compact, full-row target. */
+.onboard .onboard-choice{grid-template-columns:88px minmax(0,1fr) 22px;gap:14px;padding:10px;min-height:86px}
+.onboard .onboard-choice .choice-art{width:88px;height:64px;overflow:hidden;border-radius:10px;background:var(--bg)}
+.choice-art img{width:100%;height:100%;object-fit:cover;display:block}
+.onboard[data-step="2"] .onboard-options{grid-template-columns:minmax(0,1fr)}
+.onboard[data-step="2"] [data-kind="gear"]{display:grid;min-height:86px;align-items:center;gap:14px;padding:10px}
+.onboard[data-step="2"] [data-kind="gear"] .onboard-select{position:static}
+@media(max-height:699px){.onboard .onboard-actions{position:static}}
+@media(max-width:360px){
+ .onboard .onboard-choice{grid-template-columns:64px minmax(0,1fr) 22px;gap:10px}
+ .onboard .onboard-choice .choice-art{width:64px;height:56px}
+ .onboard .onboard-choice small{font-size:12px;line-height:1.45}
+}
 .exercise-thumb img[src*="-studio-v3-"]{object-fit:cover}
 body[data-view="ladders"] .library-brand .library-setup{border:0;box-shadow:none;background:transparent;color:var(--accent);padding:8px 0;justify-content:flex-start;text-align:left;font-size:var(--type-control)}
 body[data-view="ladders"] .library-brand h2{margin-bottom:4px;line-height:1.18}
@@ -2602,7 +2615,8 @@ function viewSetup(){
   }
   if(setupIntro){setupStage=0;setupIntro=false;}
   const d=setupDraft,stage=setupStage;
-  const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span class="choice-art" aria-hidden="true">${uiGlyph(kind==='none'?'none':value==='weights'?'Weights':value)}</span><span class="choice-copy"><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
+  const choicePhotos={Strength:'push-push-up-studio-v3',Tendon:'knee-wall-sit-v2',Mobility:'ninety-90-90-hip-switches-v2',Stretch:'openbook-open-book-stretch-v2',Weights:'carry-suitcase-carry-v2',none:'squat-bodyweight-squat-studio-v3',bar:'pull-jumping-pull-up-v2',weights:'carry-suitcase-carry-v2',new:'push-wall-push-up-v2',some:'squat-bodyweight-squat-studio-v3',strong:'squat-pistol-squat-v2',keep:'core-plank-studio-v3'};
+  const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span class="choice-art" aria-hidden="true"><img src="assets/brand/exercises/generated/${choicePhotos[kind==='none'?'none':value]}-thumb.webp" alt="" width="360" height="240" decoding="async"></span><span class="choice-copy"><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
   const headings=['Small steps.\nReal strength.','What would you like to work on?','What do you have available?','Where are you starting?',redo?'Review your changes.':'Ready for your first set.'];
   const subtitles=['A plan that fits your time, with clear steps as you get stronger.','Choose the areas you want in your workouts.','Most moves use a wall, a chair or the floor. Extra equipment is optional.','Choose a starting point. You can change individual exercises later.','Your plan will use these choices. Change them anytime in Exercises.'];
   const symbol=`<figure class="onboard-art"><picture><source media="(max-width:700px)" srcset="assets/brand/studio-reset-v2-small.webp"><img src="assets/brand/studio-reset-v2.webp" alt="An athlete taking a breath in a bright studio with mint and coral training blocks" width="1440" height="810" fetchpriority="high"></picture></figure>`;
