@@ -1,0 +1,15 @@
+// Reviewer artifact only; never execute the application or alter its photographs.
+const fs=require('node:fs'),path=require('node:path');
+const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const readMap=name=>JSON.parse(html.match(new RegExp('const '+name+'=(\\{[^\\n]+\\});'))?.[1]||'null');
+const photos=readMap('EXERCISE_PHOTOS'),details=readMap('EXERCISE_PHOTO_DETAILS');
+if(!photos||!details)throw Error('Photo maps missing');
+const sources=JSON.parse(fs.readFileSync(path.join(root,'assets/brand/exercises/photo-sources.json'),'utf8'));
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cards=Object.entries(photos).map(([key,thumb])=>{
+ const detail=details[key]||thumb,generated=detail.includes('/generated/'),source=sources.find(s=>detail.endsWith('/'+s.file));
+ if(!fs.existsSync(path.join(root,detail)))throw Error('Review photo missing: '+key);
+ return `<article><h2>${esc(key.replace(':',' · ').replaceAll('-',' '))}</h2><a href="../${esc(detail)}"><img src="../${esc(thumb)}" alt="Exercise reference for ${esc(key)}" loading="lazy"></a><p>${generated?'Generated reference — fictional adult':'Licensed photograph'}. <strong>Technique review pending.</strong></p>${source?`<p>${esc(source.author)} · <a href="${esc(source.source)}">Original</a> · <a href="${esc(source.license_url)}">${esc(source.license)}</a></p>`:''}<p><a href="../${esc(detail)}">Open full reference</a></p><p class="file">${esc(detail)}</p></article>`;
+}).join('\n');
+fs.writeFileSync(path.join(root,'docs/exercise-photo-review.html'),`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Exercise photo review · Bodyweight Ladder</title><style>body{font:16px/1.5 system-ui;margin:24px auto;padding:0 20px;max-width:1200px;color:#102b36;background:#faf9f6}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:20px}article{border:1px solid #cdd6da;padding:16px;border-radius:16px;background:white;break-inside:avoid}h2{font-size:18px}img{width:100%;height:190px;object-fit:contain;background:#f3f1eb}a{color:#214dcc}.file{overflow-wrap:anywhere;font-size:12px}header{max-width:760px;margin-bottom:28px}@media print{main{display:block}article{display:inline-block;width:40%;margin:8px;vertical-align:top}img{height:130px}}</style><header><h1>Exercise photo review</h1><p>${Object.keys(photos).length} current exercise-step mappings. Generated from the committed photo maps. Open each full reference and compare it with the exercise instructions in the app.</p><p><strong>All entries are unreviewed.</strong> This contact sheet is preparation for a qualified exercise professional, not approval of technique or proof of anatomical correctness. Use <a href="launch-review-packet.md">the review packet</a> to record decisions.</p></header><main>${cards}</main></html>`);
+console.log('Created review sheet for '+Object.keys(photos).length+' exercise steps.');

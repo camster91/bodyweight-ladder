@@ -1,0 +1,40 @@
+name: Live site availability
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ladder-availability
+  cancel-in-progress: false
+
+jobs:
+  availability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check public HTTPS and required assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          check() {
+            local path="$1" expected="$2" result code type
+            result=$(curl --silent --show-error --fail --proto '=https' --tlsv1.2 \
+              --connect-timeout 10 --max-time 25 --retry 2 --retry-delay 5 \
+              --retry-all-errors --output /dev/null --write-out '%{http_code} %{content_type}' \
+              "https://ladder.ashbi.ca${path}")
+            code="${result%% *}"
+            type="${result#* }"
+            if [[ "$code" != '200' || "$type" != "$expected"* ]]; then
+              echo "::error::${path} returned ${result}; expected 200 ${expected}"
+              exit 1
+            fi
+            printf '%s: %s\n' "$path" "$result" >> "$GITHUB_STEP_SUMMARY"
+          }
+          check / text/html
+          check /img/icon.webp image/webp
+          check /manifest.webmanifest application/manifest+json
+          echo 'Public TLS and the three required URLs responded successfully.' >> "$GITHUB_STEP_SUMMARY"

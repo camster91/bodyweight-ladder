@@ -15,6 +15,67 @@
 <meta property="og:image:alt" content="Bodyweight Ladder. Small steps. Real strength. Three rising rungs on warm ivory and cobalt.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#2555D5">
+<script>
+/* LADDER_SUPPORT_START */
+/* Minimal diagnostics: memory only, never workout data or automatic uploads. */
+window.LadderSupport=(()=>{
+ 'use strict';
+ const RELEASE='2026-10-23-support-1',events=[];
+ const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
+ function record(kind,line=0,column=0){
+  if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
+  const item={kind,screen:screen(),line:Number.isInteger(line)?Math.max(0,Math.min(line,999999)):0,column:Number.isInteger(column)?Math.max(0,Math.min(column,999999)):0};
+  const key=JSON.stringify(item),old=events.find(e=>e.key===key);
+  if(old){old.count=Math.min(99,old.count+1);return;}
+  if(events.length>=20)events.shift();
+  events.push({...item,key,count:1});
+  if(document.readyState!=='loading')showNotice();
+ }
+ function snapshot(){
+  return {release:RELEASE,screen:screen(),online:navigator.onLine,viewport:{width:innerWidth,height:innerHeight},capabilities:{dialog:typeof HTMLDialogElement!=='undefined',wakeLock:'wakeLock' in navigator},events:events.map(({key,...item})=>({...item}))};
+ }
+ function showNotice(){
+  if(!events.length||document.getElementById('appProblemNotice'))return;
+  const target=document.querySelector('.wrap');if(!target)return;
+  const notice=document.createElement('section');notice.id='appProblemNotice';notice.className='app-problem-notice';notice.setAttribute('role','status');
+  notice.innerHTML='<p>Something didn’t load or run correctly.</p><button data-support-open>Report a problem</button><button data-support-dismiss aria-label="Dismiss problem notice">Dismiss</button>';
+  target.prepend(notice);
+ }
+ function open(opener=document.activeElement){
+  if(document.getElementById('appSupport'))return;
+  const d=document.createElement('dialog');d.id='appSupport';d.className='app-preferences app-support';d.setAttribute('aria-labelledby','supportTitle');
+  d.innerHTML='<div class="preferences-head"><h2 id="supportTitle">Report a problem</h2><button data-support-close aria-label="Close problem report" autofocus>×</button></div><p>Tell us what happened and what you expected. If progress looks wrong, back it up before refreshing.</p><p>Reports open on <strong>public GitHub</strong> and require a GitHub account. Keep health details, names and backup files out of your report.</p><a class="lui lui-button" data-support-report target="_blank" rel="noopener noreferrer">Open a problem report ↗</a><details><summary>Review technical details</summary><p>These stay on this page until you choose to share them. No workout history, error messages, account details or saved progress are included.</p><textarea readonly aria-label="Technical details" spellcheck="false"></textarea><div class="support-actions"><button data-support-copy>Copy details</button><button data-support-clear>Clear errors</button></div></details><p data-support-status role="status" aria-live="polite"></p>';
+  const details=d.querySelector('textarea'),status=d.querySelector('[data-support-status]');
+  function refresh(){
+   const info=JSON.stringify(snapshot(),null,2);details.value=info;
+   const body='What happened?\n\nWhat did you expect?\n\nSteps to reproduce\n1. \n\nDevice / browser (optional)\n\nTechnical details (review before submitting)\n```json\n'+info+'\n```\n\nPlease do not attach progress backups or private health information.';
+   d.querySelector('[data-support-report]').href='https://github.com/camster91/bodyweight-ladder/issues/new?template=app-problem.md&title='+encodeURIComponent('App problem: ')+'&body='+encodeURIComponent(body);
+  }
+  refresh();
+  d.querySelector('[data-support-close]').onclick=()=>d.close();
+  d.querySelector('[data-support-copy]').onclick=async()=>{
+   try{await navigator.clipboard.writeText(details.value);status.textContent='Technical details copied.';}
+   catch(_){details.focus();details.select();status.textContent='Select and copy the details above using your device’s Copy control.';}
+  };
+  d.querySelector('[data-support-clear]').onclick=()=>{events.length=0;document.getElementById('appProblemNotice')?.remove();refresh();status.textContent='Error details cleared from this page.';};
+  d.addEventListener('close',()=>{d.remove();if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
+  document.body.append(d);if(typeof applyComponentSystem==='function')applyComponentSystem(d);d.showModal();
+ }
+ window.addEventListener('error',e=>{
+  if(e.target&&e.target!==window){const kind={IMG:'image',SCRIPT:'script',LINK:'stylesheet'}[e.target.tagName];if(kind)record(kind);return;}
+  let own=false;try{const url=new URL(e.filename,location.href);own=url.origin===location.origin&&['/','/index.html'].includes(url.pathname);}catch(_){}
+  record('runtime',own?e.lineno:0,own?e.colno:0);
+ },true);
+ window.addEventListener('unhandledrejection',()=>record('promise'));
+ document.addEventListener('click',e=>{
+  const trigger=e.target.closest('[data-support-open]');if(trigger)open(trigger);
+  if(e.target.closest('[data-support-dismiss]'))document.getElementById('appProblemNotice')?.remove();
+ });
+ document.addEventListener('DOMContentLoaded',showNotice,{once:true});
+ return Object.freeze({open,record,snapshot});
+})();
+/* LADDER_SUPPORT_END */
+</script>
 <script>try{const theme=localStorage.getItem("bwl-appearance");if(theme==="light"||theme==="dark")document.documentElement.dataset.theme=theme;}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ladder">
@@ -1428,6 +1489,17 @@ body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88
 .plan-coaching h3{font-size:16px;margin:20px 0 8px}.plan-coaching label{margin:16px 0 6px;font-size:14px}.plan-coaching select{width:100%}
 .coaching-goals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.coaching-goals button{min-height:48px;white-space:normal;line-height:1.4;padding:10px 6px}
 .coaching-goals button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent);font-weight:650}
+.support-entry{text-align:center;margin:4px 0 16px}
+.support-entry button{min-height:44px;background:transparent;border:0;color:var(--color-action);font:inherit;font-size:13px;padding:10px 16px}
+.app-support{overflow:auto;overscroll-behavior:contain;max-height:85dvh}
+.app-support>a{display:flex;min-height:48px;align-items:center;justify-content:center;white-space:normal;text-align:center;text-decoration:none;margin-bottom:20px}
+.app-support summary{min-height:44px;cursor:pointer;padding:12px 0;font-weight:600}
+.app-support textarea{box-sizing:border-box;width:100%;min-height:180px;max-height:30dvh;font:12px/1.5 ui-monospace,monospace;resize:vertical;padding:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px}
+.support-actions{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+.support-actions button{flex:1;min-height:44px}
+.app-problem-notice{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);margin:0 0 16px}
+.app-problem-notice p{margin:0 0 8px}.app-problem-notice button{min-height:44px;margin:4px 12px 0 0}
+body:has(#appSupport[open]){overflow:hidden}
 
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
@@ -1610,6 +1682,7 @@ body.library-sheet-open{overflow:hidden}
   <main id="view" tabindex="-1"></main>
   <div class="backup-entry"><button data-backup="open">Back up or restore progress</button></div>
   <p class="note" id="saveNote">Loading your progress…</p>
+  <div class="support-entry"><button data-support-open aria-haspopup="dialog">Report a problem</button></div>
 </div>
 <nav aria-label="Main navigation"><div class="nav-brand"><span class="brand-name"><small>Bodyweight</small> <b>Ladder</b></span><span class="brand-tagline">Small steps.<br>Real strength.</span></div><div class="tabs">
   <button id="tab-today" data-tab="today" aria-current="true">Today</button>
@@ -2039,7 +2112,7 @@ const sameData = (a,b) => JSON.stringify(a)===JSON.stringify(b);
 /* ---------- storage ---------- */
 let state = blank();
 const storageProblems=new Map();
-function storageProblem(key,message){storageProblems.set(key,message);updateStorageWarning();}
+function storageProblem(key,message){storageProblems.set(key,message);updateStorageWarning();window.LadderSupport?.record('storage');}
 function updateStorageWarning(){
   const warning=$('#storageWarning');if(!warning)return;
   warning.hidden=!storageProblems.size;
@@ -3142,9 +3215,10 @@ function applyAppearance(value){
 function openAppearance(){
  if(document.querySelector('.app-preferences'))return;
  const dialog=document.createElement('dialog');dialog.className='app-preferences';dialog.setAttribute('aria-labelledby','appearanceTitle');
- dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">Display</h2><button aria-label="Close display settings" autofocus>×</button></div><p>Choose the appearance that feels right for you.</p><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p>';
+ dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">Display</h2><button aria-label="Close display settings" autofocus>×</button></div><p>Choose the appearance that feels right for you.</p><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p><button data-display-support aria-haspopup="dialog">Report a problem</button>';
  const close=()=>{document.body.classList.remove('preferences-open');dialog.remove();document.querySelector('.appearance-toggle')?.focus({preventScroll:true});};
  dialog.querySelector('.preferences-head button').addEventListener('click',close);
+ dialog.querySelector('[data-display-support]').addEventListener('click',()=>{close();window.LadderSupport.open(document.querySelector('.appearance-toggle'));});
  dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
  dialog.addEventListener('click',e=>{const choice=e.target.closest('[data-appearance]');if(choice){applyAppearance(choice.dataset.appearance);return;}if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
  dialog.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const buttons=[...dialog.querySelectorAll('button')],first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
