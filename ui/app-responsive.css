@@ -201,3 +201,30 @@ body[data-view="ladders"] .library-brand .label{display:none}
  body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-counter{align-self:center;margin:0}
  body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{margin:0}
 }
+
+/* Shared interaction rhythm: readable labels, stable targets and contained sheets. */
+body[data-view] button[data-control]{max-width:100%;word-break:normal}
+body[data-view] button[data-control="choice"]{white-space:normal;overflow-wrap:break-word;text-align:center}
+.workout-tools-head>:not(button),.preferences-head>:not(button){min-width:0;overflow-wrap:break-word}
+.workout-tools-head>button,.preferences-head>button{flex-shrink:0;align-self:flex-start}
+.workout-tools-body{scroll-padding-block:var(--space-inset);scrollbar-width:thin;padding-bottom:max(var(--space-section),env(safe-area-inset-bottom,0px))}
+.workout-tools-body .tool-action>span:first-child{min-width:0;overflow-wrap:break-word;line-height:1.5}
+.workout-tools-body .tool-action>span[aria-hidden="true"]{flex:none;min-width:24px;text-align:center}
+.workout-tools-body .tool-action:focus-visible{outline-offset:-3px;border-radius:var(--button-radius)}
+.workout-tools-body .tool-action:not(:disabled,[aria-disabled="true"]):active{background:var(--color-selected)}
+.workout-tools-body .tool-section:last-child{border-bottom:0}
+.library-filters{padding:6px;gap:var(--scale-space-2);scroll-padding-inline:6px;overscroll-behavior-inline:contain}
+.library-filters button{scroll-margin-inline:6px}
+.ctl .lui-choice{min-width:0;gap:var(--scale-space-2)}
+.ctl .lui-choice>.lui-button{padding-inline:var(--scale-space-2)}
+.ctl-visibility{flex-wrap:wrap}.ctl-visibility small{flex:1;min-width:12ch}
+.app-support .support-consent{min-height:var(--target-min);cursor:pointer}
+@media(hover:hover){
+ .workout-tools-body .tool-action:not(:disabled,[aria-disabled="true"]):hover{background:var(--color-selected)}
+ body[data-view] button[data-control]:not(:disabled,[aria-disabled="true"]):hover{border-color:var(--color-action)}
+}
+@media(max-width:699px){
+ body .workout-tools{max-height:90dvh;border-bottom-left-radius:0;border-bottom-right-radius:0}
+ .workout-tools-head{padding-left:max(var(--space-inset),env(safe-area-inset-left,0px));padding-right:max(var(--space-inset),env(safe-area-inset-right,0px))}
+ body .workout-tools .workout-tools-body{padding-left:max(var(--space-inset),env(safe-area-inset-left,0px));padding-right:max(var(--space-inset),env(safe-area-inset-right,0px))}
+}
