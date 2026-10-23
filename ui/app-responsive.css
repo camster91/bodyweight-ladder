@@ -228,3 +228,30 @@ body[data-view] button[data-control="choice"]{white-space:normal;overflow-wrap:b
  .workout-tools-head{padding-left:max(var(--space-inset),env(safe-area-inset-left,0px));padding-right:max(var(--space-inset),env(safe-area-inset-right,0px))}
  body .workout-tools .workout-tools-body{padding-left:max(var(--space-inset),env(safe-area-inset-left,0px));padding-right:max(var(--space-inset),env(safe-area-inset-right,0px))}
 }
+
+/* Settings and routine editing share the app's control rhythm. */
+.app-settings .settings-section{border-top:1px solid var(--color-stroke);padding-block:var(--space-inset)}
+.app-settings .settings-section h3{font-size:var(--type-meta);color:var(--color-ink-secondary);margin:0 0 var(--space-control)}
+.app-settings .settings-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-inset);width:100%;text-align:left;white-space:normal}
+.settings-row-copy{min-width:0}.settings-row-title,.settings-row-detail{display:block}
+.settings-row-detail{margin-top:var(--scale-space-1);font-size:var(--type-meta);font-weight:400;color:var(--color-ink-secondary);line-height:1.5}
+.app-settings [data-display-done]{width:100%;margin-top:var(--space-control)}
+.routine-editor-header h2{margin-bottom:var(--scale-space-2)}
+.routine-selection-summary{color:var(--color-ink-secondary);font-size:var(--type-control);line-height:1.5;margin:var(--space-control) 0 var(--space-inset)}
+#routineEditor fieldset{border:0;padding:0;min-width:0;margin:var(--space-inset) 0}
+#routineEditor legend{padding:0;margin-bottom:var(--space-control)}
+.routine-pick-copy{min-width:0;overflow-wrap:break-word}.routine-pick-copy small{display:block;color:var(--color-ink-secondary);font-size:var(--type-meta);line-height:1.5;margin-top:var(--scale-space-1)}
+#routineEditor .pick{min-height:72px;align-items:center;gap:var(--space-control)}
+#routineEditor .pick input{flex:none;width:20px;height:20px;accent-color:var(--color-action)}
+#routineEditor .pick:has(input:checked){border-color:var(--color-action);background:var(--color-selected)}
+#routineEditor .pick:focus-within{outline:var(--focus-width) solid var(--color-action);outline-offset:var(--focus-offset)}
+.routine-validation{color:var(--color-critical);font-size:var(--type-control)}
+.lui-toast{box-sizing:border-box}.lui-toast>span{min-width:0;overflow-wrap:break-word;line-height:1.5}.lui-toast .lui-button{flex:none}
+@media(max-width:399px){.lui-toast{flex-wrap:wrap}.lui-toast>span{flex-basis:100%}}
+
+.routine-discard{padding:var(--space-inset);border:1px solid var(--color-stroke);background:var(--color-selected);border-radius:var(--button-radius);margin-bottom:var(--space-inset)}
+.routine-discard p{margin:0 0 var(--space-control)}.routine-discard>div{display:flex;flex-wrap:wrap;gap:var(--space-control)}
+.routine-validation:empty{display:none}
+
+.routine-selection-summary>b,.routine-selection-summary>span{display:block}.routine-selection-summary>span{margin-top:var(--scale-space-1)}
+.routine-discard button{margin:var(--scale-space-1)}
