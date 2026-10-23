@@ -6,7 +6,7 @@ The static app uses a pure, deterministic engine in `ui/coaching-engine.js`. Pla
 
 The adapter supplies an explicit timestamp, the local Monday week boundary, validated exercise definitions, history and preferences. The engine returns selected exercises, targets, optional step suggestions, estimated duration, recovery-related observations and human-readable reasons. The same snapshot produces the same result and does not mutate its inputs.
 
-Open **Today → Options → Why this workout**. The explanation records the plan at its creation time. Goal options are Balanced, Strength and Move better. Training days per week is a flexible target from 1–7, defaulting to 3. Missing the target never adds catch-up sets. These preferences rebuild an unstarted, unadapted workout; otherwise they apply to the next workout. Optional settings are normalized, merged by timestamp and included in backups. Older saves/backups receive Balanced/3 defaults.
+Open **Today → the plan summary → Your plan**. The explanation records the plan at its creation time. Goal options are Balanced, Strength and Move better. Training days per week is a flexible target from 1–7, defaulting to 3. Missing the target never adds catch-up sets. These preferences rebuild an unstarted, unadapted workout; otherwise they apply to the next workout. Optional settings are normalized, merged by timestamp and included in backups. Older saves/backups receive Balanced/3 defaults.
 
 ## Product rules
 

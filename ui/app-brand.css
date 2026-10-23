@@ -18,7 +18,7 @@
 .onboard-preview b{font-weight:600;font-size:14px;line-height:20px}
 .onboard .onboard-preview small{font-size:12px;line-height:16px;letter-spacing:.02em}
 .onboard-heading h2,.progress-empty h2,.library-brand h2,header.top h1,.focus-exercise h2{font-family:var(--brand-display);font-weight:800;font-synthesis:none;letter-spacing:-.025em;text-wrap:balance}
-body[data-view="ladders"] .library-brand .label{display:block;font:600 12px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+body[data-view="ladders"] .library-brand .label{display:none;font:600 12px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 body[data-view="ladders"] .library-brand>div{width:52%}
 body[data-view="ladders"] .library-brand h2{max-width:22ch}
 body[data-view="ladders"] .sect[data-grp]{gap:10px;letter-spacing:.06em;font-size:12px;line-height:16px}

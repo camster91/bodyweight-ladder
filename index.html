@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-23-support-1',events=[];
+ const RELEASE='2026-10-23-core-ux-2',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -44,18 +44,20 @@ window.LadderSupport=(()=>{
  function open(opener=document.activeElement){
   if(document.getElementById('appSupport'))return;
   const d=document.createElement('dialog');d.id='appSupport';d.className='app-preferences app-support';d.setAttribute('aria-labelledby','supportTitle');
-  d.innerHTML='<div class="preferences-head"><h2 id="supportTitle">Report a problem</h2><button data-support-close aria-label="Close problem report" autofocus>×</button></div><p>Tell us what happened and what you expected. If progress looks wrong, back it up before refreshing.</p><p>Reports open on <strong>public GitHub</strong> and require a GitHub account. Keep health details, names and backup files out of your report.</p><a class="lui lui-button" data-support-report target="_blank" rel="noopener noreferrer">Open a problem report ↗</a><details><summary>Review technical details</summary><p>These stay on this page until you choose to share them. No workout history, error messages, account details or saved progress are included.</p><textarea readonly aria-label="Technical details" spellcheck="false"></textarea><div class="support-actions"><button data-support-copy>Copy details</button><button data-support-clear>Clear errors</button></div></details><p data-support-status role="status" aria-live="polite"></p>';
-  const details=d.querySelector('textarea'),status=d.querySelector('[data-support-status]');
+  d.innerHTML='<div class="preferences-head"><h2 id="supportTitle">Report a problem</h2><button data-support-close aria-label="Close problem report" autofocus>×</button></div><p>Tell us what happened and what you expected. If progress looks wrong, back it up before refreshing.</p><label for="supportMessage">What went wrong?</label><textarea id="supportMessage" maxlength="3000" placeholder="What were you trying to do?"></textarea><label class="support-consent"><input type="checkbox" data-support-include> Include the technical details shown below</label><a class="lui lui-button" data-support-report>Email a private report</a><p>Your email app opens a draft to <strong>hello@ashbi.ca</strong>. Nothing is sent until you send it. No GitHub account needed.</p><p>If no email app opens, copy your message into an email to hello@ashbi.ca. Please leave out health details and progress backups.</p><details><summary>Review technical details</summary><p>Optional. No workout history, error messages, account details or saved progress are included.</p><textarea readonly aria-label="Technical details" spellcheck="false" data-support-details></textarea><div class="support-actions"><button data-support-copy>Copy report</button><button data-support-clear>Clear errors</button></div></details><p data-support-status role="status" aria-live="polite"></p>';
+  const details=d.querySelector('[data-support-details]'),message=d.querySelector('#supportMessage'),include=d.querySelector('[data-support-include]'),status=d.querySelector('[data-support-status]');
+  const report=()=> 'Bodyweight Ladder problem\n\n'+(message.value.trim()||'What happened?\n\nWhat did you expect?\n\nSteps to reproduce:')+(include.checked?'\n\nTechnical details:\n'+details.value:'');
   function refresh(){
    const info=JSON.stringify(snapshot(),null,2);details.value=info;
-   const body='What happened?\n\nWhat did you expect?\n\nSteps to reproduce\n1. \n\nDevice / browser (optional)\n\nTechnical details (review before submitting)\n```json\n'+info+'\n```\n\nPlease do not attach progress backups or private health information.';
-   d.querySelector('[data-support-report]').href='https://github.com/camster91/bodyweight-ladder/issues/new?template=app-problem.md&title='+encodeURIComponent('App problem: ')+'&body='+encodeURIComponent(body);
+   d.querySelector('[data-support-report]').href='mailto:hello@ashbi.ca?subject='+encodeURIComponent('Bodyweight Ladder — problem report')+'&body='+encodeURIComponent(report());
   }
   refresh();
+  const copyButton=d.querySelector('[data-support-copy]');d.querySelector('[data-support-report]').after(copyButton);copyButton.className='support-copy';
+  message.addEventListener('input',refresh);include.addEventListener('change',refresh);
   d.querySelector('[data-support-close]').onclick=()=>d.close();
   d.querySelector('[data-support-copy]').onclick=async()=>{
-   try{await navigator.clipboard.writeText(details.value);status.textContent='Technical details copied.';}
-   catch(_){details.focus();details.select();status.textContent='Select and copy the details above using your device’s Copy control.';}
+   try{await navigator.clipboard.writeText(report());status.textContent='Report copied. Paste it into an email to hello@ashbi.ca.';}
+   catch(_){const copy=document.createElement('textarea');copy.value=report();copy.setAttribute('aria-label','Report to copy');d.append(copy);copy.focus();copy.select();status.textContent='Select and copy the report below using your device’s Copy control.';}
   };
   d.querySelector('[data-support-clear]').onclick=()=>{events.length=0;document.getElementById('appProblemNotice')?.remove();refresh();status.textContent='Error details cleared from this page.';};
   d.addEventListener('close',()=>{d.remove();if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
@@ -1500,6 +1502,52 @@ body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88
 .app-problem-notice{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);margin:0 0 16px}
 .app-problem-notice p{margin:0 0 8px}.app-problem-notice button{min-height:44px;margin:4px 12px 0 0}
 body:has(#appSupport[open]){overflow:hidden}
+/* One plan entry and a shared content rhythm across the three screens. */
+.plan-summary{margin:var(--space-control) 0 var(--space-inset)}
+.plan-summary button{display:flex;align-items:center;justify-content:space-between;width:100%;gap:var(--space-control);text-align:left;background:var(--color-selected);border-color:var(--color-stroke);padding:var(--space-control) var(--space-inset)}
+.plan-summary b,.plan-summary small{display:block}.plan-summary small{font-size:var(--type-meta);line-height:1.5;color:var(--color-ink-secondary);margin-top:var(--scale-space-1)}
+.plan-preferences{padding-bottom:var(--space-inset);border-bottom:1px solid var(--color-stroke)}
+.plan-sheet .plan-coaching{border-top:0;margin:0;padding:var(--space-inset)}.plan-coaching li b,.plan-coaching li span{display:block}
+.plan-sheet select,.setup-coaching select{width:100%;margin-bottom:var(--space-control)}
+.setup-coaching{padding:var(--space-inset);margin:var(--space-inset) 0;border:1px solid var(--color-stroke);border-radius:var(--panel-radius);background:var(--color-surface)}
+.setup-coaching h3{margin:0 0 var(--space-inset)}.setup-coaching label,.app-support label{display:block;margin-bottom:var(--scale-space-2);font-size:var(--type-control)}
+.pending-workout{display:flex;align-items:center;justify-content:space-between;gap:var(--space-inset);padding:var(--space-inset);margin-bottom:var(--space-inset);background:var(--color-selected);border:1px solid var(--color-stroke);border-radius:var(--panel-radius)}
+.pending-workout h2{font-size:var(--scale-type-title);margin:var(--scale-space-2) 0}.pending-workout p{margin:var(--scale-space-2) 0}.pending-workout .cue{font-size:var(--type-meta)}
+.pending-workout button{flex-shrink:0}
+.library-filters{display:flex;gap:var(--scale-space-2);overflow-x:auto;padding:var(--scale-space-1) 0 var(--space-control);scrollbar-width:thin}
+.library-filters button{flex:none;white-space:nowrap;min-height:var(--target-min)}
+body[data-view="ladders"] .library-filters button[aria-pressed="true"]{background:var(--color-selected);border-color:var(--color-action);color:var(--color-action);font-weight:650}
+.priority-help{margin:var(--scale-space-2) 0 0;font-size:var(--type-meta);line-height:1.6;color:var(--color-ink-secondary)}
+.ctl-visibility{display:flex;align-items:center;gap:var(--space-control);border-top:1px solid var(--color-stroke);padding-top:var(--space-inset);margin-top:var(--space-inset)}
+.ctl-visibility small{font-size:var(--type-meta);color:var(--color-ink-secondary)}
+.app-support .support-consent{display:flex;gap:var(--space-control);align-items:center;margin:var(--space-control) 0 var(--space-inset)}
+.support-consent input{width:24px;height:24px;flex:none;accent-color:var(--color-action)}
+.app-support .support-copy{width:100%;margin-bottom:var(--space-inset);min-height:var(--target-min)}
+.support-entry{margin-top:0}body[data-view="today"] .support-entry{display:none}
+.technique-steps{padding-left:var(--space-section);margin:var(--space-inset) 0}.technique-steps li{padding:var(--scale-space-2) 0;line-height:1.6}
+.technique-guide h3{font-size:var(--type-body);margin:var(--space-inset) 0 var(--scale-space-2)}
+.technique-guide .technique-links{display:grid;gap:var(--space-control);margin-top:var(--space-inset)}
+.technique-links a{display:block;padding:var(--space-control) 0;min-height:var(--target-min);box-sizing:border-box}
+.technique-reference-note{font-size:var(--type-meta);color:var(--color-ink-secondary);line-height:1.6}
+body:has(#planSummary[open]){overflow:hidden}
+body[data-view="history"] .progress-empty{max-width:none;width:auto;margin-inline:0}
+body[data-view="history"] .progress-empty-art{max-width:480px;margin-inline:auto}
+body[data-view="ladders"] .exopen .ladder{max-width:none;margin-inline:var(--space-inset)}
+body[data-view="ladders"] .exopen .ladder>li{grid-template-columns:32px minmax(0,1fr) auto;gap:var(--space-control);padding-block:var(--space-inset)}
+body[data-view="today"] .focus-shell>.focus-stage{min-height:0;padding-top:var(--space-control)}
+body[data-view="today"] .focus-counter{flex:none;min-height:0;margin:var(--space-section) 0 var(--space-inset)}
+body[data-view="today"] .focus-actions{margin-top:0;padding-top:var(--space-control)}
+body[data-view="today"] .focus-set-path{margin-top:var(--space-control)}
+body[data-view="ladders"] .library-brand{min-height:80px;padding:var(--space-control) var(--space-inset)}
+body[data-view="ladders"] .library-brand h2{font-size:var(--scale-type-title);margin-block:var(--scale-space-1)}
+body[data-view="ladders"] .library-brand .label{display:none}
+.step-guide-button{margin-top:var(--scale-space-2);color:var(--color-action)}
+@media(max-width:599px){.pending-workout{align-items:stretch;flex-direction:column}.pending-workout button{width:100%}.pending-workout h2{font-size:22px}}
+@media(min-width:700px) and (min-height:700px){
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){min-height:0;grid-template-rows:auto auto auto;padding-block:var(--space-inset)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-counter{align-self:center;margin:0}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{margin:0}
+}
 
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
@@ -1620,7 +1668,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .onboard-preview b{font-weight:600;font-size:14px;line-height:20px}
 .onboard .onboard-preview small{font-size:12px;line-height:16px;letter-spacing:.02em}
 .onboard-heading h2,.progress-empty h2,.library-brand h2,header.top h1,.focus-exercise h2{font-family:var(--brand-display);font-weight:800;font-synthesis:none;letter-spacing:-.025em;text-wrap:balance}
-body[data-view="ladders"] .library-brand .label{display:block;font:600 12px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+body[data-view="ladders"] .library-brand .label{display:none;font:600 12px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 body[data-view="ladders"] .library-brand>div{width:52%}
 body[data-view="ladders"] .library-brand h2{max-width:22ch}
 body[data-view="ladders"] .sect[data-grp]{gap:10px;letter-spacing:.06em;font-size:12px;line-height:16px}
@@ -2203,18 +2251,34 @@ function workCoach(t,x){
  if(JSON.stringify(x.goals)!==JSON.stringify(current.goals)||p.level!==current.level)p={title:'Targets kept for this workout',reason:'Your latest results will shape the next workout. This one keeps the targets it started with.',goals:x.goals};
  return `<div class="coach-inline"><details><summary>${esc(p.title)}</summary><p>${esc(p.reason)}</p>${x.coaching?.reason?`<p>${esc(x.coaching.reason)}</p>`:''}<span>${esc(coachTargets(p,spec(t)))}</span></details>${Number.isInteger(p.level)&&t.steps[p.level]?`<button data-coach="level" data-t="${t.id}" data-level="${p.level}">Try ${esc(t.steps[p.level][0])}</button>`:''}</div>`;
 }
+let planSummaryOpen=false;
+function coachGoalName(value){return {balanced:'Balanced',strength:'Strength',movement:'Move better'}[value]||'Balanced';}
 function coachingView(){
- const report=focusRun?.coaching,preferences=LadderCoach.prefs(state.prefs.coach),current=report?.version===LadderCoach.VERSION&&Array.isArray(report.selected);
- const summary=current?'At the start of this workout: '+report.summary:'This workout keeps its saved targets. Updated coaching applies when you start another workout.';
- const list=current?focusRun.items.filter(x=>findTrack(x.id)).map(item=>{const x=report.selected.find(x=>x.id===item.id),reason=item.swap?'You chose an alternative for this workout. Its targets stay separate from the original exercise.':x?.reason||'Kept from your saved workout.';return `<li><b>${esc(findTrack(item.id).name)}</b><span>${esc(reason)}</span></li>`;}).join(''):'';
- const estimate=Math.ceil((focusRun?.items||[]).reduce((n,x)=>n+plannedMinutes(x),0)),budget=focusRun?.readiness?.kind==='short'?focusRun.readiness.budget:minutes;
- return `<details class="plan-coaching"><summary>Why this workout</summary><p>${esc(summary)}</p><p>Workout estimate: ${estimate} minutes including rests; actual time varies.</p>${budget&&estimate>budget+1?`<p class="cue">This full exercise block exceeds the ${budget}-minute setting. The estimate includes its prescribed sets and rests.</p>`:''}${focusRun?.readiness?.kind==='low'?'<p>You chose low energy. These exercises use lower targets today; the usual progression baseline stays separate.</p>':focusRun?.readiness?.kind==='short'?'<p>You chose less time. The highest-priority exercises stay in the same order.</p>':''}${list?`<ul>${list}</ul>`:''}<p class="cue">Suggestions use your training log and preferences. They do not measure physical recovery. Change an exercise or stop if it doesn’t feel right.</p><h3>Coaching preferences</h3><p>Changes rebuild an unstarted workout. Once any sets are recorded, they apply to the next workout.</p><div class="coaching-goals seg" role="group" aria-label="Training goal">${[['balanced','Balanced'],['strength','Strength'],['movement','Move better']].map(([v,l])=>`<button data-coach="goal" data-goal="${v}" aria-pressed="${preferences.goal===v}">${l}</button>`).join('')}</div><label for="coachDays">Training days per week</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${preferences.days===n?' selected':''}>${n} ${n===1?'day':'days'}</option>`).join('')}</select><p class="cue">A flexible weekly target. Missed days never add catch-up sets.</p></details>`;
+ const p=LadderCoach.prefs(state.prefs.coach),start=weekStart(new Date()).getTime(),days=new Set(state.log.filter(e=>e.ts>=start&&e.ts<=Date.now()&&e.sets.some(v=>v>0)).map(e=>dayOf(e.ts))).size;
+ return `<section class="plan-summary" aria-label="Your training plan"><button data-ui="plansummary" aria-haspopup="dialog"><span><b>${coachGoalName(p.goal)} · ${p.days} ${p.days===1?'day':'days'}/week</b><small>${days} of ${p.days} days this week · Why & adjust</small></span><span aria-hidden="true">→</span></button></section>`;
+}
+function closePlanSummary(){planSummaryOpen=false;const d=$('#planSummary');d?.close();d?.remove();$('[data-ui="plansummary"]')?.focus({preventScroll:true});}
+function mountPlanSummary(){
+ if(!planSummaryOpen||tab!=='today')return;
+ const p=LadderCoach.prefs(state.prefs.coach),report=focusRun?.coaching,current=report?.version===LadderCoach.VERSION&&Array.isArray(report.selected);
+ const estimate=Math.ceil((focusRun?.items||[]).reduce((n,x)=>n+plannedMinutes(x),0));
+ const why=current?report.summary:'This saved workout keeps its original targets. Your current preferences shape your next workout.';
+ const list=(focusRun?.items||[]).filter(x=>findTrack(x.id)).map(item=>{const chosen=current?report.selected.find(x=>x.id===item.id):null,decision=item.coaching?.decision||chosen?.decision;return `<li><b>${esc(sessionSpec(findTrack(item.id))[0])}</b>${decision?`<p>${esc(decision.title)} · ${esc(decision.reason)}</p>`:''}<span>${esc(item.swap?'You chose this alternative. Its targets stay separate.':chosen?.reason||'Kept from your saved workout.')}</span></li>`;}).join('');
+ const d=document.createElement('dialog');d.id='planSummary';d.className='workout-tools plan-sheet';d.setAttribute('aria-labelledby','planSummaryTitle');
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div><div class="workout-tools-body plan-coaching"><div class="plan-preferences"><label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">A flexible target, not fixed workout days. No catch-up sets. Changes apply to the next workout once any sets are recorded.</p></div><h3>Why this workout</h3><p>${esc(why)}</p><p>About ${estimate} minutes including rests. Actual time varies.</p>${minutes&&estimate>minutes+1?`<p class="cue">This exercise block exceeds the ${minutes}-minute setting. Choose fewer sets or a shorter workout if needed.</p>`:''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy. Its saved targets stay in place.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices. They do not measure physical recovery.</p></div>`;
+ d.addEventListener('cancel',e=>{e.preventDefault();closePlanSummary();});$('#view').append(d);applyComponentSystem(d);d.showModal();
+}
+function pendingWorkoutView(){
+ const items=(focusRun?.items||[]).filter(x=>x&&!x.entry&&findTrack(x.id)&&Array.isArray(x.values)&&x.values.every(Number.isFinite));
+ if(!items.length||!items.some(x=>x.values?.length>0))return '';
+ const count=items.reduce((n,x)=>n+(x.values?.length||0),0),next=items[0];
+ return `<section class="pending-workout" aria-labelledby="pendingTitle"><div><p class="label">In progress on this device</p><h2 id="pendingTitle">Your workout is waiting.</h2><p>${count} ${count===1?'set':'sets'} recorded · ${esc(sessionSpec(findTrack(next.id))[0])}</p><p class="cue">These sets stay in your unfinished workout. Completed exercises appear below and are included in backups.</p></div><button class="primary" data-ui="gotoday">Resume workout</button></section>`;
 }
 function setCoachingPreference(key,value){
  if(key==='goal'&&!['balanced','strength','movement'].includes(value)||key==='days'&&(!Number.isInteger(value)||value<1||value>7)||!['goal','days'].includes(key))return;
  const rebuild=canAdjustReadiness()&&!focusRun.readiness?.kind;
  state.prefs.coach={...LadderCoach.prefs(state.prefs.coach),[key]:value};commit();if(rebuild)focusRun=null;
- render();const target=key==='goal'?document.querySelector(`[data-coach="goal"][data-goal="${value}"]`):$('#coachDays');target?.focus({preventScroll:true});
+ render();const target=key==='goal'?$('#coachGoal'):$('#coachDays');target?.focus({preventScroll:true});
  $('#focusAnnouncement').textContent=rebuild?'Workout updated for your coaching preferences.':'Coaching preferences saved for your next workout. Current targets are unchanged.';
 }
 function focusFeedback(){
@@ -2332,7 +2396,7 @@ function applyProgressRestore(backup){
 function openProgressBackup(opener){
   if($('#progressBackup'))return;
   const d=document.createElement('dialog');d.id='progressBackup';d.className='app-preferences progress-backup';d.setAttribute('aria-labelledby','backupTitle');
-  d.innerHTML='<div class="preferences-head"><h2 id="backupTitle">Protect your progress</h2><button aria-label="Close backup and restore" autofocus>×</button></div><p>Your progress is stored in this browser. Clearing site data or changing devices can remove it.</p><section><h3>Keep a backup</h3><p>Download completed workouts, exercise levels, custom exercises and routines. Unfinished sets, workout time and display preferences stay on this device.</p><button class="primary" data-backup-download>Download backup</button><p class="cue">Keep this file somewhere private. Files are read on your device. On an account-connected version, restored progress also syncs to that account.</p></section><section><h3>Restore a backup</h3><label for="backupFile">Choose a Bodyweight Ladder JSON backup</label><input id="backupFile" type="file" accept=".json,application/json"><div id="backupPreview" hidden></div><p id="backupMessage" role="status" aria-live="polite"></p><button class="primary" data-backup-apply disabled>Merge backup</button></section>';
+  d.innerHTML='<div class="preferences-head"><h2 id="backupTitle">Protect your progress</h2><button aria-label="Close backup and restore" autofocus>×</button></div><p>Your progress is stored in this browser. Clearing site data or changing devices can remove it.</p><section><h3>Keep a backup</h3><p>Download completed workouts, exercise levels, custom exercises and routines. Unfinished sets, workout time and display preferences stay on this device.</p><button class="primary" data-backup-download>Download backup</button><p class="cue">Keep this file somewhere private. Files are read on your device. Restored progress is saved in this browser.</p></section><section><h3>Restore a backup</h3><label for="backupFile">Choose a Bodyweight Ladder JSON backup</label><input id="backupFile" type="file" accept=".json,application/json"><div id="backupPreview" hidden></div><p id="backupMessage" role="status" aria-live="polite"></p><button class="primary" data-backup-apply disabled>Merge backup</button></section>';
   let pending=null,selection=0;
   const message=d.querySelector('#backupMessage'),preview=d.querySelector('#backupPreview'),apply=d.querySelector('[data-backup-apply]');
   d.querySelector('[data-backup-download]').onclick=()=>{try{downloadProgressBackup();message.textContent='Backup download requested. Check your downloads before closing this page.';}catch(e){message.textContent='The download could not start. Keep this page open and try again.';}};
@@ -2351,7 +2415,7 @@ let historyDaysShown=14;
 const progressSectionsOpen=new Set();
 const expandedEx=new Set();
 const holdNext={};            // trackId -> next set to time
-let setupDraft=null, routinesOpen=false, setupWanted=false, exQuery="";
+let setupDraft=null, routinesOpen=false, setupWanted=false, exQuery="", exCategory="All";
 
 // Unfinished sessions belong to this browser. Completed exercises use the existing log/sync.
 let focusRun=null, focusUndo=null, focusNotice=null, focusNoticeTimer=null;
@@ -2585,16 +2649,81 @@ function closeTechnique(restore=true){
  document.body.classList.remove('technique-open');
  if(restore)$('#focusHowTo')?.focus({preventScroll:true});
 }
+/* LADDER_TECHNIQUE_START */
+/* Shared editorial instructions. References are selected resources, not endorsements. */
+const TECHNIQUE_SOURCES={
+ push:{url:'https://www.nasm.org/resource-center/exercise-library/push-up',label:'Push-up demonstration · NASM',scope:'Standard push-up; advanced hand positions differ.'},
+ kneePush:{url:'https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/modified-pushup/vid-20084674',label:'Knee push-up video · Mayo Clinic',scope:'Knee-supported push-up; use the written cue for your variation.'},
+ squat:{url:'https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/squat/vid-20084663',label:'Squat video · Mayo Clinic',scope:'Basic two-leg squat; assisted and single-leg steps differ.'},
+ lunge:{url:'https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/lunge/vid-20084662',label:'Stationary lunge video · Mayo Clinic',scope:'Foundation for a split squat, not an elevated or pistol demonstration.'},
+ swing:{url:'https://www.catalystathletics.com/exercise/524/Kettlebell-Swing/',label:'Kettlebell swing video · Catalyst Athletics',scope:'Two-hand hip-driven swing.'},
+ strength:{url:'https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan-how-to-videos/',label:'Foundation exercise videos · NHS',scope:'General strength and flexibility demonstrations; not every advanced variation is shown.'},
+ core:{url:'https://www.mayoclinic.org/healthy-lifestyle/fitness/in-depth/core-strength/art-20546851',label:'Core exercise photo guide · Mayo Clinic',scope:'Illustrated foundations, not a video or an exact guide to every variation.'},
+ pull:{url:'https://ocw.mit.edu/courses/pe-720-weight-training-spring-2006/pages/video/',label:'Pull-up demonstrations · MIT OpenCourseWare',scope:'Choose “Chinup” or “Pullup with a Spotter” in the video list. Advanced variations differ.'},
+ mobility:{url:'https://www.nhs.uk/live-well/exercise/flexibility-exercises/',label:'Flexibility photo guide · NHS',scope:'General flexibility foundations, not a demonstration of every named step.'}
+};
+const TECHNIQUE_FAMILIES={
+ push:['Place your hands on the floor or the firm support named in this step. Set your knees or feet so your body is supported before lowering.','Keep your trunk moving with your shoulders rather than letting your hips drop.','Press away from the support, then reset before the next repetition.'],
+ dip:['Use fixed parallel bars or a stable bench that cannot slide or tip. Position your hands before moving your weight off your feet.','Keep the movement slow and use only the depth you can control.','Return to a supported position before stepping or sitting down.'],
+ pull:['Use a secure, load-rated pull-up bar. Use a stable step when you need help reaching the top position.','Keep the bar secure in your hands and avoid kicking to finish a repetition.','Bring your feet back to support before releasing the bar.'],
+ row:['Use a purpose-built row station or a fixed support rated for your full body weight. A loose table or ordinary door handle is not a safe anchor.','Keep your trunk steady as your chest travels toward the support.','Lower without dropping. Return your feet to a stable position before letting go.'],
+ squat:['Stand on a clear, nonslip surface. For an assisted step, hold a fixed support and arrange your feet before lowering.','Let your hips and knees bend together; keep your weight supported through your feet.','Stand back up with control. Reset your balance before repeating.'],
+ core:['Use a mat or a comfortable, nonslip floor. Arrange the supports shown for this specific step before taking your weight.','Keep breathing while your trunk stays controlled; use a smaller movement if it starts to drift.','Return your limbs to support before relaxing the position.'],
+ hinge:['Lie on your back with your knees bent and feet supported. For elevated steps, use a firm platform that cannot slide.','Lift through your hips without trying to gain height by arching your lower back.','Lower your hips to the mat with control before repeating.'],
+ knee:['For a wall sit, use a clear, solid wall. For a Spanish squat, use a suitable strap on a secure anchor; do not improvise with loose furniture.','Set a depth you can hold steadily. Keep pressure through your feet rather than hanging on the support.','Straighten slowly and return to a stable standing position.'],
+ groin:['Lie on your side beside a stable bench. Support the top knee or foot exactly as named in this step, with the lower forearm underneath your shoulder.','Lift your hips into a side-support position without rolling your chest toward the floor.','Lower your hips before moving the supported leg. Complete the other side separately.'],
+ hold:['Set up the named knee-supported or full push-up position. Lower into a range you can hold without collapsing.','Keep the same trunk position while breathing throughout the hold.','Put your knees down or press back up before relaxing.'],
+ curl:['Stand on the middle of a strong towel and hold its ends. Arrange the length so your elbows can stay bent near a right angle.','Pull upward steadily against the towel while keeping your feet planted, wrists straight and elbows near your sides.','Ease off the pull before releasing the towel or stepping away.'],
+ hang:['Check that the bar and its mounts are rated for hanging. Use a step so you can reach and leave it without a jump.','Hold firmly and keep the hang controlled. Keep your feet supported if you cannot control your full weight.','Return your feet to the step before you release your hands.'],
+ hips:['Choose a clear floor area and a fixed support if needed for balance. Place your feet before moving into the named stance.','Move through the range you can control without twisting to force extra depth.','Come out slowly, recover your balance, then change sides if indicated.'],
+ carry:['Choose a weight you can lift and set down under control. Clear a short walking route with room to turn.','Stand tall and take small, deliberate steps; keep the load in the grip named for this step.','Stop walking before lowering the load. Set it down with control and change hands when required.'],
+ frog:['Start on hands and knees on a padded surface. Widen your knees only as far as you can comfortably support.','Rock your hips backward a small distance without pushing or bouncing into the end position.','Return forward slowly, then bring your knees closer together before standing.'],
+ bear:['Start on hands and knees, with hands below shoulders. Lift your knees just clear of the floor.','Take short opposite-hand and foot steps while keeping your torso steady.','Lower your knees before resting or changing direction.'],
+ crab:['Sit with your feet flat and hands behind you in a position your wrists tolerate. Place your supports before lifting.','Lift your hips into a comfortable tabletop position without forcing extra shoulder range.','Lower your hips to the floor before releasing your hands.'],
+ toesit:['Kneel on a padded surface with your toes tucked. Keep your hands available to take some weight.','Move your hips toward your heels only as far as you can control without forcing the toes.','Shift your weight forward and untuck your toes slowly.'],
+ hipflex:['Set one knee on a pad and the other foot in front, using support for balance if needed.','Keep your pelvis and ribs steady as you gently move forward; avoid gaining range by arching your back.','Move back out of the stretch before changing legs.'],
+ hams:['Lie on your back with one leg supported by your hands or a suitable strap. Keep a slight knee bend if needed.','Use a gentle stretch. If using the contract-relax cue, keep the contraction light rather than forcing the leg farther.','Ease the leg down before changing sides.'],
+ openbook:['Lie on your side with your knees bent and arms reaching forward. Support your head comfortably.','Rotate your upper arm and chest open while keeping your knees together; do not force your hand to the floor.','Bring the arm back slowly, then turn over to repeat on the other side.'],
+ kneewall:['Face a wall with one foot a short distance away. Keep a hand on the wall for balance.','Move that knee toward the wall while keeping the heel in contact with the floor.','Return to the start and adjust your distance rather than lifting the heel to reach farther.'],
+ ninety:['Sit with both knees bent to the sides in a comfortable 90/90 position. Use your hands behind you for support as needed.','Rotate the knees across to the other side without forcing your feet or using a sudden twist.','Pause in the new position and reset before returning.'],
+ swing:['Use a clear area and a kettlebell with a secure grip. Begin with a controlled hip hinge before attempting a swing.','Let hip drive move the bell; do not pull it upward with your arms or lean backward at the top.','Slow down with control and park the bell on the floor before letting go.'],
+ ankle:['Use a fixed support for balance. Choose the flat floor unless the step specifically calls for a secure step edge.','Raise and lower with control, keeping the foot steady rather than rolling to one edge.','Bring your heel back to support before changing legs or resting.'],
+ shin:['Stand with your back against a solid wall and your feet forward far enough to move your ankles comfortably.','Keep the heels planted as you lift your toes toward your shins.','Lower the forefoot gently instead of letting it slap the floor.']
+};
+function techniqueContent(t,i=lvlOf(t),st=spec(t,i)){
+ const name=st[0].toLowerCase();let instructions=[...(TECHNIQUE_FAMILIES[t.id]||['Choose stable supports and a clear space for your movement.','Use a controlled range and keep breathing.','Return to a supported position before resting.'])];
+ let source=TECHNIQUE_SOURCES.strength;
+ if(['push','hold'].includes(t.id))source=/knee/.test(name)?TECHNIQUE_SOURCES.kneePush:TECHNIQUE_SOURCES.push;
+ if(t.id==='squat')source=/split/.test(name)?TECHNIQUE_SOURCES.lunge:TECHNIQUE_SOURCES.squat;
+ if(['pull','hang'].includes(t.id))source=TECHNIQUE_SOURCES.pull;
+ if(t.id==='core'||t.id==='hinge')source=TECHNIQUE_SOURCES.core;
+ if(['frog','hipflex','hams','openbook','kneewall','ninety','toesit'].includes(t.id))source=TECHNIQUE_SOURCES.mobility;
+ if(t.id==='swing')source=TECHNIQUE_SOURCES.swing;
+ if(/nordic/.test(name))instructions=['Kneel on thick padding with your lower legs secured by equipment designed for this exercise. Keep your hands ready to catch your body.','Keep your hips in line with your trunk as you lean forward from the knees; stop before you lose control.','Use your hands to assist the return when needed. Do not force an unassisted repetition.'];
+ if(/front lever/.test(name))instructions=['Use a secure bar or rings rated for your body weight. Begin in a supported tucked position before lifting.','Keep the named tuck while you bring your body toward horizontal; shorten the hold if you cannot control it.','Return to the hang and then to foot support before releasing your hands.'];
+ if(/support hold/.test(name))instructions=['Use fixed parallel bars with room for your feet to return to support. Grip both bars before shifting your weight.','Support your body through straight arms without adding a dip or swinging your legs.','Bring your feet back to a stable support before releasing your hands.'];
+ if(/hanging (knee|leg) raise/.test(name))instructions=['Reach a load-rated bar from a stable step and begin in a controlled hang.','Lift the knees or legs as named without using a swing. Keep the return controlled.','Return your feet to the step before releasing the bar.'];
+ if(name==='l-sit')instructions=['Use fixed bars or stable parallettes with enough clearance. Set your hands before taking your weight.','Support through straight arms and lift your legs into the range you can hold without swinging.','Bring your feet back to support before resting.'];
+ if(name==='side plank')instructions=['Lie on your side with the supporting elbow below your shoulder and feet arranged for balance.','Lift the hips into a straight side-support position without rolling your shoulders.','Lower the hips slowly and repeat on the other side.'];
+ if(name==='dead bug')instructions=['Lie on your back with your arms up and hips and knees bent.','Lower opposite arm and leg only as far as you can keep your trunk steady, then return.','Alternate sides without rushing or arching your back to reach farther.'];
+ if(/hollow|lying leg/.test(name))instructions=['Lie on a mat and choose a knee bend that lets you control your lower back.','Move or hold your limbs as named while keeping your trunk steady; shorten the lever if your back lifts.','Return your legs and arms to the floor slowly.'];
+ if(t.id==='hips'&&/rdl/.test(name))instructions=['Stand beside a fixed support. Settle your weight on one foot with a small knee bend.','Tip forward from the hips as the other leg moves behind; keep your pelvis from rotating open.','Return to standing and regain your balance before the next repetition.'];
+ if(t.id==='ankle'&&/jump|pogo/.test(name))instructions=['Use a clear, nonslip floor with enough room overhead. Start with small jumps and soft knees.','Keep each bounce small and land quietly under your body. Stop the set if landings become uncontrolled.','Settle both feet on the floor before resting or changing sides.'];
+ if(t.id==='squat'&&/pistol/.test(name))instructions=['Stand on one foot near a fixed support, using it for the assisted step. Keep the other leg in front.','Lower only as far as your balance and control allow; do not drop into the bottom position.','Use assistance when needed to return to standing before changing legs.'];
+ const each=st[4].includes('each'),timed=isSec(st[4]);
+ return `<section class="technique-guide" aria-label="Instructions for ${esc(st[0])}"><p class="technique-cue">${esc(st[5])}</p><ol class="technique-steps"><li><b>Set up.</b> ${esc(instructions[0])}</li><li><b>${timed?'Hold or move':'Move'}.</b> ${esc(instructions[1])}</li><li><b>Finish.</b> ${esc(instructions[2])}</li></ol><p class="cue">${timed?'The target is seconds, not repetitions. Keep breathing throughout the set.':'One controlled movement out and back counts as one rep.'}${each?' Complete the target on each side; record the per-side amount.':''}</p>${st[6]!=='None'?`<p class="technique-equipment">Equipment · ${esc(st[6])}</p>`:''}<div class="technique-links"><a href="${source.url}" target="_blank" rel="noopener noreferrer">${esc(source.label)} ↗</a><p class="technique-reference-note">${esc(source.scope)}</p><a href="${ytLink(st[0])}" target="_blank" rel="noopener noreferrer">Search for this exact variation ↗</a></div><details class="technique-photo"><summary>Photo reference</summary>${exerciseFigure(t,i)}<p class="technique-reference-note">A still shows one moment, not the full movement. Generated references have not received professional technique sign-off.</p></details></section>`;
+}
+/* LADDER_TECHNIQUE_END */
 function openTechnique(){
  const x=focusItem(),t=x&&findTrack(x.id);if(!t)return;
  closeWorkoutTools();closeTechnique(false);
  const st=sessionSpec(t),d=document.createElement('dialog');
  d.id='techniqueSheet';d.className='workout-tools technique-sheet';d.setAttribute('aria-labelledby','techniqueTitle');
- d.innerHTML=`<div class="workout-tools-head"><div><p class="technique-kicker">Technique</p><h2 id="techniqueTitle" tabindex="-1">${esc(st[0])}</h2></div><button data-ui="techniqueclose" aria-label="Close technique guide" autofocus>×</button></div><div class="workout-tools-body">${exerciseFigure(t,sessionLevel(t))}<p class="technique-cue">${esc(st[5])}</p>${st[6]!=='None'?`<p class="technique-equipment">Equipment · ${esc(st[6])}</p>`:''}<a class="technique-video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Find video tutorials <span aria-hidden="true">↗</span></a></div>`;
+ d.innerHTML=`<div class="workout-tools-head"><div><p class="technique-kicker">Technique</p><h2 id="techniqueTitle" tabindex="-1">${esc(st[0])}</h2></div><button data-ui="techniqueclose" aria-label="Close technique guide" autofocus>×</button></div><div class="workout-tools-body">${techniqueContent(t,sessionLevel(t),st)}</div>`;
  d.addEventListener('cancel',e=>{e.preventDefault();closeTechnique();});
  d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeTechnique();});
  d.addEventListener('keydown',e=>{
-   if(e.key!=='Tab')return;const first=d.querySelector('button'),last=d.querySelector('a');
+   if(e.key!=='Tab')return;const controls=[...d.querySelectorAll('button,a,summary')].filter(el=>el.getClientRects().length),first=controls[0],last=controls.at(-1);
    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
  });
@@ -2611,7 +2740,7 @@ function mountWorkoutTools(previous={}){
  dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
  const body=dialog.querySelector('.workout-tools-body');
  // Move existing controls so their data, event handlers, and IDs have a single owner.
- for(const el of [$('.readiness-check'),settings,$('.plan-coaching'),$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
+ for(const el of [$('.readiness-check'),settings,$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
  if(settings){settings.querySelector('summary').textContent='Time & workout settings';settings.querySelectorAll('[data-ui="min"]').forEach(b=>b.textContent=+b.dataset.m?b.dataset.m+' min':'All');}
  // Common controls are sections and direct actions, not nested accordions.
  const reveal=(details,title)=>{if(!details)return;const section=document.createElement('section');section.className=details.className+' tool-section';const heading=document.createElement('h3');heading.className='tool-heading';heading.textContent=title;section.append(heading);for(const child of [...details.children])if(child.tagName!=='SUMMARY')section.append(child);details.replaceWith(section);return section;};
@@ -2667,7 +2796,7 @@ function focusView(plan,top,more,recent){
   if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="brand-finish-note">You made time for you.</p><p class="focus-next finish-totals">${r.items.length} ${r.items.length===1?'exercise':'exercises'} · ${r.items.reduce((n,x)=>n+x.values.length,0)} ${r.items.reduce((n,x)=>n+x.values.length,0)===1?'set':'sets'} saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest · Take a breather.</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
-  else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${exerciseThumbnail(t,sessionLevel(t),false)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps to record'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary><p>${esc(st[5])}${st[6]!=='None'?' Needs: '+esc(st[6]):''}</p>${exerciseFigure(t,sessionLevel(t))}<a href="${ytLink(st[0])}" target="_blank" rel="noopener">Find video tutorials</a></details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${exerciseThumbnail(t,sessionLevel(t),false)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps to record'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary>${techniqueContent(t,sessionLevel(t),st)}</details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+='<div class="workout-secondary">';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} ${r.items.length===1?'exercise':'exercises'}</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':a.values.length+' of '+a.goals.length+' sets complete'}</small></span>${!a.entry?(i===r.at?'<span class="status-chip" aria-current="step">Current</span>':`<button class="focus-link" data-focus="choose" data-i="${i}">Start</button>`):''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Save exercise records all the numbers shown.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
@@ -2741,7 +2870,7 @@ function fullCard(t, first){
       <div class="pm"><button data-act="dec" data-t="${t.id}" data-i="${i}" aria-label="Less, set ${i+1}">−</button><button data-act="inc" data-t="${t.id}" data-i="${i}" aria-label="More, set ${i+1}">+</button></div><button class="set-check" data-act="complete" data-t="${t.id}" data-i="${i}" aria-pressed="${checked.has(i)}" aria-label="${checked.has(i)?"Unmark":"Mark"} set ${i+1} done">${checked.has(i)?"✓ Done":"Mark done"}</button></div>`).join("")}</div>
     <div class="row workout-actions"><button class="ghost" data-act="rest" data-t="${t.id}">Rest ${restLabel(rest)}</button><button class="primary" data-act="save" data-t="${t.id}">Save exercise</button></div>
     <p class="save-hint">Save exercise adds these sets to your history.</p>
-    <details class="technique"><summary>View technique</summary>${exerciseFigure(t,lvl)}<a class="video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Find video tutorials</a></details>
+    <details class="technique"><summary>View technique</summary>${techniqueContent(t,lvl,st)}</details>
     ${canUp?`<div class="levelup big">${exerciseThumbnail(t,lvl+1)}<div><span>You topped out. Next: ${esc(t.steps[lvl+1][0])}</span><button data-act="up" data-t="${t.id}">Level up</button></div></div>`:""}
     ${tooHard?`<div class="stepdown"><span>Under the range last time. That's fine, or try an easier step.</span><button data-act="down" data-t="${t.id}">Easier: ${esc(t.steps[lvl-1][0])}</button></div>`:""}
     ${!canUp ? (last ? `<div class="last">Last time, ${ago(last.ts)}: ${last.sets.join(" · ")}${lastStep?unit(lastStep.st[4]):""}${lastStep&&!t.custom&&lastStep.i!==lvl?` (${esc(lastStep.st[0])})`:""}</div>` : `<div class="last">New for you. Start at the low end and focus on form.</div>`) : ""}
@@ -2812,13 +2941,14 @@ function sheet(){
   </div>`;
 }
 
+function libraryFilters(tracks){return '<div class="library-filters" role="group" aria-label="Exercise category">'+['All','Strength','Tendon','Mobility','Stretch','Weights','Custom'].filter(g=>g==='All'||tracks.some(t=>groupOf(t)===g)).map(g=>`<button data-ui="category" data-category="${g}" aria-pressed="${exCategory===g}">${{All:'All',Tendon:'Tendons & joints',Stretch:'Stretching',Weights:'Carries & weights'}[g]||g}</button>`).join('')+'</div>';}
 function controls(t){
   const f=focusOf(t.id), n=spec(t)[1];
-  const seg=["less","normal","more"].map(k=>`<button data-act="focus" data-t="${t.id}" data-f="${k}" aria-pressed="${f===k}">${k==="less"?"Less often":k==="more"?"More often":"Normal"}</button>`).join("");
+  const seg=["less","normal","more"].map(k=>`<button data-act="focus" data-t="${t.id}" data-f="${k}" aria-pressed="${f===k}">${k==="less"?"Lower priority":k==="more"?"Higher priority":"Balanced"}</button>`).join("");
   return `<div class="ctl lui">
-    <div class="ctl-row"><span class="label">How often</span><div class="seg" role="group" aria-label="How often for ${esc(t.name)}">${seg}</div></div>
+    <div class="ctl-row"><span class="label">Workout priority</span><div class="seg" role="group" aria-label="Workout priority for ${esc(t.name)}">${seg}</div><p class="priority-help">Changes how often this movement is picked relative to others. It does not add sets or set fixed training days.</p></div>
     <div class="ctl-row"><span class="label">Sets</span><div class="mini-step lui-stepper"><button class="lui-button" data-control="stepper" data-act="setsDec" data-t="${t.id}" aria-label="Fewer sets" ${n<=1?'disabled':''}>−</button><div class="lui-field set-count-field"><input id="sets-${t.id}" data-set-count="${t.id}" type="number" inputmode="numeric" min="1" max="6" step="1" value="${n}" aria-label="Sets for ${esc(t.name)}"></div><button class="lui-button" data-control="stepper" data-act="setsInc" data-t="${t.id}" aria-label="More sets" ${n>=6?'disabled':''}>+</button></div>
-      ${t.custom?`<button class="danger lui-button" data-control="destructive" data-variant="danger" data-act="del" data-t="${t.id}">${confirmDel===t.id?"Tap again to delete":"Delete"}</button>`:`<button class="lui-button" data-control="secondary" data-act="hide" data-t="${t.id}">Hide</button>`}</div>
+      </div><div class="ctl-visibility">${t.custom?`<button class="danger lui-button" data-control="destructive" data-variant="danger" data-act="del" data-t="${t.id}">${confirmDel===t.id?"Tap again to delete":"Delete"}</button>`:`<button class="lui-button" data-control="secondary" data-act="hide" data-t="${t.id}">Hide from Today</button>`}<small>Hidden exercises keep their progress.</small></div>
   </div>`;
 }
 let editing=null; // {id,name,items:Set}
@@ -2854,7 +2984,7 @@ let libraryPanel=null, libraryReturn=null;
 function closeLibraryPanel(){
   const d=$('#librarySheet');if(!d)return;
   if(d.open&&d.close)d.close();
-  const content=d.querySelector('[data-library-content]');if(content)$('#libraryPanelStore').append(content);
+  const content=d.querySelector('[data-library-content]');if(content){if(content.dataset.dynamicGuide)content.remove();else $('#libraryPanelStore').append(content);}
   d.remove();libraryPanel=null;document.body.classList.remove('library-sheet-open');
   const trigger=libraryReturn?.dataset.panel;
   (document.querySelector(`[data-panel="${trigger}"]`)||document.querySelector('[data-panel="custom"]'))?.focus({preventScroll:true});
@@ -2862,7 +2992,9 @@ function closeLibraryPanel(){
 function mountLibraryPanel(){
   document.body.classList.remove('library-sheet-open');
   if(!libraryPanel||tab!=='ladders')return;
-  const content=document.querySelector(`[data-library-content="${libraryPanel}"]`);if(!content){libraryPanel=null;return;}
+  let content=document.querySelector(`[data-library-content="${libraryPanel}"]`);
+  if(libraryPanel.startsWith('guide-')){const match=libraryPanel.slice(6).match(/^(.*?)(?:-(\d+))?$/),t=match&&findTrack(match[1]);if(t){const i=match[2]===undefined?lvlOf(t):Number(match[2]);if(t.steps[i]){content=document.createElement('section');content.dataset.libraryContent=libraryPanel;content.dataset.dynamicGuide='true';content.innerHTML=`<h3>${esc(spec(t,i)[0])}</h3>${techniqueContent(t,i)}`;}}}
+  if(!content){libraryPanel=null;return;}
   const d=document.createElement('dialog');d.id='librarySheet';d.className='workout-tools library-sheet';d.setAttribute('aria-labelledby','libraryPanelTitle');
   const title=libraryPanel==='custom'?'Add an exercise':libraryPanel==='hidden'?'Hidden exercises':libraryPanel.startsWith('guide-')?'Technique':'Training settings';
   d.innerHTML=`<div class="workout-tools-head"><h2 id="libraryPanelTitle" tabindex="-1">${title}</h2><button data-ui="libraryclose" aria-label="Close ${title.toLowerCase()}">×</button></div><div class="workout-tools-body"></div>`;
@@ -2879,8 +3011,8 @@ function viewLadders(){
   if(editing) return `<div class="stack">${routinesCard(tracks)}</div>`;
   let html=`<div class="stack"><section class="library-intro"><div class="library-brand"><img src="${LIBRARY_HERO_IMAGES[libraryHeroIndex]}" alt="" width="800" height="450"><div><p class="label">Room to grow</p><h2>Your next good move.</h2><button class="library-setup" data-ui="setup">Edit your setup <span aria-hidden="true">→</span></button></div></div></section>${routinesCard(tracks)}
     <div class="search"><label for="exSearch" class="sr">Find an exercise</label><input id="exSearch" type="search" placeholder="Find an exercise" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="${esc(exQuery)}"></div>
-    <p class="search-status" id="exSearchStatus" role="status" aria-atomic="true" hidden></p>
-    <section class="search-empty" id="exNone" hidden><h2>No exercises found.</h2><p>Try a movement like push-up, a muscle like calf, or add your own exercise below.</p><button data-ui="clearsearch">Clear search</button></section>`;
+    ${libraryFilters(shown)}<p class="search-status" id="exSearchStatus" role="status" aria-atomic="true" hidden></p>
+    <section class="search-empty" id="exNone" hidden><h2>No exercises found.</h2><p>Try another category or search for a movement like push-up or calf.</p><button data-ui="clearsearch">Reset filters</button></section>`;
   for(const g of ["Strength","Tendon","Mobility","Stretch","Weights","Custom"]){
     const ts=shown.filter(t=>groupOf(t)===g); if(!ts.length) continue;
     html+=`<div class="label sect" data-grp="${g}">${g}</div>`;
@@ -2891,13 +3023,13 @@ function viewLadders(){
         <span class="mini-t"><b>${esc(t.name)}${focusOf(t.id)==="more"?` <span class="star">★</span>`:focusOf(t.id)==="less"?` <span class="muted">· less often</span>`:""}</b><span>${t.custom?"Your own":`Step ${lvl+1}/${t.steps.length}`} · ${esc(st[0])}</span><span class="search-match-hint" data-search-track="${t.id}" hidden></span></span><span class="chev">${open?"▴":"▾"}</span></button>`;
       if(!open) return row;
       const list=t.custom ? "" : `<ol class="ladder">${t.steps.map((s2,i)=>`
-        <li class="${i===lvl?"cur":i<lvl?"past":""}" data-step-name="${esc(s2[0])}"><span class="n">${i<lvl?"✓":i+1}</span>
-        <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><details class="step-guide"><summary>Technique guide</summary><p>${esc(s2[5])}</p>${exerciseFigure(t,i)}<a class="video sm" href="${ytLink(s2[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a></details></div>
+        <li class="${i===lvl?"cur":i<lvl?"past":""}" data-step-name="${esc(s2[0])}"><span class="n">${i+1}</span>
+        <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><button class="step-guide-button" data-ui="librarypanel" data-panel="guide-${t.id}-${i}" aria-haspopup="dialog" aria-label="Technique for ${esc(s2[0])}">Technique guide ↗</button></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}">Start here</button>`}</li>`).join("")}</ol>`;
-      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog">How to do this <span aria-hidden="true">↗</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Normal frequency':focusOf(t.id)==='more'?'More often':'Less often'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
+      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog">How to do this <span aria-hidden="true">↗</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Balanced priority':focusOf(t.id)==='more'?'Higher priority':'Lower priority'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
     }).join("");
   }
-  html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Adjust how this movement fits your workouts.</p>${controls(t)}</div><section data-library-content="guide-${t.id}"><h3>${esc(spec(t)[0])}</h3>${exerciseFigure(t,lvlOf(t))}<p class="technique-cue">${esc(spec(t)[5])}</p><a class="technique-video" href="${ytLink(spec(t)[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a></section>`).join('')}`;
+  html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Adjust how this movement fits your workouts.</p>${controls(t)}</div>`).join('')}`;
   if(hidden.length) html+=`<section data-library-content="hidden"><h3>Keep your library yours.</h3><p class="cue">These don't show on Today. Your progress is kept.</p><div class="stack" style="gap:8px">${hidden.map(t=>`
     <div class="hid">${exerciseThumbnail(t)}<span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}">Add back</button></div>`).join("")}</div></section>`;
   html+=`<section class="custom-exercise" data-library-content="custom"><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
@@ -2946,7 +3078,8 @@ function trainingDays(log=state.log){
   return [...days].sort((a,b)=>b[0].localeCompare(a[0])).map(([date,entries])=>({date,entries,exercises:new Set(entries.map(e=>e.t)).size,sets:entries.reduce((n,e)=>n+e.sets.length,0)}));
 }
 function viewHistory(){
-  if(!state.log.length)return `<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true"><img src="assets/brand/studio-recovery-v3-small.webp" alt="" width="800" height="450" decoding="async"></div><h2>No workouts yet.</h2><p>Complete an exercise on Today to start your history. Saved sets and personal bests appear here.</p><button class="primary" data-ui="gotoday">Go to Today</button></section>`;
+  const pending=pendingWorkoutView();
+  if(!state.log.length)return pending+`<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true"><img src="assets/brand/studio-recovery-v3-small.webp" alt="" width="800" height="450" decoding="async"></div><h2>${pending?"No completed exercises yet.":"No workouts yet."}</h2><p>Completed exercises, saved sets and personal bests appear here.</p>${pending?"":'<button class="primary" data-ui="gotoday">Go to Today</button>'}</section>`;
   const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
   const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
   const weekBuckets=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const date=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===date).reduce((n,e)=>n+e.sets.length,0);return {date,label:d.toLocaleDateString(undefined,{weekday:'short'}),sets};});
@@ -2984,7 +3117,7 @@ function viewHistory(){
     const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
     return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}"><span class="history-entry-title">${f?esc(f.st[0]):'Removed exercise'}</span><span class="history-entry-meta">${tm}${e.mode==='light'?' · Lighter day':''}</span><span class="history-entry-values">${e.sets.join(' · ')}${f?' '+(isSec(f.st[4])?'sec':'reps')+(f.st[4].includes('each')?' per side':''):''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</span><span class="history-entry-action">${sel?'Hide entry actions':'Entry actions'}</span></button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
-  return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" tabindex="0" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
+  return pending+`<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" tabindex="0" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">Your first improvement will appear here.</p>'}</section>
     <section class="progress-section recent-training"><h2>Recent training</h2><ol class="training-ladder">${recentPreview}</ol>${days.length>3?`<details class="compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>More training days <span>${days.length} days recorded</span></summary><ol class="training-ladder">${timeline}</ol></details>`:''}</section></div>
     <details class="progress-section progress-exercises compact-progress" id="exerciseProgress" ${progressSectionsOpen.has('exerciseProgress')?'open':''}><summary>Your progress <span>${esc(latestSummary)}</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
@@ -3012,13 +3145,13 @@ function setupPreviewLevel(t){
 }
 function setupPlanPreview(){
   const tracks=setupAvailableTracks();
-  return `<details class="onboard-plan"><summary><b>Explore your plan</b><span>Exercises, starting steps & technique</span></summary><div class="onboard-plan-content"><p class="cue">These are your available exercise ladders. Today picks a smaller workout based on your time and recent training.</p>${SETUP_GROUPS.map(([g,label])=>{const ts=tracks.filter(t=>groupOf(t)===g);if(!ts.length)return '';return `<h3 class="label">${label}</h3>${ts.map(t=>{const lvl=setupPreviewLevel(t),st=spec(t,lvl);return `<details class="plan-exercise" data-preview-track="${t.id}" data-preview-step="${lvl}"><summary>${exerciseThumbnail(t,lvl,false)}<span><b>${esc(t.name)}</b><small>${esc(st[0])} · Step ${lvl+1}/${t.steps.length}</small></span></summary><div class="plan-exercise-body"><p class="plan-prescription">${targetText(st)}</p><p class="cue">${esc(st[5])}</p>${st[6]!=='None'?`<p class="plan-gear">Needs: ${esc(st[6])}</p>`:''}${exerciseFigure(t,lvl)}<a class="video" href="${ytLink(st[0])}" target="_blank" rel="noopener">Find video tutorials ↗</a>${t.steps.length>1?`<details class="plan-progression"><summary>See all ${t.steps.length} steps</summary><ol>${t.steps.map((s,i)=>`<li${i===lvl?' aria-current="step"':''}><span>${esc(s[0])}</span>${i===lvl?'<small>Your starting step</small>':''}</li>`).join('')}</ol></details>`:''}</div></details>`;}).join('')}`;}).join('')}</div></details>`;
+  return `<details class="onboard-plan"><summary><b>Explore your plan</b><span>Exercises, starting steps & technique</span></summary><div class="onboard-plan-content"><p class="cue">These are your available exercise ladders. Today picks a smaller workout based on your time and recent training.</p>${SETUP_GROUPS.map(([g,label])=>{const ts=tracks.filter(t=>groupOf(t)===g);if(!ts.length)return '';return `<h3 class="label">${label}</h3>${ts.map(t=>{const lvl=setupPreviewLevel(t),st=spec(t,lvl);return `<details class="plan-exercise" data-preview-track="${t.id}" data-preview-step="${lvl}"><summary>${exerciseThumbnail(t,lvl,false)}<span><b>${esc(t.name)}</b><small>${esc(st[0])} · Step ${lvl+1}/${t.steps.length}</small></span></summary><div class="plan-exercise-body"><p class="plan-prescription">${targetText(st)}</p>${techniqueContent(t,lvl,st)}${t.steps.length>1?`<details class="plan-progression"><summary>See all ${t.steps.length} steps</summary><ol>${t.steps.map((s,i)=>`<li${i===lvl?' aria-current="step"':''}><span>${esc(s[0])}</span>${i===lvl?'<small>Your starting step</small>':''}</li>`).join('')}</ol></details>`:''}</div></details>`;}).join('')}`;}).join('')}</div></details>`;
 }
 
 const SETUP_GROUPS=[['Strength','Strength','Push, pull and build control.'],['Tendon','Tendons & joints','Controlled strength for smaller movements.'],['Mobility','Mobility','Move through a wider range.'],['Stretch','Stretching','Make room to move.'],['Weights','Carries & swings','Add weight to your training.']];
 let setupStage=0,setupError='',setupIntro=false;
 let setupIntroRequested=new URLSearchParams(location.search).get('onboarding')==='1';
-function saveSetupDraft(){if(state.prefs.setupDone||state.log.length)return;store.set('bwl-onboarding',JSON.stringify({v:1,stage:setupStage,groups:[...setupDraft.groups],gear:[...setupDraft.gear],level:setupDraft.level}));}
+function saveSetupDraft(){if(state.prefs.setupDone||state.log.length)return;store.set('bwl-onboarding',JSON.stringify({v:1,stage:setupStage,groups:[...setupDraft.groups],gear:[...setupDraft.gear],level:setupDraft.level,coach:setupDraft.coach}));}
 function clearSetupDraft(){store.set('bwl-onboarding','null');setupDraft=null;setupStage=0;setupError='';}
 function setupHasExercises(){return setupAvailableCount()>0;}
 function setupMove(stage){
@@ -3026,14 +3159,16 @@ function setupMove(stage){
   if(stage>setupStage&&setupStage===2&&!setupHasExercises()){setupError='Carries and swings need weights. Choose weights, or go back and add another focus.';render();$('#setupError')?.focus();return;}
   setupStage=Math.max(0,Math.min(4,stage));setupError='';saveSetupDraft();render();window.scrollTo(0,0);$('#setupTitle')?.focus({preventScroll:true});
 }
+function setupCoachingFields(){const p=LadderCoach.prefs(setupDraft.coach);return `<section class="setup-coaching"><h3>Your training plan</h3><label for="setupGoal">Goal</label><select id="setupGoal" data-setup-coach="goal">${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="setupDays">Weekly target</label><select id="setupDays" data-setup-coach="days">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${n===p.days?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">Flexible, not a fixed schedule. Missed days never add catch-up sets.</p></section>`;}
 function viewSetup(){
   const redo=state.prefs.setupDone||state.log.length>0;
   if(!setupDraft){
     setupDraft=redo?{groups:new Set(['Strength','Tendon','Mobility','Stretch','Weights'].filter(g=>TRACKS.some(t=>groupOf(t)===g&&!isHidden(t.id)))),gear:new Set([...(!isHidden('pull')?['bar']:[]),...(TRACKS.some(t=>groupOf(t)==='Weights'&&!isHidden(t.id))?['weights']:[])]),level:'keep'}:{groups:new Set(['Strength','Tendon','Mobility','Stretch']),gear:new Set(),level:'some'};
     setupStage=redo&&!setupIntro?1:0;setupError='';
-    if(!redo)try{const d=JSON.parse(store.get('bwl-onboarding','null'));if(d?.v===1&&Number.isInteger(d.stage)&&d.stage>=0&&d.stage<=4&&Array.isArray(d.groups)&&d.groups.every(g=>SETUP_GROUPS.some(x=>x[0]===g))&&Array.isArray(d.gear)&&d.gear.every(g=>['bar','weights'].includes(g))&&['new','some','strong'].includes(d.level)){setupDraft={groups:new Set(d.groups),gear:new Set(d.gear),level:d.level};setupStage=d.stage;}}catch(e){}
+    if(!redo)try{const d=JSON.parse(store.get('bwl-onboarding','null'));if(d?.v===1&&Number.isInteger(d.stage)&&d.stage>=0&&d.stage<=4&&Array.isArray(d.groups)&&d.groups.every(g=>SETUP_GROUPS.some(x=>x[0]===g))&&Array.isArray(d.gear)&&d.gear.every(g=>['bar','weights'].includes(g))&&['new','some','strong'].includes(d.level)){setupDraft={groups:new Set(d.groups),gear:new Set(d.gear),level:d.level,coach:LadderCoach.prefs(d.coach)};setupStage=d.stage;}}catch(e){}
   }
   if(setupIntro){setupStage=0;setupIntro=false;}
+  if(!setupDraft.coach)setupDraft.coach=LadderCoach.prefs(state.prefs.coach);
   const d=setupDraft,stage=setupStage;
   const choicePhotos={Strength:'push-push-up-studio-v3',Tendon:'knee-wall-sit-v2',Mobility:'ninety-90-90-hip-switches-v2',Stretch:'openbook-open-book-stretch-v2',Weights:'carry-suitcase-carry-v2',none:'squat-bodyweight-squat-studio-v3',bar:'pull-jumping-pull-up-v2',weights:'carry-suitcase-carry-v2',new:'push-wall-push-up-v2',some:'squat-bodyweight-squat-studio-v3',strong:'squat-pistol-squat-v2',keep:'core-plank-studio-v3'};
   const choice=(kind,value,label,description)=>{const selected=kind==='level'?d.level===value:kind==='none'?!d.gear.size:d[kind].has(value);return `<button class="onboard-choice" data-ui="${kind==='none'?'onone':'stog'}" data-kind="${kind}" data-v="${value}" aria-pressed="${selected}"><span class="choice-art" aria-hidden="true"><img src="assets/brand/exercises/generated/${choicePhotos[kind==='none'?'none':value]}-thumb.webp" alt="" width="360" height="240" decoding="async"></span><span class="choice-copy"><b>${label}</b><small>${description}</small></span><span class="onboard-select" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg></span></button>`;};
@@ -3045,7 +3180,7 @@ function viewSetup(){
   if(stage===1)html+=`<div class="onboard-options" role="group" aria-label="Training focus">${SETUP_GROUPS.map(([value,label,description])=>choice('groups',value,label,description)).join('')}</div>`;
   if(stage===2)html+=`<div class="onboard-options" role="group" aria-label="Available equipment">${choice('none','','No extra equipment','A wall, a chair and some floor space.')}${choice('gear','bar','Pull-up bar','Include hanging and pulling movements.')}${choice('gear','weights','Weights','A jug, kettlebell or other suitable weight.')}</div>`;
   if(stage===3)html+=`<div class="onboard-options" role="group" aria-label="Starting level">${redo?choice('level','keep','Keep my current steps','Use the exercise levels I have now.'):''}${choice('level','new','New to this','Start with easier variations.')}${choice('level','some','Some experience','Use the standard starting steps.')}${choice('level','strong','Already training','Begin further along the exercise ladders.')}</div>${redo?'<p class="onboard-footnote">Exercises you have already logged keep their current step.</p>':''}`;
-  if(stage===4){const preview=setupAvailableTracks()[0];const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<div class="onboard-pool">${preview?exerciseThumbnail(preview,setupPreviewLevel(preview)):''}<div><b>${setupAvailableCount()}</b><span>exercise ladders match your choices</span></div></div>${setupPlanPreview()}<dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
+  if(stage===4){const preview=setupAvailableTracks()[0];const labels=SETUP_GROUPS.filter(([g])=>d.groups.has(g)).map(([,label])=>label.replace('&amp;','&'));const gear=d.gear.size?GEAR.filter(([g])=>d.gear.has(g)).map(([,label])=>label).join(', '):'No extra equipment';const level={keep:'Keep my current steps',new:'Start with easier variations',some:'Standard starting steps',strong:'Start further along'}[d.level];html+=`<div class="onboard-pool">${preview?exerciseThumbnail(preview,setupPreviewLevel(preview)):''}<div><b>${setupAvailableCount()}</b><span>exercise ladders match your choices</span></div></div>${setupCoachingFields()}${setupPlanPreview()}<dl class="onboard-review">${[['Focus',labels.join(', '),1],['Equipment',gear,2],['Starting point',level,3]].map(([label,value,step])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd><button data-ui="oedit" data-step="${step}" aria-label="Edit ${label.toLowerCase()}">Edit</button></div>`).join('')}</dl>`;}
   html+=`<p id="setupError" class="onboard-error" role="alert" tabindex="-1">${esc(setupError)}</p><div class="onboard-actions"><button class="primary" data-ui="${stage===4?'finish':'onext'}">${stage===0?'Set up my workout':stage===4?(redo?'Save changes':'Start my workout'):'Continue'}</button>${stage>0?'<button class="onboard-back" data-ui="oback">Back</button>':''}<button class="onboard-skip" data-ui="skip">${redo?'Cancel':'Set up later'}</button></div><p class="onboard-footnote">${redo?'Your saved workouts stay with you.':'No account required. Progress saves in this browser.'}</p></section>`;
   return html;
 }
@@ -3058,6 +3193,7 @@ const START = {
 function finishSetup(skip){
   if(!skip){
     const d=setupDraft;
+    state.prefs.coach=LadderCoach.prefs(d.coach);
     for(const t of TRACKS){
       let hide = !d.groups.has(groupOf(t));
       if(!d.gear.has("bar") && (t.id==="pull"||t.id==="hang")) hide=true;
@@ -3168,7 +3304,8 @@ function render(){
   const oldTools=$('#workoutTools .workout-tools-body');const toolsState=workoutToolsOpen&&oldTools?{scroll:oldTools.scrollTop,open:[...oldTools.querySelectorAll('details[open]')].map(d=>d.dataset.toolKey)}:{};
   closeTechnique(false);
   $("#view").innerHTML = tab==="today"?viewToday():tab==="ladders"?viewLadders():tab==="history"?viewHistory():viewSetup();
-  if(tab==='today')mountWorkoutTools(toolsState);else{workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');}
+  if(tab==='today'){mountWorkoutTools(toolsState);mountPlanSummary();}else planSummaryOpen=false;
+  if(tab!=='today'){workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');}
   const stage=$(".focus-stage");if(stage&&previousStage&&stage.dataset.stage!==previousStage)stage.classList.add(stage.dataset.phase==="finished"?"focus-celebrate":"focus-enter");
   const onboarding=$(".onboard");if(onboarding&&previousOnboard!==undefined&&onboarding.dataset.step!==previousOnboard){onboarding.classList.add("onboard-enter");if(+onboarding.dataset.step<+previousOnboard)onboarding.classList.add("onboard-reverse");}
   if(onboarding)onboarding.querySelector('.onboard-meta>span').insertAdjacentHTML('afterbegin',brandMark());
@@ -3176,7 +3313,7 @@ function render(){
   const number=$("#focusValue");if(number)number.dataset.wide=String(focusValue()>=1000);
   const clock=$('#focusClock');if(clock){clock.setAttribute('role','timer');clock.setAttribute('aria-live','off');}
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
-  if(tab==="ladders" && exQuery) applySearch();
+  if(tab==="ladders") applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
   mountLibraryPanel();
   if(panelAction&&libraryPanel){const buttons=[...document.querySelectorAll('#librarySheet [data-act]')];(buttons.find(b=>b.dataset.act===panelAction&&b.dataset.t===panelTrack&&b.dataset.f===panelFrequency)||$('#libraryPanelTitle'))?.focus({preventScroll:true});}
@@ -3237,13 +3374,14 @@ document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.clo
 $("#syncDot").addEventListener("click",e=>openProgressBackup(e.currentTarget));
 $("#syncWarn").addEventListener("click",()=>{ toast(storageProblems.size?'Device save failed. Keep this page open and back up progress.':"Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
 function applySearch(){
+  document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===exCategory)));
   const q=exQuery.trim().toLowerCase(),matches=text=>q.split(/\s+/).every(w=>text.toLowerCase().includes(w));let count=0;const groupsShown=new Set();
-  document.querySelectorAll("#view [data-sr]").forEach(el=>{ const hit=!q || matches(el.dataset.sr); el.hidden=!hit; if(hit){ count++; groupsShown.add(el.dataset.g); } });
-  document.querySelectorAll("#view [data-grp]").forEach(el=>{ el.hidden = !!q && !groupsShown.has(el.dataset.grp); });
+  document.querySelectorAll("#view [data-sr]").forEach(el=>{ const hit=(exCategory==='All'||el.dataset.g===exCategory)&&(!q||matches(el.dataset.sr)); el.hidden=!hit; if(hit){ count++; groupsShown.add(el.dataset.g); } });
+  document.querySelectorAll("#view [data-grp]").forEach(el=>{ el.hidden = !groupsShown.has(el.dataset.grp); });
   document.querySelectorAll('[data-search-track]').forEach(el=>{const t=findTrack(el.dataset.searchTrack),names=q?t.steps.map(s=>s[0]).filter(matches):[];el.hidden=!names.length;el.textContent=names.length?'Matches: '+names.slice(0,2).join(' · ')+(names.length>2?' · +'+(names.length-2)+' more':''):'';});
   document.querySelectorAll('[data-step-name]').forEach(el=>el.classList.toggle('search-match',!!q&&matches(el.dataset.stepName)));
-  const none=$("#exNone"); if(none) none.hidden = !q || !!count;
-  const status=$('#exSearchStatus');if(status){status.hidden=!q;status.textContent=q?(count?count+' '+(count===1?'ladder':'ladders')+' found':'No matching exercise ladders'):'';}
+  const none=$("#exNone"); if(none) none.hidden = !!count;
+  const status=$('#exSearchStatus');if(status){status.hidden=!q&&exCategory==='All';status.textContent=(q||exCategory!=='All')?(count?count+' '+(count===1?'ladder':'ladders')+' found':'No matching exercise ladders in this category'):'';}
 }
 $("#view").addEventListener("input",e=>{
   if(e.target.id==="exSearch"){ exQuery=e.target.value; applySearch(); return; }
@@ -3290,7 +3428,7 @@ function saveSetCountInput(input){
   ctl.querySelector('[data-act="setsInc"]').disabled=n>=6;
   document.querySelectorAll(`[data-track-prescription="${t.id}"]`).forEach(el=>el.textContent=targetText(spec(t)));
   const summary=document.querySelector(`[data-panel="settings-${t.id}"] span`);
-  if(summary)summary.textContent=`${n} sets · ${focusOf(t.id)==='normal'?'Normal frequency':focusOf(t.id)==='more'?'More often':'Less often'}`;
+  if(summary)summary.textContent=`${n} sets · ${focusOf(t.id)==='normal'?'Balanced priority':focusOf(t.id)==='more'?'Higher priority':'Lower priority'}`;
 }
 $("#view").addEventListener("keydown",e=>{
   if(!e.target.matches('[data-set-count]')||!['Tab','Enter'].includes(e.key))return;
@@ -3299,6 +3437,8 @@ $("#view").addEventListener("keydown",e=>{
   e.target.dispatchEvent(new Event('change',{bubbles:true}));
 });
 $("#view").addEventListener("change",e=>{
+  if(e.target.matches('[data-setup-coach]')){const key=e.target.dataset.setupCoach;setupDraft.coach={...LadderCoach.prefs(setupDraft.coach),[key]:key==='days'?Number(e.target.value):e.target.value};saveSetupDraft();return;}
+  if(e.target.matches('[data-coach-goal]')){setCoachingPreference('goal',e.target.value);return;}
   if(e.target.matches('[data-coach-days]')){setCoachingPreference('days',Number(e.target.value));return;}
   const input=e.target.closest('[data-set-count]');if(input){saveSetCountInput(input);return;}
   const cb=e.target.closest("input[data-rt]"); if(!cb||!editing) return;
@@ -3330,7 +3470,10 @@ $("#view").addEventListener("click",e=>{
     if(a==="more"){ showMore=!showMore; render(); return; }
     if(a==="rtoggle"){ routinesOpen=!routinesOpen; render(); return; }
     if(a==="done"){ showDone=!showDone; render(); return; }
-    if(a==="clearsearch"){exQuery='';const input=$('#exSearch');input.value='';applySearch();input.focus();return;}
+    if(a==="clearsearch"){exCategory='All';exQuery='';const input=$('#exSearch');input.value='';applySearch();input.focus();return;}
+    if(a==='plansummary'){planSummaryOpen=true;closeWorkoutTools();mountPlanSummary();return;}
+    if(a==='planclose'){closePlanSummary();return;}
+    if(a==='category'){exCategory=u.dataset.category;document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===exCategory)));applySearch();return;}
     if(a==='libraryclose'){closeLibraryPanel();return;}
     if(a==='librarypanel'){libraryPanel=u.dataset.panel;libraryReturn=u;mountLibraryPanel();return;}
     if(a==="ex"){ const id=u.dataset.t; expandedEx.has(id)?expandedEx.delete(id):expandedEx.add(id); confirmDel=null; render();document.querySelector(`[data-ui="ex"][data-t="${id}"]`)?.focus({preventScroll:true}); return; }
