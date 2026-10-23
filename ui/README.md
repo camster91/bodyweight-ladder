@@ -59,6 +59,7 @@ The source manifest `components.cjs` contains each component's usage rules and c
 
 - Primitive tokens hold values; semantic tokens hold intent; component aliases consume semantic tokens. `tokens.json` is a generated flat CSS variable map. The CSS source is authoritative.
 - Controls have 44px minimum touch targets, fields 48px, primary actions 52px. Compact spacing never reduces touch targets. Label text wraps.
+- Choice labels wrap at word boundaries; horizontally scrolling filters and tabs retain space for keyboard focus outlines. Disabled controls have no hover or pressed decoration. App sheet titles yield space to their Close control, and mobile sheet bodies respect side and bottom safe areas.
 - Choices and rows adapt below 360px; bottom sheets dock below 600px. Dialogs scroll within 85dvh (mobile sheets 90dvh), with safe-area padding and an explicit Close action.
 - Loading, error and selected states only exist where meaningful. Native controls expose disabled/checked/selected; color alone never carries the state.
 - Motion supports reduced-motion settings. No shimmer is required to communicate loading. Hover never reveals the only route to an action.
