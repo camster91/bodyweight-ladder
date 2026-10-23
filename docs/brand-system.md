@@ -31,7 +31,9 @@ Supporting line: **Your pace. Your ladder.**
 
 Use semantic tokens from `ui/app-foundation.css` for controls. App-specific identity styles live in `ui/app-brand.css`, embedded by `scripts/sync-controls.cjs`. The portable control library retains its independent skin. Dark mode uses the existing light cobalt and warm text accents; peach is never used for critical warnings or primary button text.
 
-Native system type keeps the app fast and familiar, with rounded system display faces where available. Headings are bold and closely spaced; body copy stays at readable native UI sizes. Numbers use tabular figures. Do not compress copy or shrink controls to fit a decorative element.
+Bricolage Grotesque adds character to selected display headings; the wordmark, body text, controls and numeric counters retain native system type. The unmodified Latin 800-weight face is distributed by Google Fonts under SIL OFL 1.1. Its source, checksum and license are in `assets/brand/type/`. A compact 38,884-byte WOFF2 is embedded by `ui/brand-type.css` with the full license notice and `font-display:swap`, so the static app needs no font route or third-party request at runtime. Headings fall back immediately to system type. Numbers use tabular figures. Do not compress copy or shrink controls to fit a decorative element.
+
+Metadata has a 12px floor, and exercise descriptions use 14px native text. The Work / Rest / Repeat walkthrough shares a neutral surface; colors are reserved for actions, real status and small editorial accents. Field boundaries use their own light/dark semantic stroke with at least 3:1 contrast, to be verified in the browser before release.
 
 ## Voice
 
@@ -42,7 +44,7 @@ Talk to a person making room for movement. Be clear first, warm second. Encourag
 | Welcome | “Make a little room for movement.” | Transformation promises |
 | Rest | “Take a breather.” | “No pain, no gain” |
 | Completed workout | “You made time for you.” | Invented calories, badges or streaks |
-| Empty Progress | “Start with one exercise.” | Sample achievements presented as real |
+| Empty Progress | “No workouts yet. Complete an exercise on Today to start your history.” | Sample achievements presented as real |
 | Returning after a break | Explain the actual adjusted targets | Guilt, urgency or missed-day warnings |
 
 Use brief encouragement sparingly. Keep exercise instructions, errors, measurements and destructive actions literal. No emoji confetti, cartoon exercise figures, leaderboards or fake community claims.
