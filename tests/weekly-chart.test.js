@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),{JSDOM}=require('jsdom'),windows=[];
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8'),now=Date.parse('2026-10-23T12:00:00Z');
+const entry=(iso,t,k,n)=>({ts:Date.parse(iso),t,k,sets:Array(n).fill(5)});
+function boot(log){const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://ladder.test/',beforeParse(w){const RealDate=w.Date;w.Date=class extends RealDate{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.localStorage.setItem('bwl-state',JSON.stringify({v:2,prefs:{setupDone:true},log}))}});windows.push(dom.window);dom.window.document.querySelector('#tab-history').click();return dom.window}
+try{
+ const w=boot([entry('2026-10-19T12:00:00Z','push','push:push-up',3),entry('2026-10-20T12:00:00Z','squat','squat:bodyweight-squat',3),entry('2026-10-20T16:00:00Z','core','core:plank',3),entry('2026-10-22T12:00:00Z','push','push:push-up',2),entry('2026-10-24T12:00:00Z','push','push:push-up',8)]),d=w.document;
+ assert.equal(d.querySelectorAll('.week-day').length,7);const bars=[...d.querySelectorAll('.week-bar')].map(e=>e.style.getPropertyValue('--day-fill'));assert.deepEqual(bars,['50%','100%','0%','33%','0%','0%','0%']);assert.equal(d.querySelectorAll('.progress-stats b')[1].textContent,'11');assert.equal(d.querySelector('.week-day[aria-current="date"]>span').textContent,'Fri');assert.equal(d.querySelectorAll('.week-activity button').length,0);assert(d.querySelector('.week-day').getAttribute('aria-label').includes('3 sets recorded'));
+ console.log('PASS weekly bars scale saved set counts, aggregate same-day exercises, label today and exclude future entries');
+ const empty=boot([entry('2026-10-01T12:00:00Z','push','push:push-up',3)]).document;assert([...empty.querySelectorAll('.week-bar')].every(e=>e.style.getPropertyValue('--day-fill')==='0%'));assert.equal(empty.querySelectorAll('.week-day.active').length,0);assert.equal(empty.querySelectorAll('.progress-stats b')[1].textContent,'0');
+ console.log('PASS a week without saved work shows zero-height bars without invented activity or invalid proportions');
+}finally{setImmediate(()=>windows.forEach(w=>w.close()))}

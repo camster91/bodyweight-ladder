@@ -20,15 +20,13 @@
 .onboard-heading h2,.progress-empty h2,.library-brand h2,header.top h1,.focus-exercise h2{font-family:var(--brand-display);font-weight:800;font-synthesis:none;letter-spacing:-.025em;text-wrap:balance}
 body[data-view="ladders"] .library-brand .label{display:block;font:600 12px/16px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 body[data-view="ladders"] .library-brand>div{width:52%}
-body[data-view="ladders"] .library-brand h2{max-width:12ch}
+body[data-view="ladders"] .library-brand h2{max-width:22ch}
 body[data-view="ladders"] .sect[data-grp]{gap:10px;letter-spacing:.06em;font-size:12px;line-height:16px}
 .sect[data-grp]::before{content:'';width:8px;height:8px;flex:0 0 8px;border-radius:3px;background:var(--muted)}
 body[data-view="ladders"] .exrow .mini-t>span{font-size:14px;line-height:20px}
 body input:not([type="checkbox"]):not([aria-invalid="true"]):not(:user-invalid),body select:not([aria-invalid="true"]):not(:user-invalid){border-color:var(--color-field-stroke)}
 .progress-week{position:relative;isolation:isolate;overflow:hidden}
 .progress-week::after{content:'';position:absolute;right:16px;top:8px;width:72px;height:72px;background:var(--accent);mask:url('assets/brand/ladder-monochrome-v3.svg') center/contain no-repeat;opacity:.12;z-index:-1;pointer-events:none}
-.week-day.active .week-count{border-radius:12px 12px 5px 12px}
-.personal-best{border-top:3px solid var(--brand-peach);border-radius:16px}
 .brand-finish-note{margin:0 0 8px;color:var(--good);font:600 14px/1.5 var(--body)}
 .focus-dial .focus-number,.progress-stats b,.record-value{font-variant-numeric:tabular-nums}
 .focus-set-path span{border-radius:8px}
