@@ -1290,10 +1290,10 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
 :root{--color-chart-bar:#2555d5}
 /* A chart reads as data; counts and date labels remain explicit. */
 .week-day{gap:4px}
-.week-day>span:first-child{font-size:12px;line-height:16px}
+.week-day>span:first-child{font-size:12px;line-height:1.35}
 .week-day .week-bar{display:block;position:relative;width:100%;height:32px;border-bottom:1px solid var(--brand-fresh-ink)}
 .week-bar>i{display:block;position:absolute;bottom:0;left:25%;width:50%;height:var(--day-fill);background:var(--color-chart-bar);border-radius:5px 5px 0 0}
-.week-day .week-count,.week-day.active .week-count{height:16px;line-height:16px;background:none;color:var(--brand-fresh-ink);border-radius:0;font-weight:600}
+.week-day .week-count,.week-day.active .week-count{height:auto;min-height:16px;line-height:1.35;background:none;color:var(--brand-fresh-ink);border-radius:0;font-weight:600}
 .week-day.today .week-count{outline:0}
 .week-day.today>span:first-child{font-weight:750;text-decoration:underline;text-underline-offset:4px}
 .personal-best{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:14px;row-gap:2px;margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
@@ -1301,9 +1301,9 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
 .record-heading{display:contents}
 .record-heading>.exercise-thumb{grid-column:1;grid-row:1 / 4;width:64px;height:64px;margin:0;align-self:center;border-radius:12px}
 .record-heading>.exercise-thumb img{object-fit:contain}
-.personal-best .record-heading h3{grid-column:2;margin:0;font-size:14px;line-height:20px}
+.personal-best .record-heading h3{grid-column:2;margin:0;font-size:14px;line-height:1.45}
 .personal-best .record-value{grid-column:2;margin:2px 0;font-size:clamp(24px,3vw,32px);line-height:1.15}
-.personal-best .record-context{grid-column:2;margin:2px 0 0;font-size:12px;line-height:18px}
+.personal-best .record-context{grid-column:2;margin:2px 0 0;font-size:12px;line-height:1.5}
 body[data-view="today"] .focus-counter{gap:12px}
 body[data-view="today"] .focus-counter .focus-stepper{width:52px;height:52px;min-width:44px;min-height:44px;border-color:var(--color-field-stroke)}
 @media(min-width:700px){
@@ -1398,6 +1398,26 @@ body .progress-backup{width:min(560px,calc(100vw - 24px));max-height:85dvh;box-s
 .progress-backup input::file-selector-button{min-height:48px;margin-right:10px;padding:10px 14px;border:1px solid var(--color-stroke);border-radius:var(--button-radius);background:var(--color-surface);color:var(--color-ink);font:inherit;cursor:pointer}
 .progress-backup .primary{width:100%;min-height:48px}.progress-backup #backupPreview{padding:12px;border-radius:12px;background:var(--color-selected);line-height:1.6;font-size:14px;overflow-wrap:anywhere}
 .progress-backup #backupMessage{font-weight:600;overflow-wrap:anywhere}.progress-backup .cue{font-size:12px}
+/* Keep navigation and workout values readable when text is enlarged. */
+.skip-link{position:fixed;left:12px;top:12px;transform:translateY(calc(-100% - 24px));z-index:100;background:var(--surface);color:var(--accent);padding:14px 18px;border:2px solid var(--accent);border-radius:12px}
+.skip-link:focus{transform:translateY(0)}#view:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+body[data-view="today"] .focus-meta{flex-wrap:wrap}body[data-view="today"] .focus-meta>span{min-width:0;overflow-wrap:anywhere}
+body[data-view="today"] .focus-number{flex-shrink:0;overflow:visible;min-width:0;max-width:100%;overflow-wrap:anywhere}
+body[data-view="today"] .focus-dial{--focus-diameter:208px;width:var(--focus-diameter);height:max-content;min-height:var(--focus-diameter);aspect-ratio:auto;box-sizing:border-box;padding:12px 4px;flex-shrink:0}
+@media(max-height:650px){body[data-view="today"] .focus-dial{--focus-diameter:150px}}
+@media(max-width:360px){body[data-view="today"] .focus-dial{--focus-diameter:176px}}
+@media(max-width:360px) and (max-height:650px){body[data-view="today"] .focus-dial{--focus-diameter:142px}}
+@media(max-height:500px){body[data-view="today"] .focus-dial{--focus-diameter:128px}}
+@media(min-width:1100px){body[data-view="today"] .focus-dial{--focus-diameter:clamp(168px,20vw,228px)}}
+.focus-exercise-copy{min-width:0;overflow-wrap:anywhere}
+header.top{flex-wrap:wrap}header.top h1{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.15;flex:1 1 auto}
+header.top .appearance-toggle{margin-left:auto}
+.week-activity{grid-template-columns:repeat(7,minmax(2em,1fr));overflow-x:auto;padding-bottom:4px}
+.week-activity:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media(max-width:599px),(min-height:501px) and (max-width:999px){
+ nav .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+ nav .tabs button{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.25;height:auto;padding:8px 2px}
+}
 
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
@@ -1518,12 +1538,12 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .onboard-preview b{font-weight:600;font-size:14px;line-height:20px}
 .onboard .onboard-preview small{font-size:12px;line-height:16px;letter-spacing:.02em}
 .onboard-heading h2,.progress-empty h2,.library-brand h2,header.top h1,.focus-exercise h2{font-family:var(--brand-display);font-weight:800;font-synthesis:none;letter-spacing:-.025em;text-wrap:balance}
-body[data-view="ladders"] .library-brand .label{display:block;font:600 12px/16px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+body[data-view="ladders"] .library-brand .label{display:block;font:600 12px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 body[data-view="ladders"] .library-brand>div{width:52%}
 body[data-view="ladders"] .library-brand h2{max-width:22ch}
 body[data-view="ladders"] .sect[data-grp]{gap:10px;letter-spacing:.06em;font-size:12px;line-height:16px}
 .sect[data-grp]::before{content:'';width:8px;height:8px;flex:0 0 8px;border-radius:3px;background:var(--muted)}
-body[data-view="ladders"] .exrow .mini-t>span{font-size:14px;line-height:20px}
+body[data-view="ladders"] .exrow .mini-t>span{font-size:14px;line-height:1.45}
 body input:not([type="checkbox"]):not([aria-invalid="true"]):not(:user-invalid),body select:not([aria-invalid="true"]):not(:user-invalid){border-color:var(--color-field-stroke)}
 .progress-week{position:relative;isolation:isolate;overflow:hidden}
 .progress-week::after{content:'';position:absolute;right:16px;top:8px;width:72px;height:72px;background:var(--accent);mask:url('assets/brand/ladder-monochrome-v3.svg') center/contain no-repeat;opacity:.12;z-index:-1;pointer-events:none}
@@ -1566,6 +1586,7 @@ body.library-sheet-open{overflow:hidden}
 @media(max-width:380px){.library-actions{grid-template-columns:1fr}.library-current{padding:16px}.library-current>button{align-items:flex-start;flex-direction:column}.library-current>button span{text-align:left}}
 </style>
 
+<a class="skip-link" href="#view">Skip to main content</a>
 <div class="wrap">
   <header class="top">
     <img src="img/icon.webp" alt="Bodyweight Ladder" width="34" height="34">
@@ -1576,7 +1597,7 @@ body.library-sheet-open{overflow:hidden}
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
   <section id="storageWarning" class="storage-warning" role="alert" hidden><strong>Some progress isn’t saved on this device.</strong><p id="storageWarningText"></p><button data-backup="open">Back up progress</button><button data-backup="retry">Try saving again</button></section>
-  <main id="view"></main>
+  <main id="view" tabindex="-1"></main>
   <div class="backup-entry"><button data-backup="open">Back up or restore progress</button></div>
   <p class="note" id="saveNote">Loading your progress…</p>
 </div>
@@ -1588,6 +1609,8 @@ body.library-sheet-open{overflow:hidden}
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button id="toastUndo" hidden>Undo</button></div>
 <div class="timer" id="timer" hidden role="timer"></div>
 <p class="sr" id="focusAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
+<p class="sr" id="timerAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
+<p class="sr" id="pageAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
 <div class="focus-effects" id="focusEffects" aria-hidden="true"></div>
 
 <script>
@@ -2516,7 +2539,7 @@ function focusView(plan,top,more,recent){
   if(recent.length)html+=`<button class="fold" data-ui="done" aria-expanded="${showDone}">Recently saved <span>${recent.length}</span></button>${showDone?recent.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'done')).join(''):''}`;
   return html+'</div></div>'+sheet();
 }
-function resumeFocus(){stopTimer();focusRun.phase='work';focusRun.restEnd=0;persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});}
+function resumeFocus({background=false}={}){stopTimer();focusRun.phase='work';focusRun.restEnd=0;persistFocus();if(background)softRender();else{render();$('#focusPrimary')?.focus({preventScroll:true});}}
 function completeFocus(value=focusValue()){
   const x=focusItem();if(!x||focusRun.phase!=='work'||x.entry)return;
   if(hold){toast('Finish or cancel the running hold first.');return;}
@@ -2550,9 +2573,9 @@ function handleFocus(b){
   if(!t)return;
   if(a==='plus'||a==='minus'){const previous=focusValue();x.value=Math.min(9999,Math.max(0,previous+(a==='plus'?1:-1)*stepInc(sessionSpec(t))));persistFocus();rollFocusNumber(previous,x.value);return;}
   if(a==='complete'){completeFocus();return;}
-  if(a==='hold'){if(hold)return;holdNext[t.id]=x.values.length;startHold(t);hold.focus=true;hold.goal=focusValue();render();return;}
+  if(a==='hold'){if(hold)return;holdNext[t.id]=x.values.length;startHold(t);hold.focus=true;hold.goal=focusValue();announceTimer(`Get ready. ${sessionSpec(t)[0]}, hold for ${hold.goal} seconds${hold.sides>1?', side '+hold.side:''}.`);render();$('[data-focus="cancel"]')?.focus({preventScroll:true});return;}
   if(a==='finish'){finishHold();return;}
-  if(a==='cancel'){stopTimer();render();}
+  if(a==='cancel'){stopTimer();announceTimer('Hold cancelled. No set recorded.');render();$('#focusPrimary')?.focus({preventScroll:true});}
 }
 
 /* ---------- views ---------- */
@@ -2836,7 +2859,7 @@ function viewHistory(){
     const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
     return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}"><span class="history-entry-title">${f?esc(f.st[0]):'Removed exercise'}</span><span class="history-entry-meta">${tm}${e.mode==='light'?' · Lighter day':''}</span><span class="history-entry-values">${e.sets.join(' · ')}${f?' '+(isSec(f.st[4])?'sec':'reps')+(f.st[4].includes('each')?' per side':''):''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</span><span class="history-entry-action">${sel?'Hide entry actions':'Entry actions'}</span></button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
-  return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
+  return `<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" tabindex="0" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">Your first improvement will appear here.</p>'}</section>
     <section class="progress-section recent-training"><h2>Recent training</h2><ol class="training-ladder">${recentPreview}</ol>${days.length>3?`<details class="compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>More training days <span>${days.length} days recorded</span></summary><ol class="training-ladder">${timeline}</ol></details>`:''}</section></div>
     <details class="progress-section progress-exercises compact-progress" id="exerciseProgress" ${progressSectionsOpen.has('exerciseProgress')?'open':''}><summary>Your progress <span>${esc(latestSummary)}</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
@@ -3026,6 +3049,7 @@ function render(){
   if(onboarding)onboarding.querySelector('.onboard-meta>span').insertAdjacentHTML('afterbegin',brandMark());
   if(previousOnboard!==undefined&&stage)stage.classList.add("focus-enter");
   const number=$("#focusValue");if(number)number.dataset.wide=String(focusValue()>=1000);
+  const clock=$('#focusClock');if(clock){clock.setAttribute('role','timer');clock.setAttribute('aria-live','off');}
   document.body.classList.toggle("focus-timing",tab==="today"&&(focusRun?.phase==="rest"||!!hold?.focus));
   if(tab==="ladders" && exQuery) applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
@@ -3082,7 +3106,7 @@ function animateAppScreen(){
  view.animate([{opacity:.35,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:240,easing:'cubic-bezier(.22,1,.36,1)'});
 }
 
-function go(t,{restoreScroll=false}={}){const previous=tab;viewScrollPositions.set(tab,window.scrollY||0);if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t;confirmDel=null;editing=null;sheetOpen=false;hideToast();render();window.scrollTo(0,restoreScroll?(viewScrollPositions.get(t)||0):0);if(previous!==t)animateAppScreen();}
+function go(t,{restoreScroll=false}={}){const previous=tab;viewScrollPositions.set(tab,window.scrollY||0);if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t;confirmDel=null;editing=null;sheetOpen=false;hideToast();render();window.scrollTo(0,restoreScroll?(viewScrollPositions.get(t)||0):0);if(previous!==t){animateAppScreen();$('#pageAnnouncement').textContent=$('#viewTitle').textContent;}}
 document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;if(b.dataset.tab===tab){window.scrollTo({top:0,behavior:motionBehavior()});return;}go(b.dataset.tab,{restoreScroll:true}); });
 $("#syncDot").addEventListener("click",e=>openProgressBackup(e.currentTarget));
 $("#syncWarn").addEventListener("click",()=>{ toast(storageProblems.size?'Device save failed. Keep this page open and back up progress.':"Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
@@ -3276,11 +3300,13 @@ let actx=null;
 function primeAudio(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); }catch(e){} }
 function beep(n){ try{ if(!actx) return; for(let i=0;i<n;i++){ const o=actx.createOscillator(), g=actx.createGain(), t0=actx.currentTime+i*0.22; o.frequency.value=880; g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.25,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+0.18); o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0+0.2); } }catch(e){} }
 const buzz = p => { try{ navigator.vibrate&&navigator.vibrate(p); }catch(e){} beep(p.length>1?2:1); };
-function showTimer(html){ const el=$("#timer"); el.innerHTML=html; el.hidden=false; document.body.classList.add("timing"); }
+function showTimer(html){ const el=$("#timer"); el.innerHTML=html;const clock=el.querySelector('#timerText');if(clock){clock.setAttribute('role','timer');clock.setAttribute('aria-live','off');clock.setAttribute('aria-label',hold?'Hold elapsed time':'Rest time remaining');}el.hidden=false; document.body.classList.add("timing"); }
+function announceTimer(message){$('#timerAnnouncement').textContent=message;}
 function startRest(sec,deadline){
   primeAudio();
   hold=null; restEnd=Number.isFinite(deadline)?deadline:Date.now()+sec*1000; buzzed=false;
   showTimer(`<span class="tlabel">Rest</span><span id="timerText"></span><button data-tm="add">+30s</button><button data-tm="stop">Skip</button>`);
+  announceTimer(`Rest started. ${Math.max(0,Math.ceil((restEnd-Date.now())/1000))} seconds.`);
   tick(); clearInterval(restTick); restTick=setInterval(tick,250); grabWake();
 }
 function startHold(t, side){
@@ -3288,6 +3314,7 @@ function startHold(t, side){
   const lvl=sessionLevel(t), st=spec(t,lvl), i=holdNext[t.id]??0, g=sessionGoals(t,lvl,st)[i];
   const sides = st[4].includes("each") ? 2 : 1;
   hold={tid:t.id, i, goal:g, start:Date.now()+3000, side:side||1, sides, first:hold?.first}; buzzed=false;
+  announceTimer(`Get ready. ${st[0]}, hold for ${g} seconds${sides>1?', side '+hold.side:''}.`);
   const label = `Set ${i+1}${sides>1?` · side ${hold.side}`:""}`;
   showTimer(`<span class="tlabel">${label}</span><span id="timerText"></span><button data-tm="done">Stop</button><button data-tm="cancel" aria-label="Cancel hold">✕</button>`);
   tick(); clearInterval(restTick); restTick=setInterval(tick,200); grabWake();
@@ -3299,9 +3326,10 @@ function tick(){
     const doneBtn=$("#timer [data-tm=done]"); if(doneBtn) doneBtn.hidden = el<0;
     if(hold.focus){const clock=$("#focusClock");if(clock)clock.textContent=el<0?"Ready "+Math.ceil(-el):Math.floor(el)+"s";const finish=$("[data-focus=finish]");if(finish)finish.disabled=el<0;}
     if(el<0){ tx.textContent="Get ready "+Math.ceil(-el); return; }
+    if(!hold.announcedStart){hold.announcedStart=true;announceTimer(`Start holding. Goal ${hold.goal} seconds${hold.sides>1?', side '+hold.side:''}.`);}
     const s=Math.floor(el); tx.textContent=`${s}s / ${hold.goal}s`;
     $("#timer").classList.toggle("reached", s>=hold.goal);
-    if(s>=hold.goal && !buzzed){ buzzed=true; buzz([150,80,150]); }
+    if(s>=hold.goal && !buzzed){ buzzed=true; buzz([150,80,150]); announceTimer('Hold target reached. Finish when you’re ready.'); }
     return;
   }
   const left=Math.max(0,Math.ceil((restEnd-Date.now())/1000));
@@ -3310,7 +3338,7 @@ function tick(){
     const clock=$("#focusClock");if(clock)clock.textContent=focusTime(left);
     const arc=$("#focusArc");if(arc)arc.setAttribute("stroke-dashoffset",String(focusRestOffset()));
   }
-  if(left===0){ const focusRest=focusRun?.phase==="rest";stopTimer(); buzz([200,100,200]);if(focusRest)resumeFocus();toast("Rest done. Next set."); }
+  if(left===0){ const focusRest=focusRun?.phase==="rest";stopTimer(); buzz([200,100,200]);if(focusRest)resumeFocus({background:true});toast("Rest done. Next set."); }
 }
 function finishHold(){
   const h=hold; if(!h) return; const t=findTrack(h.tid); if(!t){ stopTimer(); return; }
@@ -3322,14 +3350,14 @@ function finishHold(){
   if(secs>cap){ secs=cap; toast(`Capped at ${cap}s. Fix the number if that's wrong.`); }
   if(h.sides>1 && h.side===1){                                          // time the other side next
     hold={...h, first:secs}; stopTimer(); hold=null;
-    const keep={first:secs}; startHold(t,2); hold.first=keep.first; if(h.focus){hold.focus=true;hold.goal=h.goal;render();} return;
+    const keep={first:secs}; startHold(t,2); hold.first=keep.first; if(h.focus){hold.focus=true;hold.goal=h.goal;announceTimer(`Get ready. ${st[0]}, hold for ${hold.goal} seconds, side 2.`);render();$('[data-focus="cancel"]')?.focus({preventScroll:true});} return;
   }
   if(h.sides>1) secs=Math.min(secs, h.first ?? secs);                    // count the weaker side
   if(h.focus){stopTimer();completeFocus(secs);return;}
   drafts[t.id]=drafts[t.id]||sessionGoals(t,lvl,st).map(String);
   drafts[t.id][h.i]=String(secs); holdNext[t.id]=h.i+1; opened.add(t.id);
   (completedSets[t.id]||(completedSets[t.id]=new Set())).add(h.i);
-  stopTimer(); softRender();
+  stopTimer(); render();document.querySelector('[data-act="hold"][data-t="'+t.id+'"]')?.focus({preventScroll:true});
   if(h.i+1<st[1]) startRest(restOf(t,st)); else toast("All sets timed. Tap Save.");
 }
 function stopTimer(){ clearInterval(restTick); restTick=null; hold=null; const el=$("#timer"); el.hidden=true; el.classList.remove("reached"); document.body.classList.remove("timing"); try{ wake&&wake.release(); }catch(e){} wake=null; }
@@ -3344,8 +3372,16 @@ $("#timer").addEventListener("click",e=>{
 /* ---------- keep things fresh ---------- */
 const typing = () => document.activeElement?.matches?.("input,select,textarea");
 let renderLater=false;
-function softRender(){ if(typing() || sheetOpen){ renderLater=true; return; } renderLater=false; render(); }
+function softRender(){
+  if(typing()||sheetOpen||document.querySelector('dialog[open]')){renderLater=true;return;}
+  const active=document.activeElement,id=active?.id,action=active?.dataset.focus;
+  if(!id&&!action&&$('#view').contains(active)&&active.matches('button,summary,a,[tabindex]')){renderLater=true;return;}
+  renderLater=false;render();if(!active?.isConnected){const next=id?document.getElementById(id):[...document.querySelectorAll('[data-focus]')].find(e=>e.dataset.focus===action);next?.focus({preventScroll:true});}
+}
 document.addEventListener("focusout",()=>{ setTimeout(()=>{ if(renderLater) softRender(); },0); });
+// WebKit can close a modal without emitting focusout on its removed contents.
+document.addEventListener('close',()=>{setTimeout(()=>{if(renderLater)softRender();},0);},true);
+document.addEventListener('focusin',()=>{if(renderLater&&!document.querySelector('dialog[open]'))setTimeout(()=>{if(renderLater)softRender();},0);});
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible") return;
   setDate();
