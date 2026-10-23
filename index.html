@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-23-review-fixes-1',events=[];
+ const RELEASE='2026-10-23-session-history-2',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -1621,6 +1621,41 @@ body[data-view] button[data-control="choice"]{white-space:normal;overflow-wrap:b
 .custom-draft-note{color:var(--color-ink-secondary);font-size:var(--type-meta);line-height:1.5}
 .custom-draft-actions{display:flex;align-items:center;gap:var(--space-control);justify-content:flex-end;margin-top:var(--space-control)}
 
+/* Short phones retain a complete primary action above the fixed tab bar. */
+@media(max-width:699px) and (max-height:699px){
+ body[data-view="today"] .plan-summary{margin:var(--scale-space-1) 0 var(--scale-space-2)}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding-top:var(--scale-space-1)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise{gap:var(--space-control)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{width:88px;height:64px;flex-basis:88px}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise h2{font-size:var(--scale-type-title)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-target{font-size:var(--type-control);margin-block:var(--scale-space-1)}
+ body[data-view="today"] .focus-counter{margin:var(--space-control) 0 var(--scale-space-2)}
+ body[data-view="today"] .focus-dial{width:clamp(96px,16svh,112px);min-height:0;height:auto;aspect-ratio:1}
+ body[data-view="today"] .focus-number{font-size:clamp(44px,8svh,56px)}
+ body[data-view="today"] .focus-unit{font-size:var(--type-meta);line-height:1.3}
+ body[data-view="today"] .focus-set-path{margin-top:var(--scale-space-2)}
+ body[data-view="today"] .focus-actions{padding-top:var(--scale-space-1);margin-bottom:var(--scale-space-2)}
+}
+
+@media(max-width:699px) and (max-height:599px){
+ body[data-view="today"] .plan-summary button{padding-block:var(--scale-space-2)}
+ body[data-view="today"] .focus-exercise .focus-howto{min-height:var(--target-min);padding-block:0}
+ body[data-view="today"] .focus-counter{margin-block:var(--scale-space-2)}
+ body[data-view="today"] .focus-set-path{margin-block:var(--scale-space-1)}
+}
+.cloud-history-notice{padding:var(--space-inset);margin:var(--space-control) 0;border:1px solid var(--color-stroke);border-radius:var(--panel-radius);background:var(--color-selected)}
+.cloud-history-notice p{margin:0 0 var(--scale-space-2);font-size:var(--type-control);line-height:1.5}
+.cloud-history-notice button{min-height:var(--target-min)}
+
+body.end-workout-open{overflow:hidden}
+.end-workout-actions{display:grid;gap:var(--space-control);margin-top:var(--space-section)}
+.end-workout-actions button{width:100%;white-space:normal}
+
+@media(max-width:699px) and (max-height:599px){
+ body[data-view="today"] .focus-counter{margin-block:var(--scale-space-1)}
+ body[data-view="today"] .focus-shell .focus-stage:has(.focus-counter) .focus-target{margin-block:0}
+}
+
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
 
@@ -1798,6 +1833,7 @@ body.library-sheet-open{overflow:hidden}
     <button id="syncDot" class="dot local" aria-label="Storage status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H5V3h1m9 0v5h4M8 14l3 3 5-6"/></svg></button>
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
+  <section id="cloudHistoryNotice" class="cloud-history-notice" role="status" hidden><strong>Your account keeps recent history.</strong><p>Your complete history stays on this device. Download a backup to move older history to another device.</p><button data-backup="open">Back up complete history</button></section>
   <section id="storageWarning" class="storage-warning" role="alert" hidden><strong>Some progress isn’t saved on this device.</strong><p id="storageWarningText"></p><button data-backup="open">Back up progress</button><button data-backup="retry">Try saving again</button></section>
   <main id="view" tabindex="-1"></main>
   <div class="backup-entry"><button data-backup="open">Back up or restore progress</button></div>
@@ -2015,8 +2051,7 @@ const opened = new Set();      // cards the user expanded this visit
 const completedSets = {};      // checkmarks for this visit; history is written only by Save exercise
 let confirmDel = null;
 const SCHEMA = 2;
-const LOG_KEEP = 1800;         // ~130 KB, well under the 256 KB cloud limit
-const TOMB_KEEP = 1000;
+// Local history and deletion markers are retained. Only the outbound cloud copy is bounded.
 
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
@@ -2129,7 +2164,7 @@ function normalize(d){
     if(!sets.length) continue;
     log.push({ts, t:k.split(":")[0], k, sets, ...(typeof e.insteadOf==='string'&&TRACKS.some(t=>t.steps.some((_,i)=>keyOf(t,i)===e.insteadOf))?{insteadOf:e.insteadOf}:{}), ...(e.mode==='light'?{mode:'light'}:{}), ...(Number.isSafeInteger(e.effortAt)&&e.effortAt>0?{effortAt:e.effortAt,...(["easy","steady","hard"].includes(e.effort)?{effort:e.effort}:{})}:{})});
   }
-  out.deleted = (Array.isArray(d.deleted)?d.deleted:[]).filter(x=>typeof x==="string").slice(-TOMB_KEEP);
+  out.deleted = [...new Set((Array.isArray(d.deleted)?d.deleted:[]).filter(x=>typeof x==="string"))];
   const tomb = new Set(out.deleted);
   out.log = dedupe(log).filter(e=>!tomb.has(entryId(e)));
   // levels
@@ -2208,7 +2243,7 @@ function dedupe(log){
     const winner=!old||b>a||(b===a&&(!a||String(e.effort||'')>=String(old.effort||'')))?e:old;
     m.set(id,{...winner,...(old?.mode==='light'||e.mode==='light'?{mode:'light'}:{}),...(old?.insteadOf||e.insteadOf?{insteadOf:old?.insteadOf||e.insteadOf}:{})});
   }
-  return [...m.values()].sort((a,b)=>a.ts-b.ts).slice(-LOG_KEEP);
+  return [...m.values()].sort((a,b)=>a.ts-b.ts);
 }
 // Combine two copies: logs are joined (minus deletions); each setting comes from whichever copy changed it last
 function merge(a,b){
@@ -2220,7 +2255,7 @@ function merge(a,b){
   }
   const order=[...a.routines.map(r=>r.id),...a.custom.map(c=>c.id),...b.routines.map(r=>r.id),...b.custom.map(c=>c.id)];
   const u=unflatten(f, order);
-  const deleted=[...new Set([...a.deleted,...b.deleted])].slice(-TOMB_KEEP);
+  const deleted=[...new Set([...a.deleted,...b.deleted])];
   const tomb=new Set(deleted);
   return {v:SCHEMA, updated:Math.max(a.updated||0,b.updated||0), stamps,
     levels:u.levels, prefs:{...u.prefs, presetsSeen:[...new Set([...(a.prefs.presetsSeen||[]),...(b.prefs.presetsSeen||[])])]},
@@ -2260,16 +2295,21 @@ function commit(weak){
   for(const k of new Set([...Object.keys(f),...Object.keys(lastFlat)])) if(f[k]!==lastFlat[k]) state.stamps[k]=now;
   lastFlat=f; state.updated=Date.now(); saveLocal(); pushCloud();
 }
-let writing=false, again=false, retryTimer=null, tries=0;
+let writing=false, again=false, retryTimer=null, tries=0, cloudHistoryLimited=false;
+function cloudSnapshot(source){
+ const body=JSON.parse(JSON.stringify(source));
+ // Bound the account copy, never this device's full history or deletion markers.
+ while(new Blob([JSON.stringify(body)]).size>240000&&body.log.length>200)body.log=body.log.slice(Math.ceil(body.log.length*.15));
+ return body;
+}
 async function pushCloud(){
   if(!docRef) return;                         // not connected yet: the first sync merges local changes
   if(writing){ again=true; return; }
   writing=true; clearTimeout(retryTimer);
   try{
-    let body=JSON.parse(JSON.stringify(state));
-    // Stay under the cloud's 256 KB limit by sending fewer old entries (this phone keeps them all)
-    while(JSON.stringify(body).length>240000 && body.log.length>200) body.log=body.log.slice(Math.ceil(body.log.length*0.15));
+    const body=cloudSnapshot(state);
     await docRef.set(body);
+    cloudHistoryLimited=body.log.length<state.log.length;
     tries=0; setSync("ok");
   }catch(e){
     if(e && (e.code==="invalid_argument"||e.code==="revoked"||e.code==="not_granted"||e.code==="capability_disabled")){ docRef=null; setSync("readonly"); }
@@ -2281,7 +2321,7 @@ async function pushCloud(){
 function setSync(s){ const was=sync; sync=s; setNote(); if((was==="starting"||was==="syncing") && s!=="syncing" && typeof render==="function" && !state.log.length && !state.prefs.setupDone) softRender(); }
 function setNote(){
   const msg={
-    ok:"Saved to your account. Works on any device.",
+    ok:cloudHistoryLimited?"Recent history saved to your account. Older history stays on this device; download a backup for your full history.":"Saved to your account. Works on any device.",
     syncing:"Syncing with your account…",
     error:"Not synced yet. Saved on this phone and retrying.",
     local:"Progress saves in this browser only.",
@@ -2289,6 +2329,7 @@ function setNote(){
     readonly:"Can't save to your account here. Progress saves on this phone."
   }[sync];
   $("#saveNote").textContent = msg;
+  const cloudNotice=$("#cloudHistoryNotice");if(cloudNotice)cloudNotice.hidden=!cloudHistoryLimited;
   $("#saveNote").classList.toggle("warn", sync==="error");
   const dot=$("#syncDot"); dot.className="dot "+sync; dot.title=msg; dot.setAttribute("aria-label",msg);
   $("#syncWarn").hidden = sync!=="error";
@@ -2325,9 +2366,11 @@ function workCoach(t,x){
 }
 let planSummaryOpen=false;
 function coachGoalName(value){return {balanced:'Balanced',strength:'Strength',movement:'Move better'}[value]||'Balanced';}
+function hasRecordedWork(entry){return entry.sets.some(v=>v>0);}
+function trainedDayCount(log,start,now){return new Set(log.filter(e=>e.ts>=start&&e.ts<=now&&hasRecordedWork(e)).map(e=>dayOf(e.ts))).size;}
 function coachingWeekDays(){
  const now=Date.now(),start=weekStart(new Date(now)).getTime();
- return new Set(state.log.filter(e=>e.ts>=start&&e.ts<=now&&e.sets.some(v=>v>0)).map(e=>dayOf(e.ts))).size;
+ return trainedDayCount(state.log,start,now);
 }
 function coachingView(){
  const p=LadderCoach.prefs(state.prefs.coach),days=coachingWeekDays();
@@ -2400,7 +2443,7 @@ function saveSets(t,options={}){
   if(vals.every(v=>v===0) && confirmZero!==t.id){ confirmZero=t.id; toast(options.focus?"All sets are 0. Tap Complete set again to confirm.":"All sets are 0. Tap Save again to log it anyway."); return; }
   confirmZero=null; lastSaveAt=Date.now();
   const entry={ts:Date.now(), t:t.id, k:keyOf(t,lvl), sets:vals,...(lightSessionItem(t,lvl)?{mode:'light'}:{}),...(focusRun?.items.find(x=>x.id===t.id)?.swap?{insteadOf:focusRun.items.find(x=>x.id===t.id).swap.original.key}:{})};
-  state.log.push(entry); state.log=state.log.slice(-LOG_KEEP);
+  state.log.push(entry);
   delete drafts[t.id]; delete holdNext[t.id]; delete completedSets[t.id]; opened.delete(t.id);
   if(hold && hold.tid===t.id) stopTimer();
   showMore=false; commit();
@@ -2415,7 +2458,7 @@ function saveSets(t,options={}){
 }
 function undoEntry(entry,t){
   state.log=state.log.filter(e=>entryId(e)!==entryId(entry));
-  state.deleted=[...state.deleted, entryId(entry)].slice(-TOMB_KEEP);
+  state.deleted=[...new Set([...state.deleted, entryId(entry)])];
   drafts[t.id]=entry.sets.map(String); opened.add(t.id);
   const item=focusRun?.items.find(x=>x.entry===entryId(entry));
   if(item){delete item.entry;item.values=entry.sets.slice(0,-1);item.value=entry.sets.at(-1);focusRun.at=focusRun.items.indexOf(item);focusRun.phase="work";persistFocus();}
@@ -2436,7 +2479,7 @@ function parseProgressBackup(text){
   const d=file.state;
   // Bound complexity and reject dangerous property names before normalization.
   const inspect=(x,depth=0)=>{if(depth>12)throw new Error('The backup contains invalid data.');if(typeof x==='number'&&(!Number.isSafeInteger(x)||x<0))throw new Error('The backup contains invalid numbers.');if(x&&typeof x==='object'){for(const [k,v]of Object.entries(x)){if(['__proto__','prototype','constructor'].includes(k))throw new Error('The backup contains invalid fields.');inspect(v,depth+1);}}};inspect(d);
-  if(!Array.isArray(d.log)||d.log.length>LOG_KEEP||!Array.isArray(d.custom)||d.custom.length>500||!Array.isArray(d.routines)||d.routines.length>500||!Array.isArray(d.deleted)||d.deleted.length>TOMB_KEEP||!object(d.prefs)||!object(d.levels)||!object(d.stamps))throw new Error('The backup is incomplete or exceeds supported limits.');
+  if(!Array.isArray(d.log)||!Array.isArray(d.custom)||d.custom.length>500||!Array.isArray(d.routines)||d.routines.length>500||!Array.isArray(d.deleted)||!object(d.prefs)||!object(d.levels)||!object(d.stamps))throw new Error('The backup is incomplete or exceeds supported limits.');
   const p=d.prefs;
   if(p.coach!==undefined&&(!object(p.coach)||!['balanced','strength','movement'].includes(p.coach.goal)||!Number.isInteger(p.coach.days)||p.coach.days<1||p.coach.days>7))throw new Error('The backup contains invalid coaching preferences.');
   if(Object.keys(d.stamps).length>5000||Object.keys(d.levels).length>500||['hidden','focus','sets'].some(k=>!object(p[k])||Object.keys(p[k]).length>1000)||p.presetsSeen?.length>1000)throw new Error('The backup exceeds supported settings limits.');
@@ -2451,15 +2494,18 @@ function parseProgressBackup(text){
   return {state:clean,createdAt:typeof file.createdAt==='string'&&!Number.isNaN(Date.parse(file.createdAt))?new Date(file.createdAt).toLocaleString():'Unknown date'};
 }
 function planProgressRestore(backup){
-  const tomb=new Set([...state.deleted,...backup.state.deleted]);
-  const total=new Set([...state.log,...backup.state.log].filter(e=>!tomb.has(entryId(e))).map(entryId)).size;
-  if(total>LOG_KEEP||tomb.size>TOMB_KEEP)throw new Error('Combining these histories exceeds this version’s storage limit. Keep both backup files; no data was changed.');
   const fresh=!state.prefs.setupDone&&!state.log.length&&!state.custom.length&&!state.updated;
   const next=fresh?merge(state,backup.state):merge(backup.state,state); // Existing device wins ties; a new device gets the backup settings.
+  const combined={app:'bodyweight-ladder',backupVersion:1,createdAt:new Date().toISOString(),state:next};
+  if(new Blob([JSON.stringify(combined)]).size>BACKUP_LIMIT)throw new Error('The combined history exceeds the 5 MB backup limit. Keep both backup files; no data was changed.');
   return {next,added:next.log.filter(e=>!state.log.some(old=>entryId(old)===entryId(e))).length,removed:state.log.filter(e=>!next.log.some(n=>entryId(n)===entryId(e))).length};
 }
 function downloadProgressBackup(){
-  const blob=new Blob([JSON.stringify(makeProgressBackup(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  const text=JSON.stringify(makeProgressBackup()),blob=new Blob([text],{type:'application/json'});
+  if(blob.size>BACKUP_LIMIT)throw new Error('Your complete history exceeds the 5 MB backup limit. No partial backup was downloaded. Keep this page open; your existing history has not been removed.');
+  // Never offer a file this version would reject when the person needs it later.
+  try{parseProgressBackup(text);}catch(e){throw new Error('A complete restorable backup could not be created: '+e.message+' Your current history has not been removed.');}
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='bodyweight-ladder-backup-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
 function applyProgressRestore(backup){
@@ -2476,10 +2522,10 @@ function applyProgressRestore(backup){
 function openProgressBackup(opener){
   if($('#progressBackup'))return;
   const d=document.createElement('dialog');d.id='progressBackup';d.className='app-preferences progress-backup';d.setAttribute('aria-labelledby','backupTitle');
-  d.innerHTML='<div class="preferences-head"><h2 id="backupTitle">Protect your progress</h2><button aria-label="Close backup and restore" autofocus>×</button></div><p>Your progress is stored in this browser. Clearing site data or changing devices can remove it.</p><section><h3>Keep a backup</h3><p>Download completed workouts, exercise levels, custom exercises and routines. Unfinished sets, workout time and display preferences stay on this device.</p><button class="primary" data-backup-download>Download backup</button><p class="cue">Keep this file somewhere private. Files are read on your device. Restored progress is saved in this browser.</p></section><section><h3>Restore a backup</h3><label for="backupFile">Choose a Bodyweight Ladder JSON backup</label><input id="backupFile" type="file" accept=".json,application/json"><div id="backupPreview" hidden></div><p id="backupMessage" role="status" aria-live="polite"></p><button class="primary" data-backup-apply disabled>Merge backup</button></section>';
+  d.innerHTML='<div class="preferences-head"><h2 id="backupTitle">Protect your progress</h2><button aria-label="Close backup and restore" autofocus>×</button></div><p>Your progress is stored in this browser. Clearing site data or changing devices can remove it.</p><section><h3>Keep a backup</h3><p>Download your complete saved exercise history, exercise levels, custom exercises and routines. History is not automatically removed on this device. Backups support up to 5 MB. Unfinished sets, workout time and display preferences stay on this device.</p><button class="primary" data-backup-download>Download backup</button><p class="cue">Keep this file somewhere private. Files are read on your device. Restored progress is saved in this browser.</p></section><section><h3>Restore a backup</h3><label for="backupFile">Choose a Bodyweight Ladder JSON backup</label><input id="backupFile" type="file" accept=".json,application/json"><div id="backupPreview" hidden></div><p id="backupMessage" role="status" aria-live="polite"></p><button class="primary" data-backup-apply disabled>Merge backup</button></section>';
   let pending=null,selection=0;
   const message=d.querySelector('#backupMessage'),preview=d.querySelector('#backupPreview'),apply=d.querySelector('[data-backup-apply]');
-  d.querySelector('[data-backup-download]').onclick=()=>{try{downloadProgressBackup();message.textContent='Backup download requested. Check your downloads before closing this page.';}catch(e){message.textContent='The download could not start. Keep this page open and try again.';}};
+  d.querySelector('[data-backup-download]').onclick=()=>{try{downloadProgressBackup();message.textContent='Backup download requested. Check your downloads before closing this page.';}catch(e){message.textContent=e.message||'The download could not start. Keep this page open and try again.';}};
   d.querySelector('#backupFile').onchange=async e=>{const selected=++selection;pending=null;apply.disabled=true;preview.hidden=true;message.textContent='';const f=e.target.files[0];if(!f)return;try{if(f.size>BACKUP_LIMIT)throw new Error('Choose a backup smaller than 5 MB.');const parsed=parseProgressBackup(await f.text());if(selected!==selection)return;const plan=planProgressRestore(parsed);pending=parsed;preview.textContent='Backup from '+parsed.createdAt+'. '+parsed.state.log.length+' completed exercise records. Adds '+plan.added+' records; removes '+plan.removed+' previously deleted records. Duplicate workouts won’t be added. The newest version of each training setting is used; this device wins ties. Your next workout will refresh.';preview.hidden=false;apply.disabled=false;}catch(err){if(selected===selection)message.textContent=err.message;}};
   apply.onclick=()=>{if(!pending)return;apply.disabled=true;try{const plan=applyProgressRestore(pending);pending=null;message.textContent='Backup merged and saved on this device. '+plan.added+' exercise records added.';preview.hidden=true;}catch(e){message.textContent=e.message;apply.disabled=false;}};
   d.querySelector('.preferences-head button').onclick=()=>d.close();d.addEventListener('close',()=>{selection++;d.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
@@ -2515,6 +2561,17 @@ function ensureFocus(plan,report){
   const savedItem=x=>{const t=x&&findTrack(x.id);return !!t&&t.steps.some((_,i)=>x.key===keyOf(t,i))&&numbers(x.goals)&&x.goals.length>=1&&x.goals.length<=6&&numbers(x.values)&&x.values.length<=8&&(x.entry||x.values.length<=x.goals.length)&&(x.value===undefined||numbers([x.value]));};
   // A started session owns its prescriptions. Preference edits apply to the next one.
   const savedSwap=x=>!x.swap||[x.swap.original,...(x.swap.existing?[x.swap.existing.item]:[])].every(a=>savedItem(a)&&!a.swap&&!a.entry&&!a.values.length);
+  if(focusRun&&Array.isArray(focusRun.items)){
+    const previous=focusRun.items,current=previous[focusRun.at],kept=previous.filter(x=>savedItem(x)&&savedSwap(x));
+    if(kept.length!==previous.length){
+      const removed=previous.filter(x=>!kept.includes(x));
+      for(const x of removed){if(!x?.id)continue;delete drafts[x.id];delete completedSets[x.id];delete holdNext[x.id];}
+      if(removed.includes(current)||removed.some(x=>x?.id===hold?.tid)){stopTimer();focusRun.phase='work';focusRun.restEnd=0;}
+      focusRun.items=kept;focusRun.at=Math.max(0,kept.indexOf(current));focusUndo=null;
+      if(!kept.length)focusRun.signature=null;
+      toast(kept.length?'An unavailable exercise was removed. Your other workout sets are kept.':'The unavailable exercise was removed from this workout.');
+    }
+  }
   const validItems=focusRun&&Array.isArray(focusRun.items)&&focusRun.items.every(x=>savedItem(x)&&savedSwap(x));
   let reopened=false;
   if(validItems)focusRun.items.forEach((x,i)=>{
@@ -2732,6 +2789,27 @@ function closeWorkoutTools(){
  $('#workoutToolsButton')?.setAttribute('aria-expanded','false');
  (document.getElementById(workoutToolsReturn)||$('#workoutToolsButton'))?.focus({preventScroll:true});
 }
+function openEndWorkout(){
+ if(hold){toast('Finish or cancel your current hold before ending the workout.');return;}
+ if(!focusRun||focusRun.phase==='finished'||$('#endWorkout'))return;
+ const session=focusRun,unfinished=session.items.filter(x=>!x.entry),sets=unfinished.reduce((n,x)=>n+x.values.length,0);
+ closeWorkoutTools();
+ const d=document.createElement('dialog');d.id='endWorkout';d.className='workout-tools end-workout-sheet';d.setAttribute('aria-labelledby','endWorkoutTitle');d.setAttribute('aria-describedby','endWorkoutDescription');
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="endWorkoutTitle">End this workout?</h2><button type="button" data-end-keep aria-label="Close and keep unfinished workout" autofocus>×</button></div><div class="workout-tools-body"><p id="endWorkoutDescription">Completed exercises stay in Progress. ${sets?`${sets} unfinished ${sets===1?'set is':'sets are'} recorded on this device. Starting the next workout will discard ${sets===1?'that set':'those sets'}.`:'Your remaining exercises have not been saved.'} Nothing is logged automatically.</p><p class="cue">Your next workout uses your latest time, routine and training preferences.</p><div class="end-workout-actions"><button type="button" class="primary" data-end-keep>Keep unfinished workout</button><button type="button" class="${sets?'danger':'ghost'}" data-end-discard>${sets?'Discard unfinished & start next':'End & start next workout'}</button></div></div>`;
+ const close=()=>{if(d.open)d.close();else d.remove();};
+ d.querySelectorAll('[data-end-keep]').forEach(b=>b.addEventListener('click',close));
+ d.querySelector('[data-end-discard]').addEventListener('click',()=>{
+  if(focusRun!==session){close();toast('Your workout changed. Review it before ending.');return;}
+  stopTimer();
+  for(const x of session.items){delete drafts[x.id];delete completedSets[x.id];delete holdNext[x.id];opened.delete(x.id);}
+  focusRun=null;focusUndo=null;readinessChoice=null;swapChoice=null;clearFocusNotice();persistFocus();
+  close();render();$('#focusPrimary')?.focus({preventScroll:true});$('#focusAnnouncement').textContent='Previous workout ended. Completed exercises are kept. Your next workout is ready.';
+ });
+ d.addEventListener('cancel',e=>{e.preventDefault();close();});
+ d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
+ d.addEventListener('close',()=>{d.remove();document.body.classList.remove('end-workout-open');$('#workoutToolsButton')?.focus({preventScroll:true});},{once:true});
+ $('#view').append(d);applyComponentSystem(d);document.body.classList.add('end-workout-open');d.showModal();
+}
 function closeTechnique(restore=true){
  const d=$('#techniqueSheet');if(!d)return;
  if(d.open&&typeof d.close==='function')d.close();d.remove();
@@ -2878,6 +2956,9 @@ function mountWorkoutTools(previous={}){
  dialog.addEventListener('close',()=>{workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');button.setAttribute('aria-expanded','false');});
  dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeWorkoutTools();});
  const storage=document.createElement('p');storage.className='workout-storage';storage.textContent=$('#saveNote')?.textContent||'';body.append(storage);
+ if(focusRun?.items.length&&focusRun.phase!=='finished'){
+  const end=document.createElement('button');end.type='button';end.className='tool-action end-workout-action';end.dataset.ui='endworkout';end.setAttribute('aria-haspopup','dialog');end.setAttribute('aria-controls','endWorkout');end.innerHTML='<span>End workout</span><span aria-hidden="true">→</span>';body.insertBefore(end,storage);
+ }
  // Apply the subpage after every control has been moved into its final position.
  const activePanel=workoutToolsPanel!=='main'?body.querySelector(`[data-tool-panel="${workoutToolsPanel}"]`):null;
  if(!activePanel)workoutToolsPanel='main';
@@ -2886,7 +2967,7 @@ function mountWorkoutTools(previous={}){
  body.querySelectorAll('button').forEach(control=>control.type='button');
  body.querySelectorAll('[data-focus="choose"]').forEach(control=>{const name=control.closest('.focus-ex-row')?.querySelector('span')?.firstChild?.textContent?.trim();if(name)control.setAttribute('aria-label','Start '+name);});
  if(hold){
-  const locked=body.querySelectorAll('[data-ui="min"],[data-ui="sheet"],[data-focus="choose"],[data-focus="another"],[data-coach="level"]');
+  const locked=body.querySelectorAll('[data-ui="min"],[data-ui="sheet"],[data-ui="endworkout"],[data-focus="choose"],[data-focus="another"],[data-coach="level"]');
   if(locked.length){const note=document.createElement('p');note.id='workoutControlsLocked';note.className='cue';note.textContent='Finish or cancel your current hold to change the workout.';body.prepend(note);locked.forEach(control=>{control.disabled=true;control.setAttribute('aria-describedby',note.id);});}
  }
  shell.append(dialog);document.body.classList.toggle('workout-tools-open',workoutToolsOpen);
@@ -2937,7 +3018,7 @@ function completeFocus(value=focusValue()){
 }
 function undoFocus(){
   if(!focusUndo)return;$('#focusEffects').replaceChildren();clearFocusNotice();stopTimer();const u=focusUndo;focusUndo=null;
-  if(u.entry){state.log=state.log.filter(e=>entryId(e)!==entryId(u.entry));state.deleted=[...state.deleted,entryId(u.entry)].slice(-TOMB_KEEP);commit();}
+  if(u.entry){state.log=state.log.filter(e=>entryId(e)!==entryId(u.entry));state.deleted=[...new Set([...state.deleted,entryId(u.entry)])];commit();}
   focusRun=u.before;focusRun.phase='work';focusRun.restEnd=0;delete drafts[focusItem().id];delete completedSets[focusItem().id];persistFocus();hideToast();render();$('#focusPrimary')?.focus({preventScroll:true});
 }
 function handleFocus(b){
@@ -3057,15 +3138,15 @@ function sheet(){
 
 function libraryFilters(tracks){return '<div class="library-filters" role="group" aria-label="Exercise category">'+['All','Strength','Tendon','Mobility','Stretch','Weights','Custom'].filter(g=>g==='All'||g===exCategory||tracks.some(t=>groupOf(t)===g)).map(g=>`<button type="button" data-ui="category" data-category="${g}" aria-pressed="${exCategory===g}">${{All:'All',Tendon:'Tendons & joints',Stretch:'Stretching',Weights:'Carries & weights'}[g]||g}</button>`).join('')+'</div>';}
 function controls(t){
-  const f=focusOf(t.id), n=spec(t)[1];
+  const f=focusOf(t.id), n=spec(t)[1],pendingCustomSets=t.custom?(focusRun?.items.find(x=>x.id===t.id&&!x.entry)?.values?.length||0):0;
   const seg=["less","normal","more"].map(k=>`<button type="button" data-act="focus" data-t="${t.id}" data-f="${k}" aria-pressed="${f===k}">${k==="less"?"Lower priority":k==="more"?"Higher priority":"Balanced"}</button>`).join("");
   return `<div class="ctl lui">
     <div class="ctl-row"><span class="label">Workout priority</span><div class="seg" role="group" aria-label="Workout priority for ${esc(t.name)}" aria-describedby="priority-help-${t.id}">${seg}</div><p class="priority-help" id="priority-help-${t.id}">Choose how often this movement is picked relative to others. Your sets and weekly target stay the same.</p></div>
     <div class="ctl-row"><span class="label">Sets per workout</span><div class="mini-step lui-stepper"><button type="button" class="lui-button" data-control="stepper" data-act="setsDec" data-t="${t.id}" aria-label="Fewer sets for ${esc(t.name)}" ${n<=1?'disabled':''}>−</button><div class="lui-field set-count-field"><input id="sets-${t.id}" data-set-count="${t.id}" type="number" inputmode="numeric" min="1" max="6" step="1" value="${n}" aria-label="Sets per workout for ${esc(t.name)}"></div><button type="button" class="lui-button" data-control="stepper" data-act="setsInc" data-t="${t.id}" aria-label="More sets for ${esc(t.name)}" ${n>=6?'disabled':''}>+</button></div>
-      </div><div class="ctl-visibility">${t.custom?`<button class="danger lui-button" data-control="destructive" data-variant="danger" data-act="del" data-t="${t.id}" aria-label="${confirmDel===t.id?'Confirm deletion of':'Delete'} ${esc(t.name)}">${confirmDel===t.id?"Confirm delete":"Delete exercise"}</button>`:`<button class="lui-button" data-control="secondary" data-act="hide" data-t="${t.id}" aria-label="Hide ${esc(t.name)} from Today">Hide from Today</button>`}<small>${t.custom?'Deleting removes this custom exercise.':'Hidden exercises keep their progress.'}</small></div>
+      </div><div class="ctl-visibility">${t.custom?`<button class="danger lui-button" data-control="destructive" data-variant="danger" data-act="del" data-t="${t.id}" aria-describedby="delete-help-${t.id}" aria-label="${confirmDel===t.id?'Confirm delete':'Delete exercise'}: ${esc(t.name)}">${confirmDel===t.id?"Confirm delete":"Delete exercise"}</button>`:`<button class="lui-button" data-control="secondary" data-act="hide" data-t="${t.id}" aria-label="Hide ${esc(t.name)} from Today">Hide from Today</button>`}<small${t.custom?` id="delete-help-${t.id}"`:''}${t.custom&&confirmDel===t.id?' role="alert"':''}>${t.custom?(confirmDel===t.id&&pendingCustomSets?`Deleting also removes this exercise’s ${pendingCustomSets} unfinished ${pendingCustomSets===1?'set':'sets'}. Your other unfinished exercises and saved history stay.`:'Deleting removes this custom exercise.'):'Hidden exercises keep their progress.'}</small></div>
   </div>`;
 }
-let editing=null; // {id,name,items:Set}
+let editing=null; // {id,name,items:Set,offered:Set}
 function routinesCard(tracks){
   if(editing){
     const groups=["Strength","Tendon","Mobility","Stretch","Weights","Custom"];
@@ -3073,12 +3154,12 @@ function routinesCard(tracks){
     return `<section class="card routine-editor" id="routineEditor" aria-labelledby="routineEditorTitle"><div class="routine-editor-header"><h2 id="routineEditorTitle">${editing.id?"Edit routine":"New routine"}</h2><p>Choose the exercises you want together. Saving opens this routine on Today.</p></div>
       <div class="addform"><label for="rName">Routine name</label><input id="rName" maxlength="30" value="${esc(editing.name)}" placeholder="e.g. Morning movement" autocomplete="off" aria-describedby="routineValidation"></div>
       <p class="routine-selection-summary" id="routineSelection" role="status" aria-live="polite"><b><span id="rCount">${selected.length}</span> selected</b><span id="routineSelectionHint">${selected.some(t=>isHidden(t.id))?'Hidden exercises stay in this routine, but do not appear on Today.':'Select at least one exercise. Each uses your current step and set count.'}</span></p>
-      ${groups.map(g=>{ const ts=tracks.filter(t=>groupOf(t)===g&&(!isHidden(t.id)||editing.items.has(t.id))); if(!ts.length) return "";
+      ${groups.map(g=>{ const ts=tracks.filter(t=>groupOf(t)===g&&(!isHidden(t.id)||editing.offered.has(t.id))); if(!ts.length) return "";
         return `<fieldset class="routine-pick-group"><legend class="label">${esc(g)}</legend><div class="picks">${ts.map(t=>`<label class="pick"><input type="checkbox" data-rt="${t.id}" ${editing.items.has(t.id)?"checked":""}>${exerciseThumbnail(t)}<span class="routine-pick-copy"><b>${esc(t.name)}</b><small>${isHidden(t.id)?'Hidden from Today':esc(spec(t)[0])}</small></span></label>`).join("")}</div></fieldset>`; }).join("")}
       <p class="routine-validation" id="routineValidation" role="alert">${esc(editing.error||'')}</p>
       ${editing.cancelPending?`<div class="routine-discard" role="group" aria-label="Unsaved routine changes"><p>Discard your unsaved changes?</p><button data-ract="keep">Keep editing</button><button class="danger" data-ract="discard">Discard changes</button></div>`:''}
       <div class="sticky-actions"><button class="ghost" data-ract="cancel">Cancel</button><button class="primary" data-ract="save">Save &amp; use routine</button></div>
-      ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete" aria-label="${confirmDel==='r:'+editing.id?'Confirm deletion of':'Delete'} ${esc(editing.name)}">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
+      ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete" aria-label="${confirmDel==='r:'+editing.id?'Tap again to delete':'Delete routine'}: ${esc(editing.name)}">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
     </section>`;
   }
   if(!routinesOpen) return `<section class="card" id="routinesCard"><button class="exrow plain" data-ui="rtoggle" aria-expanded="false"><span class="mini-t"><b>Your routines</b><span>${state.routines.length} ${state.routines.length===1?"routine":"routines"} · Choose or edit a training plan</span></span><span class="chev">▾</span></button></section>`;
@@ -3148,7 +3229,7 @@ function viewLadders(){
       const list=t.custom ? "" : `<ol class="ladder">${t.steps.map((s2,i)=>`
         <li class="${i===lvl?"cur":i<lvl?"past":""}" data-step-name="${esc(s2[0])}"><span class="n">${i+1}</span>
         <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><button class="step-guide-button" data-ui="librarypanel" data-panel="guide-${t.id}-${i}" aria-haspopup="dialog" aria-label="Technique for ${esc(s2[0])}">Technique guide <span aria-hidden="true">→</span></button></div>
-        ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}" aria-label="Start ${esc(t.name)} at ${esc(s2[0])}">Start here</button>`}</li>`).join("")}</ol>`;
+        ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}" aria-label="Start here: ${esc(t.name)} at ${esc(s2[0])}">Start here</button>`}</li>`).join("")}</ol>`;
       return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog" aria-label="How to do ${esc(st[0])}">How to do this <span aria-hidden="true">→</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog" aria-label="Training settings for ${esc(t.name)}">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Balanced priority':focusOf(t.id)==='more'?'Higher priority':'Lower priority'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
     }).join("");
   }
@@ -3205,7 +3286,7 @@ function viewHistory(){
   if(!state.log.length&&pending)return pending+'<section class="progress-pending-note"><h2>No completed exercises yet.</h2><p>Finish an exercise to start your completed history and personal bests.</p></section>';
   if(!state.log.length)return `<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true"><img src="assets/brand/studio-recovery-v3-small.webp" alt="" width="800" height="450" decoding="async"></div><h2>${pending?"No completed exercises yet.":"No workouts yet."}</h2><p>Completed exercises, saved sets and personal bests appear here.</p>${pending?"":'<button class="primary" data-ui="gotoday">Go to Today</button>'}</section>`;
   const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
-  const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
+  const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=trainedDayCount(thisWeek,start,now),weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
   const weekBuckets=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const date=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===date).reduce((n,e)=>n+e.sets.length,0);return {date,label:d.toLocaleDateString(undefined,{weekday:'short'}),sets};});
   const weekMax=Math.max(1,...weekBuckets.map(d=>d.sets));
   const weekActivity=weekBuckets.map(({date,label,sets})=>`<div class="week-day${sets?' active':''}${date===dayOf(now)?' today':''}" role="listitem"${date===dayOf(now)?' aria-current="date"':''} aria-label="${fmtDate(date)}: ${sets} sets recorded"><span>${label}</span><span class="week-bar" style="--day-fill:${Math.round(sets/weekMax*100)}%" aria-hidden="true"><i></i></span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`).join('');
@@ -3239,9 +3320,9 @@ function viewHistory(){
   const visibleDays=Math.min(historyDaysShown,days.length);
   const recent=days.slice(0,visibleDays).map(({date,entries})=>`<div class="hist-day" data-history-day="${date}"><span class="d">${fmtDate(date)}</span>${[...entries].sort((a,b)=>b.ts-a.ts).map(e=>{
     const f=stepByKey(e.k),id=entryId(e),tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),sel=confirmDel==='e:'+id;
-    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}"><span class="history-entry-title">${f?esc(f.st[0]):'Removed exercise'}</span><span class="history-entry-meta">${tm}${e.mode==='light'?' · Lighter day':''}</span><span class="history-entry-values">${e.sets.join(' · ')}${f?' '+(isSec(f.st[4])?'sec':'reps')+(f.st[4].includes('each')?' per side':''):''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</span><span class="history-entry-action">${sel?'Hide entry actions':'Entry actions'}</span></button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
+    return `<div class="e${sel?' sel':''}"><button class="erow" data-ui="selentry" data-id="${esc(id)}" aria-expanded="${sel}"><span class="history-entry-title">${f?esc(f.st[0]):'Removed exercise'}</span><span class="history-entry-meta">${tm}${e.mode==='light'?' · Lighter day':''}${hasRecordedWork(e)?'':' · Zero result'}</span><span class="history-entry-values">${e.sets.join(' · ')}${f?' '+(isSec(f.st[4])?'sec':'reps')+(f.st[4].includes('each')?' per side':''):''}${e.insteadOf?' · Instead of '+esc(stepByKey(e.insteadOf)?.st[0]||'original exercise'):''}</span><span class="history-entry-action">${sel?'Hide entry actions':'Entry actions'}</span></button>${sel?`<button class="xdel" data-ui="delentry" data-id="${esc(id)}">Delete</button>`:''}</div>`;
   }).join('')}</div>`).join('');
-  return pending+`<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" tabindex="0" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
+  return pending+`<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" tabindex="0" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day. A trained day includes at least one positive rep or hold. Zero results remain in your log.</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">Your first improvement will appear here.</p>'}</section>
     <section class="progress-section recent-training"><h2>Recent training</h2><ol class="training-ladder">${recentPreview}</ol>${days.length>3?`<details class="compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>Earlier training days <span>${Math.min(days.length-3,5)} earlier ${days.length===4?'day':'days'}</span></summary><ol class="training-ladder">${timeline}</ol>${days.length>8?`<p class="progress-caption">Showing the latest 8 of ${days.length} training days. Open Workout log below to see your complete history.</p>`:''}</details>`:''}</section></div>
     <details class="progress-section progress-exercises compact-progress" id="exerciseProgress" ${progressSectionsOpen.has('exerciseProgress')?'open':''}><summary>Your progress <span>${esc(latestSummary)}</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
@@ -3598,6 +3679,7 @@ $("#view").addEventListener("click",e=>{
     if(a==='toolalternatives'||a==='tooladvanced'){workoutToolsPanel=a==='tooladvanced'?'advanced':'alternatives';render();const body=$('#workoutTools .workout-tools-body');if(body)body.scrollTop=0;document.querySelector(`#workoutTools [data-tool-panel="${workoutToolsPanel}"] .tool-back`)?.focus({preventScroll:true});return;}
     if(a==='toolmain'){const returnAction=u.dataset.toolReturn||'tooladvanced';workoutToolsPanel='main';render();const body=$('#workoutTools .workout-tools-body');if(body)body.scrollTop=0;document.querySelector(`#workoutTools [data-ui="${returnAction}"]`)?.focus({preventScroll:true});return;}
     if(a==='workouttools'){workoutToolsReturn='workoutToolsButton';workoutToolsOpen=true;render();return;}
+    if(a==='endworkout'){openEndWorkout();return;}
     if(a==='technique'){openTechnique();return;}
     if(a==='techniqueclose'){closeTechnique();return;}
     if(a==='workouttoolsclose'){closeWorkoutTools();return;}
@@ -3633,7 +3715,7 @@ $("#view").addEventListener("click",e=>{
       const id=u.dataset.id;
       const gone=state.log.find(x=>entryId(x)===id);
       const rows=[...document.querySelectorAll('[data-ui="selentry"]')],position=rows.findIndex(b=>b.dataset.id===id);
-      state.log=state.log.filter(x=>entryId(x)!==id); state.deleted=[...state.deleted,id].slice(-TOMB_KEEP); confirmDel=null;
+      state.log=state.log.filter(x=>entryId(x)!==id); state.deleted=[...new Set([...state.deleted,id])]; confirmDel=null;
       commit(); render();
       const remaining=[...document.querySelectorAll('[data-ui="selentry"]')];(remaining[Math.min(position,remaining.length-1)]||$('#progressLog>summary')||$('.progress-empty .primary'))?.focus({preventScroll:true});
       toast("Entry deleted.", gone ? ()=>{ state.deleted=state.deleted.filter(x=>x!==id); state.log=dedupe([...state.log,gone]); commit(); render(); toast("Entry restored.");[...document.querySelectorAll('[data-ui="selentry"]')].find(b=>b.dataset.id===id)?.focus({preventScroll:true}); } : null); return;
@@ -3643,8 +3725,8 @@ $("#view").addEventListener("click",e=>{
   if(ra){
     const act=ra.dataset.ract;
     if(editing && $("#rName")) editing.name=$("#rName").value;
-    if(act==="new"){ editing={id:null,name:"",items:new Set(),original:JSON.stringify(['',[]])}; confirmDel=null; render(); window.scrollTo(0,0); $('#rName')?.focus({preventScroll:true}); return; }
-    if(act==="edit"){ const r=state.routines.find(x=>x.id===ra.dataset.r); if(!r) return; editing={id:r.id,name:r.name,items:new Set(r.items),original:JSON.stringify([r.name,[...r.items].sort()])}; confirmDel=null; render(); window.scrollTo(0,0); $('#rName')?.focus({preventScroll:true}); return; }
+    if(act==="new"){ editing={id:null,name:"",items:new Set(),offered:new Set(allTracks().filter(t=>!isHidden(t.id)).map(t=>t.id)),original:JSON.stringify(['',[]])}; confirmDel=null; render(); window.scrollTo(0,0); $('#rName')?.focus({preventScroll:true}); return; }
+    if(act==="edit"){ const r=state.routines.find(x=>x.id===ra.dataset.r); if(!r) return; editing={id:r.id,name:r.name,items:new Set(r.items),offered:new Set(allTracks().filter(t=>!isHidden(t.id)||r.items.includes(t.id)).map(t=>t.id)),original:JSON.stringify([r.name,[...r.items].sort()])}; confirmDel=null; render(); window.scrollTo(0,0); $('#rName')?.focus({preventScroll:true}); return; }
     if(!editing)return;
     if(act==='keep'){editing.cancelPending=false;render();$('#rName')?.focus({preventScroll:true});return;}
     if(act==="cancel"||act==='discard'){
@@ -3695,7 +3777,12 @@ $("#view").addEventListener("click",e=>{
   if(act==="save") saveSets(t);
   if(act==="up"){ setLevel(t.id,lvl+1); toast(`New step: ${t.steps[lvl+1][0]}`); }
   if(act==="down"){ setLevel(t.id,lvl-1); toast(`Moved to ${t.steps[lvl-1][0]}. Build up from here.`); }
-  if(act==="set"){ setLevel(t.id,+b.dataset.l); toast(`Starting at ${t.steps[+b.dataset.l][0]}`); }
+  if(act==="set"){
+    const selected=+b.dataset.l;setLevel(t.id,selected);
+    const row=document.querySelector(`[data-ui="ex"][data-t="${t.id}"]`),step=row?.closest('.exopen')?.querySelector('.ladder li.cur .t>b');
+    if(step){step.tabIndex=-1;step.focus({preventScroll:true});}else row?.focus({preventScroll:true});
+    const message=`Starting at ${t.steps[selected][0]}`;toast(message);$('#focusAnnouncement').textContent=message;
+  }
   if(act==="focus"){ const selected=b.dataset.f;state.prefs.focus[t.id]=selected;commit();render();document.querySelector(`[data-act="focus"][data-t="${t.id}"][data-f="${selected}"]`)?.focus({preventScroll:true}); }
   if(act==="setsInc"||act==="setsDec"){const n=Math.min(6,Math.max(1,st[1]+(act==="setsInc"?1:-1)));updateTrackSets(t,n);(document.querySelector(`[data-act="${act}"][data-t="${t.id}"]:not(:disabled)`)||document.getElementById(`sets-${t.id}`))?.focus({preventScroll:true});}
   if(act==="hide"||act==="show"){
@@ -3860,7 +3947,7 @@ async function connect(ref){
   const changedHere = !sameData(state, merged);
   state = merged; remember(); saveLocal();
   docRef = ref;
-  if(!remote || !sameData(merged, remote)) pushCloud(); else setSync("ok");
+  if(!remote || !sameData(cloudSnapshot(merged), remote)) pushCloud(); else {cloudHistoryLimited=remote.log.length<merged.log.length;setSync("ok");}
   if(changedHere || tab!=="today") softRender();
   // Live updates from your other devices
   listen(ref);
@@ -3872,7 +3959,7 @@ function listen(ref){
       const other = normalize(snap.data());
       const m = merge(state, other);
       if(!sameData(m, state)){ state = m; remember(); saveLocal(); softRender(); }
-      if(!sameData(m, other)) pushCloud();
+      if(!sameData(cloudSnapshot(m), other)) pushCloud();
     }, ()=>{ setTimeout(()=>{ if(docRef) listen(ref); }, 5000); });
   }catch(e){}
 }
