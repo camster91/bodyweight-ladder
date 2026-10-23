@@ -255,3 +255,16 @@ body[data-view] button[data-control="choice"]{white-space:normal;overflow-wrap:b
 
 .routine-selection-summary>b,.routine-selection-summary>span{display:block}.routine-selection-summary>span{margin-top:var(--scale-space-1)}
 .routine-discard button{margin:var(--scale-space-1)}
+
+/* Portrait tablets use a vertical workout composition instead of a shallow desktop row. */
+@media(min-width:700px) and (max-width:999px) and (min-height:850px) and (orientation:portrait){
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto auto;row-gap:var(--space-section);max-width:680px;margin-inline:auto;padding-block:var(--space-section)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{grid-column:1/-1;grid-row:1;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:center;gap:var(--space-section)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{height:220px}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-counter{grid-column:1/-1;grid-row:2;justify-content:center;padding:0}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:clamp(200px,28vw,240px)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-set-path{grid-column:1/-1;grid-row:3}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{grid-column:1/-1;grid-row:4;width:min(480px,100%);justify-self:center}
+}
+.custom-draft-note{color:var(--color-ink-secondary);font-size:var(--type-meta);line-height:1.5}
+.custom-draft-actions{display:flex;align-items:center;gap:var(--space-control);justify-content:flex-end;margin-top:var(--space-control)}

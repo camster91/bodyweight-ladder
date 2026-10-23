@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-23-core-ux-2',events=[];
+ const RELEASE='2026-10-23-review-fixes-1',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -1608,6 +1608,19 @@ body[data-view] button[data-control="choice"]{white-space:normal;overflow-wrap:b
 .routine-selection-summary>b,.routine-selection-summary>span{display:block}.routine-selection-summary>span{margin-top:var(--scale-space-1)}
 .routine-discard button{margin:var(--scale-space-1)}
 
+/* Portrait tablets use a vertical workout composition instead of a shallow desktop row. */
+@media(min-width:700px) and (max-width:999px) and (min-height:850px) and (orientation:portrait){
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto auto;row-gap:var(--space-section);max-width:680px;margin-inline:auto;padding-block:var(--space-section)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{grid-column:1/-1;grid-row:1;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:center;gap:var(--space-section)}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{height:220px}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-counter{grid-column:1/-1;grid-row:2;justify-content:center;padding:0}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:clamp(200px,28vw,240px)}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-set-path{grid-column:1/-1;grid-row:3}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{grid-column:1/-1;grid-row:4;width:min(480px,100%);justify-self:center}
+}
+.custom-draft-note{color:var(--color-ink-secondary);font-size:var(--type-meta);line-height:1.5}
+.custom-draft-actions{display:flex;align-items:center;gap:var(--space-control);justify-content:flex-end;margin-top:var(--space-control)}
+
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
 
@@ -2312,19 +2325,23 @@ function workCoach(t,x){
 }
 let planSummaryOpen=false;
 function coachGoalName(value){return {balanced:'Balanced',strength:'Strength',movement:'Move better'}[value]||'Balanced';}
+function coachingWeekDays(){
+ const now=Date.now(),start=weekStart(new Date(now)).getTime();
+ return new Set(state.log.filter(e=>e.ts>=start&&e.ts<=now&&e.sets.some(v=>v>0)).map(e=>dayOf(e.ts))).size;
+}
 function coachingView(){
- const p=LadderCoach.prefs(state.prefs.coach),start=weekStart(new Date()).getTime(),days=new Set(state.log.filter(e=>e.ts>=start&&e.ts<=Date.now()&&e.sets.some(v=>v>0)).map(e=>dayOf(e.ts))).size;
+ const p=LadderCoach.prefs(state.prefs.coach),days=coachingWeekDays();
  return `<section class="plan-summary" aria-label="Your training plan"><button data-ui="plansummary" aria-haspopup="dialog"><span><b>${coachGoalName(p.goal)} · ${p.days} ${p.days===1?'day':'days'}/week</b><small>${days} of ${p.days} days this week · Why & adjust</small></span><span aria-hidden="true">→</span></button></section>`;
 }
 function closePlanSummary(){planSummaryOpen=false;const d=$('#planSummary');d?.close();d?.remove();$('[data-ui="plansummary"]')?.focus({preventScroll:true});}
 function mountPlanSummary(){
  if(!planSummaryOpen||tab!=='today')return;
- const p=LadderCoach.prefs(state.prefs.coach),report=focusRun?.coaching,current=report?.version===LadderCoach.VERSION&&Array.isArray(report.selected);
+ const p=LadderCoach.prefs(state.prefs.coach),days=coachingWeekDays(),report=focusRun?.coaching,current=report?.version===LadderCoach.VERSION&&Array.isArray(report.selected);
  const estimate=Math.ceil((focusRun?.items||[]).reduce((n,x)=>n+plannedMinutes(x),0));
  const why=current?report.summary:'This saved workout keeps its original targets. Your current preferences shape your next workout.';
  const list=(focusRun?.items||[]).filter(x=>findTrack(x.id)).map(item=>{const chosen=current?report.selected.find(x=>x.id===item.id):null,decision=item.coaching?.decision||chosen?.decision;return `<li><b>${esc(sessionSpec(findTrack(item.id))[0])}</b>${decision?`<p>${esc(decision.title)} · ${esc(decision.reason)}</p>`:''}<span>${esc(item.swap?'You chose this alternative. Its targets stay separate.':chosen?.reason||'Kept from your saved workout.')}</span></li>`;}).join('');
  const d=document.createElement('dialog');d.id='planSummary';d.className='workout-tools plan-sheet';d.setAttribute('aria-labelledby','planSummaryTitle');
- d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div><div class="workout-tools-body plan-coaching"><div class="plan-preferences"><label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">A flexible target, not fixed workout days. No catch-up sets. Changes apply to the next workout once any sets are recorded.</p></div><h3>Why this workout</h3><p>${esc(why)}</p><p>About ${estimate} minutes including rests. Actual time varies.</p>${minutes&&estimate>minutes+1?`<p class="cue">This exercise block exceeds the ${minutes}-minute setting. Choose fewer sets or a shorter workout if needed.</p>`:''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy. Its saved targets stay in place.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices. They do not measure physical recovery.</p></div>`;
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div><div class="workout-tools-body plan-coaching"><div class="plan-preferences"><label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">A flexible target, not fixed workout days. No catch-up sets. Changes apply to the next workout once any sets are recorded.</p></div><h3>This week so far</h3><p>${days} of ${p.days} planned training days recorded this week. ${days>=p.days?'Your weekly target is met; another workout is optional.':'A flexible target, with no catch-up sets.'}</p><h3>Why this workout</h3>${current?'<p class="cue">Planning snapshot from when this workout was created. The week count above reflects your latest saved results; the selections and targets below keep their original explanation.</p>':''}<p>${esc(why)}</p><p>About ${estimate} minutes including rests. Actual time varies.</p>${minutes&&estimate>minutes+1?`<p class="cue">This exercise block exceeds the ${minutes}-minute setting. Choose fewer sets or a shorter workout if needed.</p>`:''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy. Its saved targets stay in place.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices. They do not measure physical recovery.</p></div>`;
  const preferenceNote=d.querySelector('.plan-preferences .cue');preferenceNote.id='planPreferenceNote';
  d.querySelectorAll('.plan-preferences select').forEach(select=>select.setAttribute('aria-describedby',preferenceNote.id));
  d.addEventListener('cancel',e=>{e.preventDefault();closePlanSummary();});
@@ -2377,7 +2394,7 @@ function minutesFor(t){return progression(t).estimatedMinutes;}
 let lastSaveAt=0, confirmZero=null;
 function saveSets(t,options={}){
   if(!options.focus && Date.now()-lastSaveAt<900) return;          // ignore an accidental double tap
-  const lvl=sessionLevel(t), st=spec(t,lvl);
+  const lvl=sessionLevel(t), st=sessionSpec(t);
   const vals=(drafts[t.id]||sessionGoals(t,lvl,st).map(String)).map(v=>parseInt(v,10)).filter(v=>!isNaN(v)&&v>=0);
   if(!vals.length){ toast("Enter at least one set"); return; }
   if(vals.every(v=>v===0) && confirmZero!==t.id){ confirmZero=t.id; toast(options.focus?"All sets are 0. Tap Complete set again to confirm.":"All sets are 0. Tap Save again to log it anyway."); return; }
@@ -2494,28 +2511,37 @@ function showFocusSaved(name){
 function focusSignature(){return JSON.stringify([new Date().toDateString(),filter,minutes,state.levels,state.prefs.sets,state.prefs.hidden,state.routines]);}
 function ensureFocus(plan,report){
   const signature=focusSignature();
-  const valid=focusRun&&focusRun.signature===signature&&focusRun.items.every(x=>{
-    const t=x&&findTrack(x.id),i=t?t.steps.findIndex((_,j)=>x.key===keyOf(t,j)):-1;return t&&i>=0&&(!x.swap||validSwap(x))&&(x.key===keyOf(t,lvlOf(t))||validSwap(x))&&Array.isArray(x.values)&&Array.isArray(x.goals)&&x.goals.length===spec(t,i)[1]&&x.values.length<=x.goals.length&&[...x.values,...x.goals,...(x.value===undefined?[]:[x.value])].every(v=>Number.isFinite(v)&&v>=0&&v<=9999);
+  const numbers=a=>Array.isArray(a)&&a.every(v=>Number.isFinite(v)&&v>=0&&v<=9999);
+  const savedItem=x=>{const t=x&&findTrack(x.id);return !!t&&t.steps.some((_,i)=>x.key===keyOf(t,i))&&numbers(x.goals)&&x.goals.length>=1&&x.goals.length<=6&&numbers(x.values)&&x.values.length<=8&&(x.entry||x.values.length<=x.goals.length)&&(x.value===undefined||numbers([x.value]));};
+  // A started session owns its prescriptions. Preference edits apply to the next one.
+  const savedSwap=x=>!x.swap||[x.swap.original,...(x.swap.existing?[x.swap.existing.item]:[])].every(a=>savedItem(a)&&!a.swap&&!a.entry&&!a.values.length);
+  const validItems=focusRun&&Array.isArray(focusRun.items)&&focusRun.items.every(x=>savedItem(x)&&savedSwap(x));
+  let reopened=false;
+  if(validItems)focusRun.items.forEach((x,i)=>{
+    if(!x.entry||state.log.some(e=>entryId(e)===x.entry))return;
+    // Deleting history must also remove its completion claim, without replaying its sets.
+    delete x.entry;x.values=[];delete x.value;x.restartAfter=Date.now();
+    delete drafts[x.id];delete completedSets[x.id];delete holdNext[x.id];
+    if(!reopened)focusRun.at=i;reopened=true;
   });
+  if(reopened){if(hold||focusRun.phase==='rest')stopTimer();focusRun.phase='work';focusRun.restEnd=0;focusUndo=null;}
+  const active=validItems&&(!!hold?.focus||focusRun.phase==='rest'||focusRun.items.some(x=>!x.entry&&(x.values.length||x.restartAfter))||(focusRun.phase!=='finished'&&focusRun.items.some(x=>x.entry)));
+  const valid=validItems&&(focusRun.signature===signature||active);
+  if(valid&&focusRun.signature!==signature){
+    if(focusRun.originalMinutes===undefined)try{const oldMinutes=JSON.parse(focusRun.signature)[2];if(MIN_OPTS.includes(oldMinutes))focusRun.originalMinutes=oldMinutes;}catch(e){}
+    focusRun.signature=signature;focusRun.preferencesChanged=true;
+  }
   if(!valid){
     clearFocusNotice();
     if(hold?.focus||focusRun?.phase==='rest')stopTimer();
-    const previous=focusRun?.items||[];
-    // Midnight refreshes completed plans, but never drops an exercise already in progress.
-    try{if(JSON.stringify(JSON.parse(focusRun.signature).slice(1))===JSON.stringify(JSON.parse(signature).slice(1))){
-      const partial=previous.filter(x=>x&&!x.entry&&Array.isArray(x.values)&&x.values.length).map(x=>findTrack(x.id)).filter(Boolean);
-      const originals=new Set(previous.filter(x=>x.swap&&x.values?.length&&!x.entry).map(x=>x.swap.original.id));
-      plan=[...partial,...plan.filter(t=>!partial.some(p=>p.id===t.id)&&!originals.has(t.id))];
-    }}catch(e){}
-    focusRun={v:1,signature,started:Date.now(),at:0,phase:'work',restEnd:0,coaching:report,items:plan.map(t=>{
-      const partial=previous.find(x=>x&&x.id===t.id&&!x.entry&&Array.isArray(x.values)&&x.values.length&&validSwap(x)&&t.steps.some((_,i)=>x.key===keyOf(t,i)));
-      const level=partial?t.steps.findIndex((_,i)=>keyOf(t,i)===partial.key):lvlOf(t),key=keyOf(t,level),g=report?.selected.find(x=>x.id===t.id)?.decision.goals||goals(t,level,spec(t,level)),old=previous.find(x=>x&&x.id===t.id&&x.key===key&&!x.entry&&Array.isArray(x.values)&&x.values.length<g.length&&x.values.every(v=>Number.isFinite(v)&&v>=0&&v<=9999)&&Array.isArray(x.goals)&&x.goals.length===g.length&&x.goals.every(v=>Number.isFinite(v)&&v>=0&&v<=9999));
-      return {id:t.id,key,coaching:old?.values.length?old.coaching:report?.selected.find(x=>x.id===t.id),goals:old?.values.length?old.goals.slice():g,values:old?old.values.slice():[],...(old?.values.length&&old.mode==='light'?{mode:'light'}:{}),...(old?.values.length&&old.swap?{swap:old.swap}:{})};
+    focusRun={v:1,signature,originalMinutes:minutes,started:Date.now(),at:0,phase:'work',restEnd:0,coaching:report,items:plan.map(t=>{
+      const level=lvlOf(t),key=keyOf(t,level),chosen=report?.selected.find(x=>x.id===t.id),g=chosen?.decision.goals||goals(t,level,spec(t,level));
+      return {id:t.id,key,coaching:chosen,goals:g.slice(),values:[]};
     })};focusUndo=null;readinessChoice=null;swapChoice=null;persistFocus();
   }
   // A synced or manually saved result completes this exercise without logging it twice.
   focusRun.items.forEach(x=>{
-    if(!x.entry){const e=state.log.find(e=>e.t===x.id&&e.k===x.key&&e.ts>=(focusRun.started||Infinity));if(e){x.entry=entryId(e);x.values=e.sets.slice();}}
+    if(!x.entry){const e=state.log.find(e=>e.t===x.id&&e.k===x.key&&e.ts>=Math.max(focusRun.started||Infinity,x.restartAfter||0));if(e){x.entry=entryId(e);x.values=e.sets.slice();delete x.restartAfter;}}
     if(!drafts[x.id]&&x.values.length&&!x.entry){drafts[x.id]=x.goals.map((v,i)=>String(x.values[i]??v));completedSets[x.id]=new Set(x.values.map((_,i)=>i));}
   });
   if(!Number.isInteger(focusRun.at)||focusRun.at<0||focusRun.at>=focusRun.items.length)focusRun.at=0;
@@ -2584,7 +2610,7 @@ function readinessBase(){
  }))return JSON.parse(JSON.stringify(base));
  return JSON.parse(JSON.stringify(focusRun?.items||[]));
 }
-function plannedMinutes(x){const t=findTrack(x.id),level=t.steps.findIndex((_,i)=>keyOf(t,i)===x.key);return LadderCoach.estimate(coachingModel(t,level<0?lvlOf(t):level),x.goals);}
+function plannedMinutes(x){const t=findTrack(x.id),level=t.steps.findIndex((_,i)=>keyOf(t,i)===x.key),st=spec(t,level<0?lvlOf(t):level);st[1]=x.goals.length;return LadderCoach.estimate(coachingModel(t,level<0?lvlOf(t):level,st),x.goals);}
 function readinessPreview(kind){return LadderCoach.adjustSession(readinessBase(),kind,{budget:minutes&&minutes<=10?5:10,cost:plannedMinutes});}
 function readinessView(){
  if(!canAdjustReadiness())return '';
@@ -2628,7 +2654,7 @@ function sessionLevel(t){
  const x=focusRun?.items.find(x=>x&&x.id===t.id),i=x?t.steps.findIndex((_,j)=>keyOf(t,j)===x.key):-1;
  return i<0?lvlOf(t):i;
 }
-function sessionSpec(t){return spec(t,sessionLevel(t));}
+function sessionSpec(t){const st=spec(t,sessionLevel(t)),x=focusRun?.items.find(x=>x.id===t.id);if(x?.goals?.length)st[1]=x.goals.length;return st;}
 function validSwap(x){
  const s=x?.swap;if(!s)return false;
  const valid=r=>{
@@ -2808,7 +2834,7 @@ function mountWorkoutTools(previous={}){
  // Common controls are sections and direct actions, not nested accordions.
  const reveal=(details,title)=>{if(!details)return;const section=document.createElement('section');section.className=details.className+' tool-section';const heading=document.createElement('h3');heading.className='tool-heading';heading.textContent=title;section.append(heading);for(const child of [...details.children])if(child.tagName!=='SUMMARY')section.append(child);details.replaceWith(section);return section;};
  reveal(body.querySelector('.readiness-check'),'How are you feeling?');
- reveal(settings,'Workout length');
+ const lengthSection=reveal(settings,'Workout length');if(lengthSection){const note=document.createElement('p');note.className='cue';note.textContent=focusRun?.preferencesChanged?'Your started workout is preserved. These choices apply to your next workout.':'After you record a set, changes here apply to your next workout.';lengthSection.append(note);}
  reveal(body.querySelector('.focus-workout'),'Your workout');
  const technique=body.querySelector('.focus-technique');if(technique){const action=document.createElement('button');action.className='focus-technique tool-action';action.dataset.ui='technique';action.setAttribute('aria-haspopup','dialog');action.setAttribute('aria-controls','techniqueSheet');action.innerHTML='<span>How to do this exercise</span><span aria-hidden="true">→</span>';technique.replaceWith(action);}
  const alternatives=body.querySelector('.swap-picker');
@@ -2869,10 +2895,11 @@ function mountWorkoutTools(previous={}){
 
 function focusView(plan,top,more,recent){
   const r=ensureFocus(plan),x=focusItem(),t=x&&findTrack(x.id),st=t&&sessionSpec(t),timed=st&&isSec(st[4]);
+  const sessionMinutes=MIN_OPTS.includes(r.originalMinutes)?r.originalMinutes:minutes;
   const runningHold=hold?.focus&&hold.tid===x?.id;
   document.body.classList.toggle('focus-timing',r.phase==='rest'||!!runningHold);
   const saved=r.items.filter(x=>x.entry).length;
-  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.phase==='finished'||!r.items.length?r.items.length+' '+(r.items.length===1?'exercise':'exercises'):'Exercise '+(r.at+1)+' of '+r.items.length}${minutes&&r.readiness?.kind!=='short'?' · '+minutes+' min':''}${r.readiness?.kind==='low'?' · Lighter day':r.readiness?.kind==='short'?' · Short workout':''}${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${r.readiness?.kind==='short'?'Short workout':minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
+  let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.phase==='finished'||!r.items.length?r.items.length+' '+(r.items.length===1?'exercise':'exercises'):'Exercise '+(r.at+1)+' of '+r.items.length}${sessionMinutes&&r.readiness?.kind!=='short'?' · '+sessionMinutes+' min':''}${r.readiness?.kind==='low'?' · Lighter day':r.readiness?.kind==='short'?' · Short workout':''}${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${r.readiness?.kind==='short'?'Short workout':sessionMinutes?sessionMinutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
   html+=readinessView()+coachingView();
   const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
   if(away>=7)html+=`<p class="focus-next">Welcome back. Targets repeat your last results within the exercise range, so ease back in.</p>`;
@@ -2933,7 +2960,7 @@ function handleFocus(b){
 function rungs(t,lvl){ return `<div class="rung" aria-label="Step ${lvl+1} of ${t.steps.length}">${t.steps.map((_,i)=>`<i class="${i<=lvl?"on":""}"></i>`).join("")}</div>`; }
 
 function fullCard(t, first){
-  const lvl=sessionLevel(t), st=spec(t,lvl), timed=isSec(st[4]);
+  const lvl=sessionLevel(t), st=sessionSpec(t), timed=isSec(st[4]);
   const last=lastFor(t.id);
   const advice=progression(t,lvl,st);
   const canUp = !focusRun?.items.find(x=>x.id===t.id&&x.swap)&&!lightSessionItem(t,lvl)&&advice.kind==='up';
@@ -2999,11 +3026,12 @@ function viewToday(){
   if(filter.startsWith("r:") && !routine && sync!=="starting" && sync!=="syncing") filter="All";
   const vis = routine ? routine.items.map(findTrack).filter(t=>t&&!isHidden(t.id))
     : shown.filter(t=>filter==="All"||groupOf(t)===filter);
+  const nextWorkoutSettings=focusRun?.preferencesChanged||(focusRun?.signature!==focusSignature()&&(hold?.focus||focusRun?.phase==='rest'||focusRun?.items.some(x=>!x.entry&&(x.values?.length||x.restartAfter)||x.entry&&focusRun.phase!=='finished')));
   const top = `<div class="planbar">
       <div class="minrow"><span class="label">Minutes</span><div class="seg mins" role="group" aria-label="Minutes you have">${MIN_OPTS.map(m=>`<button data-ui="min" data-m="${m}" aria-pressed="${minutes===m}" aria-label="${m?m+" minutes":"All moves"}">${m||"All"}</button>`).join("")}</div></div>
-      <button class="showbtn" data-ui="sheet" aria-haspopup="dialog">Showing: <b>${esc(currentFilterName())}</b> ▾</button>
+      <button class="showbtn" data-ui="sheet" aria-haspopup="dialog">${nextWorkoutSettings?'Next workout':'Showing'}: <b>${esc(currentFilterName())}</b> ▾</button>
     </div>`;
-  if(!vis.length){
+  if(!vis.length&&!focusRun?.items?.some(x=>findTrack(x.id)&&(!x.entry&&(x.values?.length||x.restartAfter)||x.entry&&(focusRun.phase!=='finished'||!state.log.some(e=>entryId(e)===x.entry))))&&!hold?.focus&&focusRun?.phase!=='rest'){
     return top+`<div class="card empty"><img src="assets/brand/ladder-mark-v3.svg" alt=""><h2>Nothing to show</h2><p>${routine&&routine.items.length?"Every move in this routine is hidden. Add them back on the Exercises tab.":routine?"This routine has no moves yet. Edit it on the Exercises tab.":filter==="All"?"Everything is hidden. Add moves back on the Exercises tab.":`Every ${esc(filter)} move is hidden. Add them back on the Exercises tab.`}</p></div>`;
   }
   const report=coachingPlan(vis),plan=report.selected.map(x=>findTrack(x.id));
@@ -3050,7 +3078,7 @@ function routinesCard(tracks){
       <p class="routine-validation" id="routineValidation" role="alert">${esc(editing.error||'')}</p>
       ${editing.cancelPending?`<div class="routine-discard" role="group" aria-label="Unsaved routine changes"><p>Discard your unsaved changes?</p><button data-ract="keep">Keep editing</button><button class="danger" data-ract="discard">Discard changes</button></div>`:''}
       <div class="sticky-actions"><button class="ghost" data-ract="cancel">Cancel</button><button class="primary" data-ract="save">Save &amp; use routine</button></div>
-      ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
+      ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete" aria-label="${confirmDel==='r:'+editing.id?'Confirm deletion of':'Delete'} ${esc(editing.name)}">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
     </section>`;
   }
   if(!routinesOpen) return `<section class="card" id="routinesCard"><button class="exrow plain" data-ui="rtoggle" aria-expanded="false"><span class="mini-t"><b>Your routines</b><span>${state.routines.length} ${state.routines.length===1?"routine":"routines"} · Choose or edit a training plan</span></span><span class="chev">▾</span></button></section>`;
@@ -3071,6 +3099,9 @@ function rotateLibraryHero(){
  store.set('bwl-library-hero',String(libraryHeroIndex));
 }
 let libraryPanel=null, libraryReturn=null;
+const customExerciseDefaults=()=>({cName:'',cType:'reps',cMin:'8',cMax:'15',cSets:'3'});
+let customExerciseDraft=customExerciseDefaults();
+function captureCustomExerciseField(input){if(input.closest('#addForm')&&Object.hasOwn(customExerciseDraft,input.id))customExerciseDraft[input.id]=input.value;}
 function closeLibraryPanel(){
   const d=$('#librarySheet');if(!d)return;
   if(d.open&&d.close)d.close();
@@ -3126,14 +3157,14 @@ function viewLadders(){
     <div class="hid">${exerciseThumbnail(t)}<span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}" aria-label="Add ${esc(t.name)} back to Today">Add back</button></div>`).join("")}</div></section>`;
   html+=`<section class="custom-exercise" data-library-content="custom"><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
     <form id="addForm" class="addform lui" novalidate>
-      <div class="lui-field"><label for="cName">Name <span class="muted" id="cCount">0/40</span></label><input id="cName" required maxlength="40" placeholder="e.g. Burpees" autocomplete="off"></div>
+      <div class="lui-field"><label for="cName">Name <span class="muted" id="cCount">${customExerciseDraft.cName.length}/40</span></label><input id="cName" required maxlength="40" placeholder="e.g. Burpees" autocomplete="off" value="${esc(customExerciseDraft.cName)}"></div>
       <div class="grid3">
-        <div class="lui-field"><label for="cType">Measure in</label><select id="cType"><option value="reps">Repetitions</option><option value="sec">Seconds</option></select></div>
-        <div class="lui-field"><label for="cMin">Start at</label><input id="cMin" type="number" min="1" max="9999" step="1" inputmode="numeric" value="8" required></div>
-        <div class="lui-field"><label for="cMax">Level up at</label><input id="cMax" type="number" min="1" max="9999" step="1" inputmode="numeric" value="15" required></div>
+        <div class="lui-field"><label for="cType">Measure in</label><select id="cType"><option value="reps"${customExerciseDraft.cType==='reps'?' selected':''}>Repetitions</option><option value="sec"${customExerciseDraft.cType==='sec'?' selected':''}>Seconds</option></select></div>
+        <div class="lui-field"><label for="cMin">Start at</label><input id="cMin" type="number" min="1" max="9999" step="1" inputmode="numeric" value="${esc(customExerciseDraft.cMin)}" required></div>
+        <div class="lui-field"><label for="cMax">Level up at</label><input id="cMax" type="number" min="1" max="9999" step="1" inputmode="numeric" value="${esc(customExerciseDraft.cMax)}" required></div>
       </div>
-      <div class="lui-field"><label for="cSets">Sets</label><input id="cSets" type="number" min="1" max="6" step="1" inputmode="numeric" value="3" required><small>Choose 1–6 sets. You can adjust this later.</small></div>
-      <button class="primary lui-button" data-control="primary" data-variant="primary" type="submit">Add exercise</button>
+      <div class="lui-field"><label for="cSets">Sets</label><input id="cSets" type="number" min="1" max="6" step="1" inputmode="numeric" value="${esc(customExerciseDraft.cSets)}" required><small>Choose 1–6 sets. You can adjust this later.</small></div>
+      <p class="custom-draft-note">Your draft stays here while you explore the app. Add it before refreshing or closing this page.</p><div class="custom-draft-actions"><button class="primary lui-button" data-control="primary" data-variant="primary" type="submit">Add exercise</button><button class="ghost lui-button" type="button" data-custom-discard>Discard draft</button></div>
     </form></section></div>`;
   return html+`<p class="photo-credit-note">Exercise images follow your selected step. Includes AI-generated pose references. <button class="photo-credit-link" data-photo-credits>Photo credits</button></p></div>`;
 }
@@ -3212,7 +3243,7 @@ function viewHistory(){
   }).join('')}</div>`).join('');
   return pending+`<div class="progress-page"><section class="progress-week" aria-label="This week"><p class="label">This week</p><div class="progress-stats"><div><b>${weekDays}</b><span>${weekDays===1?'day':'days'} trained</span></div><div><b>${weekSets}</b><span>sets recorded</span></div></div><div class="week-activity" role="list" tabindex="0" aria-label="Recorded sets by day">${weekActivity}</div><p class="week-legend">Recorded sets by day</p></section>
     <div class="progress-columns"><section class="progress-section"><h2>Personal bests</h2><p class="progress-caption">${records.length>4?'Most recent four. ':''}From saved history. Same step and set count.</p>${bestHtml||'<p class="records-empty">Your first improvement will appear here.</p>'}</section>
-    <section class="progress-section recent-training"><h2>Recent training</h2><ol class="training-ladder">${recentPreview}</ol>${days.length>3?`<details class="compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>More training days <span>${days.length} days recorded</span></summary><ol class="training-ladder">${timeline}</ol></details>`:''}</section></div>
+    <section class="progress-section recent-training"><h2>Recent training</h2><ol class="training-ladder">${recentPreview}</ol>${days.length>3?`<details class="compact-progress" id="trainingDays" ${progressSectionsOpen.has('trainingDays')?'open':''}><summary>Earlier training days <span>${Math.min(days.length-3,5)} earlier ${days.length===4?'day':'days'}</span></summary><ol class="training-ladder">${timeline}</ol>${days.length>8?`<p class="progress-caption">Showing the latest 8 of ${days.length} training days. Open Workout log below to see your complete history.</p>`:''}</details>`:''}</section></div>
     <details class="progress-section progress-exercises compact-progress" id="exerciseProgress" ${progressSectionsOpen.has('exerciseProgress')?'open':''}><summary>Your progress <span>${esc(latestSummary)}</span></summary><p class="progress-caption">Current exercise steps. Each trend compares the same number of sets.</p>${progHtml}</details>
     <details class="progress-log" id="progressLog" ${progressLogOpen?'open':''}><summary>Workout log <span>View or remove saved entries</span></summary><p class="progress-caption" id="historyRange" role="status">Showing ${visibleDays} of ${days.length} training ${days.length===1?'day':'days'}. Tap an entry to remove it.</p>${recent}${visibleDays<days.length?'<button class="history-more" data-ui="olderhistory">Show older training days</button>':''}</details></div>`;
 }
@@ -3481,6 +3512,7 @@ function applySearch(){
   const status=$('#exSearchStatus');if(status){status.hidden=!q&&exCategory==='All';status.textContent=(q||exCategory!=='All')?(count?count+' '+(count===1?'ladder':'ladders')+' found':'No matching exercise ladders in this category'):'';}
 }
 $("#view").addEventListener("input",e=>{
+  captureCustomExerciseField(e.target);
   if(e.target.id==='rName'&&editing){editing.name=e.target.value;editing.error='';e.target.removeAttribute('aria-invalid');const message=$('#routineValidation');if(message)message.textContent='';return;}
   if(e.target.id==="exSearch"){ exQuery=e.target.value; applySearch(); return; }
   if(e.target.closest('#addForm')&&document.querySelector('#addForm [aria-invalid="true"]'))validateCustomExercise();
@@ -3513,7 +3545,12 @@ $("#view").addEventListener("submit",e=>{
   const min=+$("#cMin").value,max=+$("#cMax").value,sets=+$("#cSets").value;
   const id="c"+Date.now().toString(36);
   state.custom.push({id,name,sets,min,max,unit:type==="sec"?"sec":"reps"});
+  customExerciseDraft=customExerciseDefaults();
   libraryPanel=null;commit(); render(); toast(`${name} added. Find it on Today.`);document.querySelector('[data-panel="custom"]')?.focus({preventScroll:true});
+});
+$("#view").addEventListener('click',e=>{
+  if(!e.target.closest('[data-custom-discard]'))return;
+  customExerciseDraft=customExerciseDefaults();render();$('#cName')?.focus({preventScroll:true});
 });
 function saveSetCountInput(input){
   const n=Number(input.value);
@@ -3536,6 +3573,7 @@ $("#view").addEventListener("keydown",e=>{
   e.target.dispatchEvent(new Event('change',{bubbles:true}));
 });
 $("#view").addEventListener("change",e=>{
+  captureCustomExerciseField(e.target);
   if(e.target.matches('[data-setup-coach]')){const key=e.target.dataset.setupCoach;setupDraft.coach={...LadderCoach.prefs(setupDraft.coach),[key]:key==='days'?Number(e.target.value):e.target.value};saveSetupDraft();return;}
   if(e.target.matches('[data-coach-goal]')){setCoachingPreference('goal',e.target.value);return;}
   if(e.target.matches('[data-coach-days]')){setCoachingPreference('days',Number(e.target.value));return;}
@@ -3627,7 +3665,7 @@ $("#view").addEventListener("click",e=>{
     }
     if(act==="delete"){
       const key="r:"+editing.id;
-      if(confirmDel!==key){ confirmDel=key; render(); return; }
+      if(confirmDel!==key){ confirmDel=key; render();document.querySelector('[data-ract="delete"]')?.focus({preventScroll:true});return; }
       state.routines=state.routines.filter(x=>x.id!==editing.id); if(filter===key) filter="All";
       editing=null; confirmDel=null; commit(); routinesOpen=true;render();$('#routinesCard [data-ract="new"]')?.focus();toast("Routine deleted."); return;
     }
@@ -3703,7 +3741,7 @@ function startRest(sec,deadline){
 }
 function startHold(t, side){
   primeAudio();
-  const lvl=sessionLevel(t), st=spec(t,lvl), i=holdNext[t.id]??0, g=sessionGoals(t,lvl,st)[i];
+  const lvl=sessionLevel(t), st=sessionSpec(t), i=holdNext[t.id]??0, g=sessionGoals(t,lvl,st)[i];
   const sides = st[4].includes("each") ? 2 : 1;
   hold={tid:t.id, i, goal:g, start:Date.now()+3000, side:side||1, sides, first:hold?.first}; buzzed=false;
   announceTimer(`Get ready. ${st[0]}, hold for ${g} seconds${sides>1?', side '+hold.side:''}.`);
@@ -3736,7 +3774,7 @@ function finishHold(){
   const h=hold; if(!h) return; const t=findTrack(h.tid); if(!t){ stopTimer(); return; }
   const raw=(Date.now()-h.start)/1000;
   if(raw<0){ stopTimer(); toast("Hold cancelled."); return; }          // stopped during the countdown
-  const lvl=sessionLevel(t), st=spec(t,lvl);
+  const lvl=sessionLevel(t), st=sessionSpec(t);
   if(h.i>=st[1]){ stopTimer(); return; }
   let secs=Math.floor(raw); const cap=Math.max(h.goal*3,120);
   if(secs>cap){ secs=cap; toast(`Capped at ${cap}s. Fix the number if that's wrong.`); }
