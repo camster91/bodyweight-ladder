@@ -1,4 +1,29 @@
 /* App layouts: space changes the composition, not just the scale. */
+:root{--color-chart-bar:#2555d5}
+/* A chart reads as data; counts and date labels remain explicit. */
+.week-day{gap:4px}
+.week-day>span:first-child{font-size:12px;line-height:16px}
+.week-day .week-bar{display:block;position:relative;width:100%;height:32px;border-bottom:1px solid var(--brand-fresh-ink)}
+.week-bar>i{display:block;position:absolute;bottom:0;left:25%;width:50%;height:var(--day-fill);background:var(--color-chart-bar);border-radius:5px 5px 0 0}
+.week-day .week-count,.week-day.active .week-count{height:16px;line-height:16px;background:none;color:var(--brand-fresh-ink);border-radius:0;font-weight:600}
+.week-day.today .week-count{outline:0}
+.week-day.today>span:first-child{font-weight:750;text-decoration:underline;text-underline-offset:4px}
+.personal-best{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:14px;row-gap:2px;margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.personal-best:last-child{padding-bottom:16px;border-bottom:1px solid var(--line)}
+.record-heading{display:contents}
+.record-heading>.exercise-thumb{grid-column:1;grid-row:1 / 4;width:64px;height:64px;margin:0;align-self:center;border-radius:12px}
+.record-heading>.exercise-thumb img{object-fit:contain}
+.personal-best .record-heading h3{grid-column:2;margin:0;font-size:14px;line-height:20px}
+.personal-best .record-value{grid-column:2;margin:2px 0;font-size:clamp(24px,3vw,32px);line-height:1.15}
+.personal-best .record-context{grid-column:2;margin:2px 0 0;font-size:12px;line-height:18px}
+body[data-view="today"] .focus-counter{gap:12px}
+body[data-view="today"] .focus-counter .focus-stepper{width:52px;height:52px;min-width:44px;min-height:44px;border-color:var(--color-field-stroke)}
+@media(min-width:700px){
+ body[data-view="ladders"] .library-brand>div{max-width:none}
+ body[data-view="ladders"] .library-brand h2{max-width:22ch}
+ body[data-view="ladders"] .library-brand{min-height:124px;padding:16px 20px}
+}
+@media(min-width:700px) and (max-width:999px){body[data-view="today"] .focus-counter .focus-stepper{width:44px;height:44px}}
 .onboard-preview .onboard-preview-photo{display:block;width:100%;height:72px;object-fit:cover;border-radius:10px;margin-bottom:10px}
 .onboard-preview>div{min-width:0}
 .onboard-pool .exercise-thumb{width:96px;height:72px;flex:0 0 96px;margin:0;border-radius:12px}

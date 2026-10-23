@@ -11,8 +11,10 @@ try{
  assert.deepEqual(records(w),[]);assert.equal(w.document.querySelectorAll('.personal-best').length,0);assert(w.document.querySelector('.records-empty'));assert(!/streak|weeks in a row|best run|Nice start|keep showing up/i.test(w.document.querySelector('#view').textContent));
  console.log('PASS first results and ties establish a baseline without invented personal bests or streak pressure');
  const base=entry(7,'push','push:push-up',[5,5,5]),best=entry(5,'push','push:push-up',[8,7,6]),tie=entry(3,'push','push:push-up',[8,7,6]),lower=entry(1,'push','push:push-up',[6,6,6]);
- w=boot([lower,tie,base,best]);const r=records(w);assert.equal(r.length,1);assert.equal(r[0].total,21);assert.equal(r[0].entry.ts,best.ts);assert.equal(r[0].count,3);assert.equal(r[0].gain,6);
+ w=boot([lower,tie,base,best],{levels:{push:'push:diamond-push-up'}});const r=records(w);assert.equal(r.length,1);assert.equal(r[0].total,21);assert.equal(r[0].entry.ts,best.ts);assert.equal(r[0].count,3);assert.equal(r[0].gain,6);
  console.log('PASS best totals use chronological evidence and retain the original achievement date after ties or lower results');
+ assert.equal(w.document.querySelector('.personal-best img').getAttribute('src'),w.eval('EXERCISE_PHOTOS["push:push-up"]'));assert.notEqual(w.document.querySelector('.personal-best img').getAttribute('src'),w.eval('EXERCISE_PHOTOS["push:diamond-push-up"]'));
+ console.log('PASS record photography follows the achieved step even after the selected exercise level changes');
  w=boot([base,entry(4,'push','push:push-up',[5,5,5,5]),entry(2,'push','push:diamond-push-up',[9,9,9])]);assert.deepEqual(records(w),[]);
  console.log('PASS adding sets or changing exercise steps cannot produce a personal best');
  w=boot([entry(7,'core','core:plank',[20,20,20]),entry(2,'core','core:plank',[25,25,25]),entry(5,'core','core:side-plank',[10,10,10]),entry(1,'core','core:side-plank',[15,15,15])]);

@@ -1287,6 +1287,31 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.finish-title{font-s
 .workout-tools-head .lui-button[data-icon] svg,.preferences-head .lui-button[data-icon] svg,.photo-credits header .lui-button[data-icon] svg{width:22px;height:22px}
 
 /* App layouts: space changes the composition, not just the scale. */
+:root{--color-chart-bar:#2555d5}
+/* A chart reads as data; counts and date labels remain explicit. */
+.week-day{gap:4px}
+.week-day>span:first-child{font-size:12px;line-height:16px}
+.week-day .week-bar{display:block;position:relative;width:100%;height:32px;border-bottom:1px solid var(--brand-fresh-ink)}
+.week-bar>i{display:block;position:absolute;bottom:0;left:25%;width:50%;height:var(--day-fill);background:var(--color-chart-bar);border-radius:5px 5px 0 0}
+.week-day .week-count,.week-day.active .week-count{height:16px;line-height:16px;background:none;color:var(--brand-fresh-ink);border-radius:0;font-weight:600}
+.week-day.today .week-count{outline:0}
+.week-day.today>span:first-child{font-weight:750;text-decoration:underline;text-underline-offset:4px}
+.personal-best{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:14px;row-gap:2px;margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.personal-best:last-child{padding-bottom:16px;border-bottom:1px solid var(--line)}
+.record-heading{display:contents}
+.record-heading>.exercise-thumb{grid-column:1;grid-row:1 / 4;width:64px;height:64px;margin:0;align-self:center;border-radius:12px}
+.record-heading>.exercise-thumb img{object-fit:contain}
+.personal-best .record-heading h3{grid-column:2;margin:0;font-size:14px;line-height:20px}
+.personal-best .record-value{grid-column:2;margin:2px 0;font-size:clamp(24px,3vw,32px);line-height:1.15}
+.personal-best .record-context{grid-column:2;margin:2px 0 0;font-size:12px;line-height:18px}
+body[data-view="today"] .focus-counter{gap:12px}
+body[data-view="today"] .focus-counter .focus-stepper{width:52px;height:52px;min-width:44px;min-height:44px;border-color:var(--color-field-stroke)}
+@media(min-width:700px){
+ body[data-view="ladders"] .library-brand>div{max-width:none}
+ body[data-view="ladders"] .library-brand h2{max-width:22ch}
+ body[data-view="ladders"] .library-brand{min-height:124px;padding:16px 20px}
+}
+@media(min-width:700px) and (max-width:999px){body[data-view="today"] .focus-counter .focus-stepper{width:44px;height:44px}}
 .onboard-preview .onboard-preview-photo{display:block;width:100%;height:72px;object-fit:cover;border-radius:10px;margin-bottom:10px}
 .onboard-preview>div{min-width:0}
 .onboard-pool .exercise-thumb{width:96px;height:72px;flex:0 0 96px;margin:0;border-radius:12px}
@@ -1484,15 +1509,13 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .onboard-heading h2,.progress-empty h2,.library-brand h2,header.top h1,.focus-exercise h2{font-family:var(--brand-display);font-weight:800;font-synthesis:none;letter-spacing:-.025em;text-wrap:balance}
 body[data-view="ladders"] .library-brand .label{display:block;font:600 12px/16px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 body[data-view="ladders"] .library-brand>div{width:52%}
-body[data-view="ladders"] .library-brand h2{max-width:12ch}
+body[data-view="ladders"] .library-brand h2{max-width:22ch}
 body[data-view="ladders"] .sect[data-grp]{gap:10px;letter-spacing:.06em;font-size:12px;line-height:16px}
 .sect[data-grp]::before{content:'';width:8px;height:8px;flex:0 0 8px;border-radius:3px;background:var(--muted)}
 body[data-view="ladders"] .exrow .mini-t>span{font-size:14px;line-height:20px}
 body input:not([type="checkbox"]):not([aria-invalid="true"]):not(:user-invalid),body select:not([aria-invalid="true"]):not(:user-invalid){border-color:var(--color-field-stroke)}
 .progress-week{position:relative;isolation:isolate;overflow:hidden}
 .progress-week::after{content:'';position:absolute;right:16px;top:8px;width:72px;height:72px;background:var(--accent);mask:url('assets/brand/ladder-monochrome-v3.svg') center/contain no-repeat;opacity:.12;z-index:-1;pointer-events:none}
-.week-day.active .week-count{border-radius:12px 12px 5px 12px}
-.personal-best{border-top:3px solid var(--brand-peach);border-radius:16px}
 .brand-finish-note{margin:0 0 8px;color:var(--good);font:600 14px/1.5 var(--body)}
 .focus-dial .focus-number,.progress-stats b,.record-value{font-variant-numeric:tabular-nums}
 .focus-set-path span{border-radius:8px}
@@ -2686,7 +2709,9 @@ function viewHistory(){
   if(!state.log.length)return `<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true"><img src="assets/brand/studio-recovery-v3-small.webp" alt="" width="800" height="450" decoding="async"></div><h2>No workouts yet.</h2><p>Complete an exercise on Today to start your history. Saved sets and personal bests appear here.</p><button class="primary" data-ui="gotoday">Go to Today</button></section>`;
   const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
   const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
-  const weekActivity=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const key=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===key).reduce((n,e)=>n+e.sets.length,0);return `<div class="week-day${sets?' active':''}${key===dayOf(now)?' today':''}" role="listitem" aria-label="${fmtDate(key)}: ${sets} sets recorded"><span>${d.toLocaleDateString(undefined,{weekday:'short'})}</span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`;}).join('');
+  const weekBuckets=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const date=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===date).reduce((n,e)=>n+e.sets.length,0);return {date,label:d.toLocaleDateString(undefined,{weekday:'short'}),sets};});
+  const weekMax=Math.max(1,...weekBuckets.map(d=>d.sets));
+  const weekActivity=weekBuckets.map(({date,label,sets})=>`<div class="week-day${sets?' active':''}${date===dayOf(now)?' today':''}" role="listitem"${date===dayOf(now)?' aria-current="date"':''} aria-label="${fmtDate(date)}: ${sets} sets recorded"><span>${label}</span><span class="week-bar" style="--day-fill:${Math.round(sets/weekMax*100)}%" aria-hidden="true"><i></i></span><i class="week-count" aria-hidden="true">${sets||'–'}</i></div>`).join('');
   const records=personalBests();
   const timeline=days.slice(3,8).map(d=>`<li class="training-day"><span class="training-rung" aria-hidden="true"></span><div><time datetime="${d.date}">${fmtDate(d.date)}</time><span>${d.exercises} ${d.exercises===1?'exercise':'exercises'} · ${d.sets} ${d.sets===1?'set':'sets'}</span></div></li>`).join('');
   const latestEntry=[...state.log].sort((a,b)=>b.ts-a.ts)[0],latestStep=stepByKey(latestEntry.k);
@@ -2696,7 +2721,7 @@ function viewHistory(){
   const latestSummary=latestStep?'Latest: '+latestStep.st[0]+' · '+latestEntry.sets.join(' · ')+' '+(isSec(latestStep.st[4])?'sec':'reps')+(latestStep.st[4].includes('each')?' per side':''):'Exercise trends and comparisons';
   const bestHtml=records.slice(0,4).map(({entry,total,count})=>{
     const f=stepByKey(entry.k),measure=isSec(f.st[4])?'seconds':'reps',side=f.st[4].includes('each')?' per side':'';
-    return `<div class="personal-best" data-record="${esc(entry.k)}" data-count="${count}"><h3>${esc(f.st[0])}</h3><p class="record-value">${total} <span>${measure}${side}</span></p><p class="record-context">${count}-set total · <time datetime="${dayOf(entry.ts)}">${fmtDate(dayOf(entry.ts))}</time></p></div>`;
+    return `<div class="personal-best" data-record="${esc(entry.k)}" data-count="${count}"><div class="record-heading">${exerciseThumbnail(f.t,f.i)}<h3>${esc(f.st[0])}</h3></div><p class="record-value">${total} <span>${measure}${side}</span></p><p class="record-context">${count}-set total · <time datetime="${dayOf(entry.ts)}">${fmtDate(dayOf(entry.ts))}</time></p></div>`;
   }).join('');
   const prog=allTracks().map(t=>{const es=state.log.filter(e=>e.t===t.id).sort((a,b)=>a.ts-b.ts);return es.length?{t,es}:null;}).filter(Boolean).sort((a,b)=>b.es.at(-1).ts-a.es.at(-1).ts);
   const progHtml=prog.map(({t,es})=>{
