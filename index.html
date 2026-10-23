@@ -1514,6 +1514,9 @@ body:has(#appSupport[open]){overflow:hidden}
 .pending-workout{display:flex;align-items:center;justify-content:space-between;gap:var(--space-inset);padding:var(--space-inset);margin-bottom:var(--space-inset);background:var(--color-selected);border:1px solid var(--color-stroke);border-radius:var(--panel-radius)}
 .pending-workout h2{font-size:var(--scale-type-title);margin:var(--scale-space-2) 0}.pending-workout p{margin:var(--scale-space-2) 0}.pending-workout .cue{font-size:var(--type-meta)}
 .pending-workout button{flex-shrink:0}
+.progress-pending-note{padding:var(--space-inset);border-top:1px solid var(--color-stroke)}
+.progress-pending-note h2{font-size:var(--type-body);margin:0 0 var(--scale-space-2)}
+.progress-pending-note p{font-size:var(--type-control);line-height:1.6;color:var(--color-ink-secondary);margin:0}
 .library-filters{display:flex;gap:var(--scale-space-2);overflow-x:auto;padding:var(--scale-space-1) 0 var(--space-control);scrollbar-width:thin}
 .library-filters button{flex:none;white-space:nowrap;min-height:var(--target-min)}
 body[data-view="ladders"] .library-filters button[aria-pressed="true"]{background:var(--color-selected);border-color:var(--color-action);color:var(--color-action);font-weight:650}
@@ -1523,6 +1526,7 @@ body[data-view="ladders"] .library-filters button[aria-pressed="true"]{backgroun
 .app-support .support-consent{display:flex;gap:var(--space-control);align-items:center;margin:var(--space-control) 0 var(--space-inset)}
 .support-consent input{width:24px;height:24px;flex:none;accent-color:var(--color-action)}
 .app-support .support-copy{width:100%;margin-bottom:var(--space-inset);min-height:var(--target-min)}
+.app-support textarea:not([readonly]){font:inherit;line-height:1.5;min-height:104px;max-height:20dvh}
 .support-entry{margin-top:0}body[data-view="today"] .support-entry{display:none}
 .technique-steps{padding-left:var(--space-section);margin:var(--space-inset) 0}.technique-steps li{padding:var(--scale-space-2) 0;line-height:1.6}
 .technique-guide h3{font-size:var(--type-body);margin:var(--space-inset) 0 var(--scale-space-2)}
@@ -3079,7 +3083,8 @@ function trainingDays(log=state.log){
 }
 function viewHistory(){
   const pending=pendingWorkoutView();
-  if(!state.log.length)return pending+`<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true"><img src="assets/brand/studio-recovery-v3-small.webp" alt="" width="800" height="450" decoding="async"></div><h2>${pending?"No completed exercises yet.":"No workouts yet."}</h2><p>Completed exercises, saved sets and personal bests appear here.</p>${pending?"":'<button class="primary" data-ui="gotoday">Go to Today</button>'}</section>`;
+  if(!state.log.length&&pending)return pending+'<section class="progress-pending-note"><h2>No completed exercises yet.</h2><p>Finish an exercise to start your completed history and personal bests.</p></section>';
+  if(!state.log.length)return `<section class="progress-empty"><div class="progress-empty-art" aria-hidden="true"><img src="assets/brand/studio-recovery-v3-small.webp" alt="" width="800" height="450" decoding="async"></div><h2>${pending?"No completed exercises yet.":"No workouts yet."}</h2><p>Completed exercises, saved sets and personal bests appear here.</p>${pending?"":'<button class="primary" data-ui="gotoday">Go to Today</button>'}</section>`;
   const days=trainingDays(),start=weekStart(new Date()).getTime(),now=Date.now();
   const thisWeek=state.log.filter(e=>e.ts>=start&&e.ts<=now),weekDays=new Set(thisWeek.map(e=>dayOf(e.ts))).size,weekSets=thisWeek.reduce((n,e)=>n+e.sets.length,0);
   const weekBuckets=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i);const date=dayOf(+d),sets=thisWeek.filter(e=>dayOf(e.ts)===date).reduce((n,e)=>n+e.sets.length,0);return {date,label:d.toLocaleDateString(undefined,{weekday:'short'}),sets};});
