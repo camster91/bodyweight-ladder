@@ -99,3 +99,14 @@ body[data-view="history"] .training-day:has(.recent-exercise){align-items:flex-s
  body[data-view]:not(.in-setup) .wrap{width:calc(100% - var(--app-rail-compact));margin-left:var(--app-rail-compact);margin-right:0;padding-bottom:32px}
  .timer,.toast{left:calc(50% + 44px)}
 }
+/* Progress protection remains visible even in the focused workout layout. */
+.storage-warning{padding:16px;border:2px solid var(--color-critical);border-radius:var(--button-radius);background:var(--color-surface);color:var(--color-ink);margin:12px 0;overflow-wrap:anywhere}
+.storage-warning p{margin:8px 0;line-height:1.5;font-size:14px}.storage-warning button{min-height:48px;margin:4px 8px 4px 0}
+.backup-entry{text-align:center;margin:16px 0}.backup-entry button{min-height:48px;font-size:14px;color:var(--color-action);background:transparent;border:0}
+body[data-view="today"] .backup-entry,body[data-view="ladders"] .backup-entry{display:none}
+body .progress-backup{width:min(560px,calc(100vw - 24px));max-height:85dvh;box-sizing:border-box;overflow:auto;padding:20px}
+.progress-backup section{border-top:1px solid var(--color-stroke);padding-top:16px;margin-top:20px}.progress-backup h3{font-size:18px;margin:0 0 8px}
+.progress-backup p,.progress-backup label{font-size:14px;line-height:1.6}.progress-backup input{display:block;box-sizing:border-box;width:100%;padding:12px 0;margin:8px 0;min-width:0}
+.progress-backup input::file-selector-button{min-height:48px;margin-right:10px;padding:10px 14px;border:1px solid var(--color-stroke);border-radius:var(--button-radius);background:var(--color-surface);color:var(--color-ink);font:inherit;cursor:pointer}
+.progress-backup .primary{width:100%;min-height:48px}.progress-backup #backupPreview{padding:12px;border-radius:12px;background:var(--color-selected);line-height:1.6;font-size:14px;overflow-wrap:anywhere}
+.progress-backup #backupMessage{font-weight:600;overflow-wrap:anywhere}.progress-backup .cue{font-size:12px}
