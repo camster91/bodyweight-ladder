@@ -175,6 +175,7 @@ body[data-view="ladders"] .library-filters button[aria-pressed="true"]{backgroun
 .app-support .support-consent{display:flex;gap:var(--space-control);align-items:center;margin:var(--space-control) 0 var(--space-inset)}
 .support-consent input{width:24px;height:24px;flex:none;accent-color:var(--color-action)}
 .app-support .support-copy{width:100%;margin-bottom:var(--space-inset);min-height:var(--target-min)}
+.app-support textarea:not([readonly]){font:inherit;line-height:1.5;min-height:104px;max-height:20dvh}
 .support-entry{margin-top:0}body[data-view="today"] .support-entry{display:none}
 .technique-steps{padding-left:var(--space-section);margin:var(--space-inset) 0}.technique-steps li{padding:var(--scale-space-2) 0;line-height:1.6}
 .technique-guide h3{font-size:var(--type-body);margin:var(--space-inset) 0 var(--scale-space-2)}
