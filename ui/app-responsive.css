@@ -124,6 +124,8 @@ body[data-view="today"] .focus-dial{--focus-diameter:208px;width:var(--focus-dia
 .focus-exercise-copy{min-width:0;overflow-wrap:anywhere}
 header.top{flex-wrap:wrap}header.top h1{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.15;flex:1 1 auto}
 header.top .appearance-toggle{margin-left:auto}
+body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88px) + 32px)}
+:root{scroll-padding-bottom:calc(var(--app-nav-height,0px) + 16px)}
 .week-activity{grid-template-columns:repeat(7,minmax(2em,1fr));overflow-x:auto;padding-bottom:4px}
 .week-activity:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:599px),(min-height:501px) and (max-width:999px){

@@ -1412,6 +1412,8 @@ body[data-view="today"] .focus-dial{--focus-diameter:208px;width:var(--focus-dia
 .focus-exercise-copy{min-width:0;overflow-wrap:anywhere}
 header.top{flex-wrap:wrap}header.top h1{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.15;flex:1 1 auto}
 header.top .appearance-toggle{margin-left:auto}
+body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88px) + 32px)}
+:root{scroll-padding-bottom:calc(var(--app-nav-height,0px) + 16px)}
 .week-activity{grid-template-columns:repeat(7,minmax(2em,1fr));overflow-x:auto;padding-bottom:4px}
 .week-activity:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:599px),(min-height:501px) and (max-width:999px){
@@ -3381,7 +3383,17 @@ function softRender(){
 document.addEventListener("focusout",()=>{ setTimeout(()=>{ if(renderLater) softRender(); },0); });
 // WebKit can close a modal without emitting focusout on its removed contents.
 document.addEventListener('close',()=>{setTimeout(()=>{if(renderLater)softRender();},0);},true);
-document.addEventListener('focusin',()=>{if(renderLater&&!document.querySelector('dialog[open]'))setTimeout(()=>{if(renderLater)softRender();},0);});
+document.addEventListener('focusin',event=>{
+  if(renderLater&&!document.querySelector('dialog[open]'))setTimeout(()=>{if(renderLater)softRender();},0);
+  const target=event.target;
+  if(target.closest('.wrap')&&!target.closest('dialog')&&target.matches('button,input,select,summary,a')&&target.matches(':focus-visible'))setTimeout(()=>{
+    if(!target.isConnected||document.activeElement!==target)return;
+    const r=target.getBoundingClientRect(),nav=document.querySelector('nav').getBoundingClientRect();
+    const viewportEnd=window.visualViewport?Math.min(innerHeight,visualViewport.offsetTop+visualViewport.height):innerHeight;
+    const end=nav.width>innerWidth/2?Math.min(nav.top,viewportEnd):viewportEnd;
+    if(r.bottom>end-12)window.scrollBy(0,r.bottom-end+12);else if(r.top<12)window.scrollBy(0,r.top-12);
+  },0);
+});
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible") return;
   setDate();

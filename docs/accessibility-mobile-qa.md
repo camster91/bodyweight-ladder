@@ -9,6 +9,7 @@ This is an engineering validation record, not a WCAG conformance claim or physic
 - Background refreshes could replace focused controls or an open dialog. They now preserve stable controls and defer while a dialog is open. Automatic rest completion updates the underlying session without closing the dialog. Explicit close handling flushes the deferred screen update in WebKit, where a removed dialog did not reliably emit the expected focus event.
 - Enlarged text could overlap the workout value, controls, page header and personal-best metadata, or clip navigation labels. The value container grows with its contents; navigation and headers wrap; exercise descriptions and record metadata use proportional line heights. The weekly chart can scroll horizontally at large text sizes and has keyboard focus access.
 - Added a keyboard-visible skip link to the main landmark and stable announcements for tab changes.
+- Final reachability testing found fixed navigation could still cover the bottom of the primary action at enlarged text sizes. Main-page bottom spacing now follows the measured navigation height. Keyboard-focused controls scroll into the usable viewport above bottom navigation; side navigation does not trigger unnecessary vertical scrolling. This was checked at 100% and 200% text in all three engines, including tablet and landscape sizes.
 
 ## Verification
 
