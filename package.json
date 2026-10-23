@@ -8,6 +8,8 @@
     "controls:sync": "node scripts/sync-controls.cjs",
     "controls:check": "node scripts/sync-controls.cjs --check && node scripts/build-controls-docs.cjs --check",
     "controls:docs": "node scripts/build-controls-docs.cjs",
+    "coach:sync": "node scripts/sync-coaching.cjs",
+    "coach:check": "node scripts/sync-coaching.cjs --check",
     "start": "npx --yes serve@14.2.4 ."
   },
   "devDependencies": {

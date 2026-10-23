@@ -1420,6 +1420,14 @@ body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88
  nav .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
  nav .tabs button{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.25;height:auto;padding:8px 2px}
 }
+.plan-coaching{border-top:1px solid var(--line);padding:14px 0;margin:8px 0;color:var(--ink)}
+.plan-coaching>summary{min-height:44px;padding:12px 0;cursor:pointer;color:var(--accent);font-size:14px;font-weight:650}
+.plan-coaching p,.plan-coaching li{font-size:14px;line-height:1.6}.plan-coaching .cue{font-size:12px}
+.plan-coaching ul{list-style:none;padding:0;margin:12px 0}.plan-coaching li{padding:10px 0;border-top:1px solid var(--line)}
+.plan-coaching li b,.plan-coaching li span,.plan-coaching label{display:block}.plan-coaching li span{color:var(--muted)}
+.plan-coaching h3{font-size:16px;margin:20px 0 8px}.plan-coaching label{margin:16px 0 6px;font-size:14px}.plan-coaching select{width:100%}
+.coaching-goals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.coaching-goals button{min-height:48px;white-space:normal;line-height:1.4;padding:10px 6px}
+.coaching-goals button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent);font-weight:650}
 
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
@@ -1617,6 +1625,86 @@ body.library-sheet-open{overflow:hidden}
 
 <script>
 // [name, sets, minReps, maxReps, unit, cue, gear]
+/* LADDER_COACH_START */
+/* Pure coaching decisions. Product heuristics, not a diagnosis or measured recovery. */
+const LadderCoach=(()=>{
+ 'use strict';
+ const VERSION=1,DAY=86400000,GAP={Strength:48,Weights:48,Tendon:24,Mobility:24,Stretch:24,Custom:36};
+ const PATTERNS={push:'push',dip:'push',hold:'push',pull:'pull',row:'pull',hang:'pull',curl:'pull',squat:'legs',knee:'legs',hinge:'hinge',swing:'hinge',core:'core',carry:'carry'};
+ const FIRST=['push','squat','core','row','hinge','pull','dip'];
+ const validHistory=(log,now)=>(Array.isArray(log)?log:[]).filter(e=>e&&Number.isFinite(e.ts)&&e.ts>0&&e.ts<=now&&typeof e.t==='string'&&typeof e.k==='string'&&Array.isArray(e.sets)&&e.sets.length>0&&e.sets.length<=8&&e.sets.every(v=>Number.isFinite(v)&&v>=0&&v<=9999)).slice().sort((a,b)=>b.ts-a.ts||a.t.localeCompare(b.t));
+ const pattern=t=>PATTERNS[t.id]||t.id;
+ const frequency=t=>({less:.5,normal:1,more:2}[t.frequency]||1);
+ const prefs=p=>({goal:['balanced','strength','movement'].includes(p?.goal)?p.goal:'balanced',days:Number.isInteger(p?.days)&&p.days>=1&&p.days<=7?p.days:3});
+ function progression(t,history,now){
+  const st=t.step,last=history[0],inc=st.timed?5:1,clamp=v=>Math.min(st.max,Math.max(st.min,v));
+  if(!last)return {kind:'start',title:'Start with control',reason:'Begin at the low end. Adjust the number to match what you actually do.',goals:Array(st.sets).fill(st.min)};
+  const base=Array.from({length:st.sets},(_,i)=>clamp(last.sets[i]??last.sets.at(-1))),days=[],seen=new Set();
+  for(const e of history){const day=e.day||new Date(e.ts).toDateString();if(e.ts<last.ts-28*DAY||e.sets.length!==st.sets||seen.has(day))continue;seen.add(day);days.push(e);if(days.length===4)break;}
+  const hasStep=!t.custom&&t.level<t.stepCount-1,result=(kind,title,reason,values=base,level)=>({kind,title,reason,goals:values,...(level===undefined?{}:{level})});
+  if(now-last.ts>=21*DAY)return result('return','Rebuild after time away','This step was last recorded at least three weeks ago. Trim one increment from each target, within this step’s range, before building again.',base.map(v=>clamp(v-inc)));
+  if(now-last.ts>7*DAY)return result('return','Ease back in','It has been over a week since this step. Repeat your last targets before building again.');
+  if(last.effort==='hard'){
+   if(days.length>=2&&days[0]===last&&days.slice(0,2).every(e=>e.effort==='hard'&&e.sets.some(v=>v<st.min))&&!t.custom&&t.level>0)return result('down','Try an easier step','Two separate training days felt hard and fell below the range. An easier variation is available.',base,t.level-1);
+   return result('hold','Repeat this target','You marked the last exercise hard. Keep the target steady; adjust down if needed.');
+  }
+  if(last.sets.length!==st.sets)return result('hold','Build a complete baseline','The number of sets changed or the last entry was partial. Repeat these targets before increasing.');
+  if(days[0]===last&&days.length>=2&&days.slice(0,2).every(e=>e.sets.every(v=>v>=st.max)&&e.effort!=='hard')&&hasStep)return result('up','Ready for the next step','You reached the top of every set on two separate training days. Try the next variation when you feel ready.',base,t.level+1);
+  if(last.sets.some(v=>v<st.min))return result('hold','Keep this manageable','At least one set was below the range. Rebuild at the low end before adding more.');
+  if(last.sets.every(v=>v>=st.max))return result('confirm','Confirm this level',hasStep?'You reached the top of the range. Repeat it on another training day before moving up.':'You reached the top of this ladder. Keep the movement controlled; there is no higher step here.');
+  const sum=e=>e.sets.reduce((n,v)=>n+v,0);
+  if(days[0]===last&&days.length>=3&&last.effort!=='easy'&&days.slice(0,3).every(e=>e.effort!=='easy')&&Math.max(...days.slice(0,3).map(sum))-Math.min(...days.slice(0,3).map(sum))<inc)return result('steady','Consolidate this step','Your total has stayed similar across three training days. Repeat the target and focus on control; no extra reps today.');
+  const next=base.slice();let at=-1;for(let i=0;i<next.length;i++)if(next[i]<st.max&&(at<0||next[i]<next[at]))at=i;if(at>=0)next[at]=clamp(next[at]+inc);
+  return result('build','One small increase',`Add ${st.timed?'up to 5 seconds':'one rep'} to one of your lower sets. The other targets stay steady.`,next);
+ }
+ function estimate(t,goals){return (goals.reduce((n,v)=>n+v*(t.step.timed?1:3),0)*(t.step.eachSide?2:1)+(t.step.sets-1)*t.rest)/60+1;}
+ function evaluate(t,{history=[],catalog=[],now=0,weekStart=now-7*DAY}={}){
+  const log=validHistory(history,now),own=log.filter(e=>e.t===t.id),baseline=own.filter(e=>e.k===t.key&&e.mode!=='light'),active=own.find(e=>e.sets.some(v=>v>0)),p=pattern(t),cadence=GAP[t.group]||36;
+  const known=new Map(catalog.map(m=>[m.id,pattern(m)]));known.set(t.id,p);
+  const related=log.find(e=>e.t!==t.id&&known.get(e.t)===p&&e.effort==='hard'&&e.sets.some(v=>v>0)&&now-e.ts<cadence*3600000);
+  const recent=!!active&&now-active.ts<DAY,caution=recent||!!related;
+  const weekSets=log.filter(e=>e.ts>=weekStart&&known.get(e.t)===p).reduce((n,e)=>n+e.sets.filter(v=>v>0).length,0);
+  let decision=progression(t,baseline,now);
+  const note=recent?'This exercise was recorded in the last 24 hours. It is kept out of the automatic plan.':related?`A related movement was marked hard in the past ${cadence} hours. These targets stay steady.`:'';
+  if(caution&&['build','up'].includes(decision.kind)){
+   const st=t.step,last=baseline[0],values=Array.from({length:st.sets},(_,i)=>Math.min(st.max,Math.max(st.min,last?.sets[i]??last?.sets.at(-1)??st.min)));
+   decision={kind:'hold',title:'Keep the targets steady',reason:note,goals:values};
+  }
+  return {...decision,version:VERSION,estimatedMinutes:estimate(t,decision.goals),pattern:p,recovery:{recent,caution,note,cadenceHours:cadence,weekSets,hoursSince:active?Math.max(0,(now-active.ts)/3600000):null},evidence:{matchingSessions:baseline.length,distinctDays:new Set(baseline.map(e=>e.day||new Date(e.ts).toDateString())).size,lastEffort:baseline[0]?.effort||null},hasHistory:own.length>0};
+ }
+ function plan(models,context={}){
+  const now=context.now||0,preferences=prefs(context.preferences),allLog=validHistory(context.history,now),decisions=models.map((t,i)=>({t,i,d:evaluate(t,context)}));
+  const recent=decisions.filter(x=>x.d.recovery.recent),due=decisions.filter(x=>!x.d.recovery.recent&&x.d.hasHistory),fresh=decisions.filter(x=>!x.d.recovery.recent&&!x.d.hasHistory);
+  const selected=[],counts=new Map(),reasons={},budget=Number.isFinite(context.budget)&&context.budget>0?context.budget:0;let used=0;
+  const goalWeight=t=>preferences.goal==='strength'&&['Strength','Weights'].includes(t.group)?1.3:preferences.goal==='movement'&&['Mobility','Stretch'].includes(t.group)?1.3:1;
+  const firstRank=x=>{const n=FIRST.indexOf(x.t.id);return n<0?99+x.i:n;};
+  const priority=x=>{
+   const age=x.d.recovery.hoursSince,urgency=age===null?1:Math.max(0,age)/(GAP[x.t.group]||36);
+   return urgency*frequency(x.t)*(context.explicit?1:goalWeight(x.t))/(1+x.d.recovery.weekSets/24)/(1+(counts.get(x.d.pattern)||0)*.8)/(x.d.recovery.caution?3:1);
+  };
+  const add=(x,isNew)=>{selected.push(x);used+=x.d.estimatedMinutes;counts.set(x.d.pattern,(counts.get(x.d.pattern)||0)+1);reasons[x.t.id]=isNew?'Introduce this movement at its starting targets.':x.d.recovery.caution?x.d.recovery.note:`Selected using time since training, ${x.d.recovery.weekSets} sets logged for this movement pattern this week, and your frequency preference.`;};
+  const fits=x=>!budget||used+x.d.estimatedMinutes<=budget+1;
+  const choose=pool=>{while(pool.length){pool.sort((a,b)=>priority(b)-priority(a)||a.i-b.i);const x=pool.shift();if(fits(x))add(x,false);}};
+  choose(due.slice());
+  fresh.sort((a,b)=>frequency(b.t)*(context.explicit?1:goalWeight(b.t))-frequency(a.t)*(context.explicit?1:goalWeight(a.t))||firstRank(a)-firstRank(b));
+  const cap=allLog.length>0&&!context.explicit?1:Infinity;let added=0;
+  while(fresh.length&&added<cap){const x=fresh.shift();if(fits(x)){add(x,true);added++;}}
+  if(!selected.length){const fallback=decisions.filter(x=>!x.d.recovery.recent).sort((a,b)=>priority(b)-priority(a)||firstRank(a)-firstRank(b))[0];if(fallback)add(fallback,!fallback.d.hasHistory);}
+  const weekDays=new Set(allLog.filter(e=>e.ts>=(context.weekStart??now-7*DAY)&&e.sets.some(v=>v>0)).map(e=>e.day||new Date(e.ts).toDateString())).size;
+  const goalName={balanced:'Balanced training',strength:'Strength focus',movement:'Movement focus'}[preferences.goal];
+  const summary=`${goalName}. ${weekDays} of ${preferences.days} planned training days recorded this week. ${weekDays>=preferences.days?'Your weekly target is met; another workout is optional.':'This is a planning target, not a requirement to catch up.'}${recent.length?' Exercises recorded in the last 24 hours are left out of the automatic plan.':''}`;
+  return {version:VERSION,generatedAt:now,preferences,weekDays,summary,estimatedMinutes:Math.ceil(used),overBudget:!!budget&&used>budget+1,selected:selected.map(x=>({id:x.t.id,decision:x.d,reason:reasons[x.t.id]})),recent:recent.map(x=>x.t.id),available:decisions.filter(x=>!recent.includes(x)&&!selected.includes(x)).map(x=>x.t.id)};
+ }
+ function adjustSession(items,kind,{budget=10,cost}={}){
+  const base=JSON.parse(JSON.stringify(items));
+  if(kind==='low')return {items:base.map(x=>({...x,mode:'light',goals:x.goals.map(v=>v===0?0:Math.max(1,Math.floor(v*.8))),coaching:x.coaching?{...x.coaching,title:'Lighter targets today',reason:'You chose low energy. Targets are reduced for this workout; progression stays separate.'}:undefined}))};
+  if(kind==='short'){const selected=[];let used=0;for(const x of base){const minutes=cost(x);if(selected.length&&used+minutes>budget)break;selected.push(x);used+=minutes;}return {items:selected,budget,estimate:Math.ceil(used)};}
+  return {items:base};
+ }
+ return {VERSION,pattern,prefs,evaluate,plan,adjustSession,estimate};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=LadderCoach;
+/* LADDER_COACH_END */
 const TRACKS = [
   {id:"push", name:"Push", steps:[
     ["Wall push-up",3,10,20,"reps","Hands on wall, body straight.","None"],
@@ -1724,7 +1812,6 @@ const TRACKS = [
     ["Tibialis raise",3,15,20,"reps","Back on wall, feet 10–12 in out. Toes to shins, lower slowly.","Wall"]]}
 ];
 const DEFAULT_LEVELS = {push:3,dip:0,pull:2,row:1,squat:1,core:1,hinge:0,knee:0,groin:0,hold:0,curl:0,hang:0,ankle:0,hips:0,carry:0,frog:0,bear:0,crab:0,toesit:0,shin:0,hipflex:0,hams:0,openbook:0,kneewall:0,ninety:0,swing:0};
-const RECENT_HRS = 24;         // done within this many hours = "Done recently"
 const FOCUS = {less:0.5, normal:1, more:2};
 
 let tab = "today";
@@ -1824,7 +1911,7 @@ function legacyTs(e){ if(e.ts) return +e.ts; const [y,m,d]=String(e.d||"").split
 
 function blank(){
   return {v:SCHEMA, updated:0, stamps:{}, levels:Object.fromEntries(TRACKS.map(t=>[t.id,keyOf(t,defaultIdx(t))])),
-    log:[], deleted:[], prefs:{hidden:{}, focus:{}, sets:{}, presetsSeen:presets().map(r=>r.id), setupDone:false}, custom:[], routines:presets()};
+    log:[], deleted:[], prefs:{hidden:{}, focus:{}, sets:{}, coach:{goal:"balanced",days:3}, presetsSeen:presets().map(r=>r.id), setupDone:false}, custom:[], routines:presets()};
 }
 function normalize(d){
   d = d || {};
@@ -1862,6 +1949,7 @@ function normalize(d){
   }
   // prefs
   const p=d.prefs||{};
+  out.prefs.coach=LadderCoach.prefs(p.coach);
   const okId=id=>/^[a-z0-9]+$/i.test(id);
   out.prefs.hidden=Object.fromEntries(Object.entries(p.hidden||{}).filter(([k,v])=>okId(k)&&v));
   out.prefs.focus=Object.fromEntries(Object.entries(p.focus||{}).filter(([k,v])=>okId(k)&&FOCUS[v]));
@@ -1895,13 +1983,14 @@ function flatten(x){
   for(const [k,v] of Object.entries(x.prefs?.hidden||{})) if(v) f["hidden."+k]="1";
   for(const [k,v] of Object.entries(x.prefs?.focus||{})) f["focus."+k]=v;
   for(const [k,v] of Object.entries(x.prefs?.sets||{})) f["sets."+k]=String(v);
+  const coach=LadderCoach.prefs(x.prefs?.coach);f["coach.goal"]=coach.goal;f["coach.days"]=String(coach.days);
   for(const c of x.custom||[]) f["custom."+c.id]=JSON.stringify(c);
   for(const r of x.routines||[]) f["routine."+r.id]=JSON.stringify(r);
   if(x.prefs?.setupDone) f["setup.done"]="1";
   return f;
 }
 function unflatten(f, order){
-  const out={levels:blank().levels, prefs:{hidden:{},focus:{},sets:{},setupDone:false}, custom:[], routines:[]};
+  const out={levels:blank().levels, prefs:{hidden:{},focus:{},sets:{},coach:{goal:"balanced",days:3},setupDone:false}, custom:[], routines:[]};
   for(const [key,v] of Object.entries(f)){
     const i=key.indexOf("."), kind=key.slice(0,i), id=key.slice(i+1);
     if(v===undefined) continue;
@@ -1909,6 +1998,8 @@ function unflatten(f, order){
     else if(kind==="hidden") out.prefs.hidden[id]=true;
     else if(kind==="focus") out.prefs.focus[id]=v;
     else if(kind==="sets") out.prefs.sets[id]=+v;
+    else if(kind==="coach"&&id==="goal"&&["balanced","strength","movement"].includes(v))out.prefs.coach.goal=v;
+    else if(kind==="coach"&&id==="days"&&+v>=1&&+v<=7)out.prefs.coach.days=+v;
     else if(kind==="custom") out.custom.push(JSON.parse(v));
     else if(kind==="routine") out.routines.push(JSON.parse(v));
     else if(kind==="setup") out.prefs.setupDone=true;
@@ -2023,50 +2114,44 @@ function index(){
 const lastFor = id => index().byT.get(id) || null;
 const lastAtLevel = (t,lvl) => index().byK.get(keyOf(t,lvl)) || null;
 const DAY = 864e5;
-function hitTarget(entry, st){ return entry.sets.length>=st[1] && entry.sets.slice(0,st[1]).every(v=>v>=st[3]); }
 // Transparent heuristics, not a readiness diagnosis. Compare the same step and set count.
-function progression(t,lvl=lvlOf(t),st=spec(t,lvl)){
- const history=state.log.filter(e=>e.mode!=='light'&&e.k===keyOf(t,lvl)).sort((a,b)=>b.ts-a.ts);
- const last=history[0],inc=stepInc(st),clamp=v=>Math.min(st[3],Math.max(st[2],v));
- if(!last)return {kind:'start',title:'Start with control',reason:'Begin at the low end. Adjust the number to match what you actually do.',goals:Array(st[1]).fill(st[2])};
- const base=Array.from({length:st[1]},(_,i)=>clamp(last.sets[i]??last.sets.at(-1)));
- const days=[],seen=new Set();
- for(const e of history){const day=new Date(e.ts).toDateString();if(e.ts<last.ts-28*DAY||e.sets.length!==st[1]||seen.has(day))continue;seen.add(day);days.push(e);if(days.length===4)break;}
- const age=Date.now()-last.ts,hasStep=!t.custom&&lvl<t.steps.length-1;
- const result=(kind,title,reason,values=base,level)=>({kind,title,reason,goals:values,...(level===undefined?{}:{level})});
- if(age>7*DAY)return result('return','Ease back in','It has been over a week since this step. Repeat your last targets before building again.');
- if(last.effort==='hard'){
-  if(days.length>=2&&days[0]===last&&days.slice(0,2).every(e=>e.effort==='hard'&&e.sets.some(v=>v<st[2]))&&!t.custom&&lvl>0)
-   return result('down','Try an easier step','Two separate training days felt hard and fell below the range. An easier variation is available.',base,lvl-1);
-  return result('hold','Repeat this target','You marked the last exercise hard. Keep the target steady; adjust down if needed.');
- }
- if(last.sets.length!==st[1])return result('hold','Build a complete baseline','The number of sets changed or the last entry was partial. Repeat these targets before increasing.');
- if(days[0]===last&&days.length>=2&&days.slice(0,2).every(e=>hitTarget(e,st)&&e.effort!=='hard')&&hasStep)
-  return result('up','Ready for the next step','You reached the top of every set on two separate training days. Try the next variation when you feel ready.',base,lvl+1);
- if(last.sets.some(v=>v<st[2]))return result('hold','Keep this manageable','At least one set was below the range. Rebuild at the low end before adding more.');
- if(hitTarget(last,st))return result('confirm','Confirm this level',hasStep?'You reached the top of the range. Repeat it on another training day before moving up.':'You reached the top of this ladder. Keep the movement controlled; there is no higher step here.');
- const sum=e=>e.sets.reduce((n,v)=>n+v,0);
- if(days[0]===last&&days.length>=3&&last.effort!=='easy'&&days.slice(0,3).every(e=>e.effort!=='easy')&&Math.max(...days.slice(0,3).map(sum))-Math.min(...days.slice(0,3).map(sum))<inc)
-  return result('steady','Consolidate this step','Your total has stayed similar across three training days. Repeat the target and focus on control; no extra reps today.');
- const next=base.slice();let at=-1;
- for(let i=0;i<next.length;i++)if(next[i]<st[3]&&(at<0||next[i]<next[at]))at=i;
- if(at>=0)next[at]=clamp(next[at]+inc);
- return result('build','One small increase',`Add ${isSec(st[4])?'up to 5 seconds':'one rep'} to one of your lower sets. The other targets stay steady.`,next);
+function coachingModel(t,lvl=lvlOf(t),st=spec(t,lvl)){
+ return {id:t.id,group:groupOf(t),custom:!!t.custom,level:lvl,stepCount:t.steps.length,key:keyOf(t,lvl),frequency:focusOf(t.id),rest:restOf(t,st),step:{sets:st[1],min:st[2],max:st[3],timed:isSec(st[4]),eachSide:st[4].includes('each')}};
 }
+function coachingContext(now=Date.now()){
+ return {now,weekStart:weekStart(new Date(now)).getTime(),history:state.log.map(e=>({...e,day:dayOf(e.ts)})),catalog:allTracks().map(t=>({id:t.id,group:groupOf(t)})),preferences:state.prefs.coach};
+}
+function progression(t,lvl=lvlOf(t),st=spec(t,lvl)){return LadderCoach.evaluate(coachingModel(t,lvl,st),coachingContext());}
+function coachingPlan(tracks){return LadderCoach.plan(tracks.map(t=>coachingModel(t)),{...coachingContext(),budget:minutes,explicit:filter!=='All'});}
 function coachTargets(p,st){return p.goals.join(' · ')+(isSec(st[4])?' sec':' reps')+(st[4].includes('each')?' each side':'');}
 function workCoach(t,x){
  if(x.swap||lightSessionItem(t)||focusRun?.readiness?.kind==='short')return '';
- let p=progression(t);if(p.kind==='start')return '';
- if(JSON.stringify(x.goals)!==JSON.stringify(p.goals))p={title:'Targets kept for this workout',reason:'Your latest results will shape the next workout. This one keeps the targets it started with.',goals:x.goals};
- return `<div class="coach-inline"><details><summary>${esc(p.title)}</summary><p>${esc(p.reason)}</p><span>${esc(coachTargets(p,spec(t)))}</span></details>${p.level!==undefined?`<button data-coach="level" data-t="${t.id}" data-level="${p.level}">Try ${esc(t.steps[p.level][0])}</button>`:''}</div>`;
+ const current=progression(t),saved=x.coaching?.decision;let p=saved?.version===LadderCoach.VERSION&&Array.isArray(saved.goals)?saved:current;if(p.kind==='start')return '';
+ if(JSON.stringify(x.goals)!==JSON.stringify(current.goals)||p.level!==current.level)p={title:'Targets kept for this workout',reason:'Your latest results will shape the next workout. This one keeps the targets it started with.',goals:x.goals};
+ return `<div class="coach-inline"><details><summary>${esc(p.title)}</summary><p>${esc(p.reason)}</p>${x.coaching?.reason?`<p>${esc(x.coaching.reason)}</p>`:''}<span>${esc(coachTargets(p,spec(t)))}</span></details>${Number.isInteger(p.level)&&t.steps[p.level]?`<button data-coach="level" data-t="${t.id}" data-level="${p.level}">Try ${esc(t.steps[p.level][0])}</button>`:''}</div>`;
+}
+function coachingView(){
+ const report=focusRun?.coaching,preferences=LadderCoach.prefs(state.prefs.coach),current=report?.version===LadderCoach.VERSION&&Array.isArray(report.selected);
+ const summary=current?'At the start of this workout: '+report.summary:'This workout keeps its saved targets. Updated coaching applies when you start another workout.';
+ const list=current?focusRun.items.filter(x=>findTrack(x.id)).map(item=>{const x=report.selected.find(x=>x.id===item.id),reason=item.swap?'You chose an alternative for this workout. Its targets stay separate from the original exercise.':x?.reason||'Kept from your saved workout.';return `<li><b>${esc(findTrack(item.id).name)}</b><span>${esc(reason)}</span></li>`;}).join(''):'';
+ const estimate=Math.ceil((focusRun?.items||[]).reduce((n,x)=>n+plannedMinutes(x),0)),budget=focusRun?.readiness?.kind==='short'?focusRun.readiness.budget:minutes;
+ return `<details class="plan-coaching"><summary>Why this workout</summary><p>${esc(summary)}</p><p>Workout estimate: ${estimate} minutes including rests; actual time varies.</p>${budget&&estimate>budget+1?`<p class="cue">This full exercise block exceeds the ${budget}-minute setting. The estimate includes its prescribed sets and rests.</p>`:''}${focusRun?.readiness?.kind==='low'?'<p>You chose low energy. These exercises use lower targets today; the usual progression baseline stays separate.</p>':focusRun?.readiness?.kind==='short'?'<p>You chose less time. The highest-priority exercises stay in the same order.</p>':''}${list?`<ul>${list}</ul>`:''}<p class="cue">Suggestions use your training log and preferences. They do not measure physical recovery. Change an exercise or stop if it doesn’t feel right.</p><h3>Coaching preferences</h3><p>Changes rebuild an unstarted workout. Once any sets are recorded, they apply to the next workout.</p><div class="coaching-goals seg" role="group" aria-label="Training goal">${[['balanced','Balanced'],['strength','Strength'],['movement','Move better']].map(([v,l])=>`<button data-coach="goal" data-goal="${v}" aria-pressed="${preferences.goal===v}">${l}</button>`).join('')}</div><label for="coachDays">Training days per week</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${preferences.days===n?' selected':''}>${n} ${n===1?'day':'days'}</option>`).join('')}</select><p class="cue">A flexible weekly target. Missed days never add catch-up sets.</p></details>`;
+}
+function setCoachingPreference(key,value){
+ if(key==='goal'&&!['balanced','strength','movement'].includes(value)||key==='days'&&(!Number.isInteger(value)||value<1||value>7)||!['goal','days'].includes(key))return;
+ const rebuild=canAdjustReadiness()&&!focusRun.readiness?.kind;
+ state.prefs.coach={...LadderCoach.prefs(state.prefs.coach),[key]:value};commit();if(rebuild)focusRun=null;
+ render();const target=key==='goal'?document.querySelector(`[data-coach="goal"][data-goal="${value}"]`):$('#coachDays');target?.focus({preventScroll:true});
+ $('#focusAnnouncement').textContent=rebuild?'Workout updated for your coaching preferences.':'Coaching preferences saved for your next workout. Current targets are unchanged.';
 }
 function focusFeedback(){
  const entries=(focusRun?.items||[]).filter(x=>x.entry).map(x=>state.log.find(e=>entryId(e)===x.entry)).filter(Boolean).sort((a,b)=>b.ts-a.ts);
  const e=entries[0];if(!e)return '';
  const t=findTrack(e.t),step=stepByKey(e.k);if(!t||!step)return '';const p=progression(t);
- return `<section class="effort-check" aria-label="Exercise effort"><div><span class="label">${esc(step.st[0])} saved</span><h3>How did it feel?</h3><p>${e.mode==='light'?'Optional. Saved with this lighter workout.':'Optional. Helps set your next target.'}</p></div><div class="effort-options" role="group" aria-label="How ${esc(step.st[0])} felt">${[['easy','Easy'],['steady','Steady'],['hard','Hard']].map(([value,label])=>`<button data-coach="effort" data-entry="${esc(entryId(e))}" data-effort="${value}" aria-pressed="${e.effort===value}">${label}</button>`).join('')}</div>${e.effort?`<details class="feedback-reason"><summary>Next time: ${esc(p.title)}</summary><p>${esc(p.reason)}</p><span>${esc(coachTargets(p,spec(t)))}</span></details>`:""}</section>`;
+ return `<section class="effort-check" aria-label="Exercise effort"><div><span class="label">${esc(step.st[0])} saved</span><h3>How did it feel?</h3><p>${e.mode==='light'?'Optional. Saved with this lighter workout.':'Optional. Helps set your next target.'}</p></div><div class="effort-options" role="group" aria-label="How ${esc(step.st[0])} felt">${[['easy','Easy'],['steady','Steady'],['hard','Hard']].map(([value,label])=>`<button data-coach="effort" data-entry="${esc(entryId(e))}" data-effort="${value}" aria-pressed="${e.effort===value}">${label}</button>`).join('')}</div>${e.effort?`<details class="feedback-reason"><summary>Current advice: ${esc(p.title)}</summary><p>${esc(p.reason)}</p>${p.recovery.recent?'<p>This exercise was just recorded. Your next workout reassesses targets using elapsed time and your saved effort rating.</p>':''}<span>${esc(coachTargets(p,spec(t)))}</span></details>`:""}</section>`;
 }
 function handleCoach(b){
+ if(b.dataset.coach==='goal'){setCoachingPreference('goal',b.dataset.goal);return;}
  if(b.dataset.coach==='effort'){
   const e=state.log.find(e=>entryId(e)===b.dataset.entry),value=b.dataset.effort;if(!e||!['easy','steady','hard'].includes(value))return;
   e.effortAt=Math.max(Date.now(),(e.effortAt||0)+1);if(e.effort===value)delete e.effort;else e.effort=value;
@@ -2080,8 +2165,6 @@ function handleCoach(b){
 }
 
 function goals(t,lvl,st){return progression(t,lvl,st).goals;}
-// How long until an exercise is "due" again, by type
-const GAP = {Strength:48, Weights:48, Tendon:24, Mobility:24, Stretch:24, Custom:36};
 // Rest between sets: the move's own instruction if it has one, otherwise by type
 function restOf(t, st){
   const m=/Rest (\d+) min/i.exec(st[5]); if(m) return +m[1]*60;
@@ -2090,18 +2173,7 @@ function restOf(t, st){
 }
 const restLabel = s => s>=60 ? `${Math.floor(s/60)}:${pad2(s%60)}` : `${s}s`;
 // Rough minutes for one exercise: work + rest between sets + a minute to set up
-function minutesFor(t){
-  const st=spec(t), sides=st[4].includes("each")?2:1, g=goals(t,lvlOf(t),st);
-  const work=g.reduce((a,v)=>a+(isSec(st[4])?v:v*3),0)*sides;
-  return (work + (st[1]-1)*restOf(t,st))/60 + 1;
-}
-// Who's next: how overdue it is (hours since last time ÷ usual gap), times "how often"
-function score(t){
-  const last=lastFor(t.id); if(!last) return null;
-  return (Date.now()-last.ts)/3600000/GAP[groupOf(t)]*FOCUS[focusOf(t.id)];
-}
-function recentlyDone(t){ const l=lastFor(t.id); return !!l && (Date.now()-l.ts)/3600000 < RECENT_HRS; }
-
+function minutesFor(t){return progression(t).estimatedMinutes;}
 let lastSaveAt=0, confirmZero=null;
 function saveSets(t,options={}){
   if(!options.focus && Date.now()-lastSaveAt<900) return;          // ignore an accidental double tap
@@ -2149,6 +2221,7 @@ function parseProgressBackup(text){
   const inspect=(x,depth=0)=>{if(depth>12)throw new Error('The backup contains invalid data.');if(typeof x==='number'&&(!Number.isSafeInteger(x)||x<0))throw new Error('The backup contains invalid numbers.');if(x&&typeof x==='object'){for(const [k,v]of Object.entries(x)){if(['__proto__','prototype','constructor'].includes(k))throw new Error('The backup contains invalid fields.');inspect(v,depth+1);}}};inspect(d);
   if(!Array.isArray(d.log)||d.log.length>LOG_KEEP||!Array.isArray(d.custom)||d.custom.length>500||!Array.isArray(d.routines)||d.routines.length>500||!Array.isArray(d.deleted)||d.deleted.length>TOMB_KEEP||!object(d.prefs)||!object(d.levels)||!object(d.stamps))throw new Error('The backup is incomplete or exceeds supported limits.');
   const p=d.prefs;
+  if(p.coach!==undefined&&(!object(p.coach)||!['balanced','strength','movement'].includes(p.coach.goal)||!Number.isInteger(p.coach.days)||p.coach.days<1||p.coach.days>7))throw new Error('The backup contains invalid coaching preferences.');
   if(Object.keys(d.stamps).length>5000||Object.keys(d.levels).length>500||['hidden','focus','sets'].some(k=>!object(p[k])||Object.keys(p[k]).length>1000)||p.presetsSeen?.length>1000)throw new Error('The backup exceeds supported settings limits.');
   if(!Number.isSafeInteger(d.updated)||d.updated<0||Object.values(d.stamps).some(n=>!Number.isSafeInteger(n)||n<0)||!object(p.hidden)||!object(p.focus)||!object(p.sets)||typeof p.setupDone!=='boolean'||!Array.isArray(p.presetsSeen)||p.presetsSeen.some(id=>typeof id!=='string')||Object.values(p.hidden).some(v=>v!==true)||Object.values(p.focus).some(v=>!['less','normal','more'].includes(v))||Object.values(p.sets).some(n=>!Number.isInteger(n)||n<1||n>6)||d.deleted.some(id=>typeof id!=='string'))throw new Error('The backup contains invalid training settings.');
   if(d.custom.some(c=>!object(c)||typeof c.name!=='string'||!c.name.length||c.name.length>40||typeof c.id!=='string'||!/^c[a-z0-9]{4,79}$/i.test(c.id)||!Number.isInteger(c.sets)||c.sets<1||c.sets>6||!Number.isInteger(c.min)||c.min<1||!Number.isInteger(c.max)||c.max<c.min||!['sec','reps'].includes(c.unit))||new Set(d.custom.map(c=>c.id)).size!==d.custom.length)throw new Error('The backup contains invalid custom exercises.');
@@ -2219,7 +2292,7 @@ function showFocusSaved(name){
   focusNoticeTimer=setTimeout(clearFocusNotice,3500);
 }
 function focusSignature(){return JSON.stringify([new Date().toDateString(),filter,minutes,state.levels,state.prefs.sets,state.prefs.hidden,state.routines]);}
-function ensureFocus(plan){
+function ensureFocus(plan,report){
   const signature=focusSignature();
   const valid=focusRun&&focusRun.signature===signature&&focusRun.items.every(x=>{
     const t=x&&findTrack(x.id),i=t?t.steps.findIndex((_,j)=>x.key===keyOf(t,j)):-1;return t&&i>=0&&(!x.swap||validSwap(x))&&(x.key===keyOf(t,lvlOf(t))||validSwap(x))&&Array.isArray(x.values)&&Array.isArray(x.goals)&&x.goals.length===spec(t,i)[1]&&x.values.length<=x.goals.length&&[...x.values,...x.goals,...(x.value===undefined?[]:[x.value])].every(v=>Number.isFinite(v)&&v>=0&&v<=9999);
@@ -2234,10 +2307,10 @@ function ensureFocus(plan){
       const originals=new Set(previous.filter(x=>x.swap&&x.values?.length&&!x.entry).map(x=>x.swap.original.id));
       plan=[...partial,...plan.filter(t=>!partial.some(p=>p.id===t.id)&&!originals.has(t.id))];
     }}catch(e){}
-    focusRun={v:1,signature,started:Date.now(),at:0,phase:'work',restEnd:0,items:plan.map(t=>{
+    focusRun={v:1,signature,started:Date.now(),at:0,phase:'work',restEnd:0,coaching:report,items:plan.map(t=>{
       const partial=previous.find(x=>x&&x.id===t.id&&!x.entry&&Array.isArray(x.values)&&x.values.length&&validSwap(x)&&t.steps.some((_,i)=>x.key===keyOf(t,i)));
-      const level=partial?t.steps.findIndex((_,i)=>keyOf(t,i)===partial.key):lvlOf(t),key=keyOf(t,level),g=goals(t,level,spec(t,level)),old=previous.find(x=>x&&x.id===t.id&&x.key===key&&!x.entry&&Array.isArray(x.values)&&x.values.length<g.length&&x.values.every(v=>Number.isFinite(v)&&v>=0&&v<=9999)&&Array.isArray(x.goals)&&x.goals.length===g.length&&x.goals.every(v=>Number.isFinite(v)&&v>=0&&v<=9999));
-      return {id:t.id,key,goals:old?.values.length?old.goals.slice():g,values:old?old.values.slice():[],...(old?.values.length&&old.mode==='light'?{mode:'light'}:{}),...(old?.values.length&&old.swap?{swap:old.swap}:{})};
+      const level=partial?t.steps.findIndex((_,i)=>keyOf(t,i)===partial.key):lvlOf(t),key=keyOf(t,level),g=report?.selected.find(x=>x.id===t.id)?.decision.goals||goals(t,level,spec(t,level)),old=previous.find(x=>x&&x.id===t.id&&x.key===key&&!x.entry&&Array.isArray(x.values)&&x.values.length<g.length&&x.values.every(v=>Number.isFinite(v)&&v>=0&&v<=9999)&&Array.isArray(x.goals)&&x.goals.length===g.length&&x.goals.every(v=>Number.isFinite(v)&&v>=0&&v<=9999));
+      return {id:t.id,key,coaching:old?.values.length?old.coaching:report?.selected.find(x=>x.id===t.id),goals:old?.values.length?old.goals.slice():g,values:old?old.values.slice():[],...(old?.values.length&&old.mode==='light'?{mode:'light'}:{}),...(old?.values.length&&old.swap?{swap:old.swap}:{})};
     })};focusUndo=null;readinessChoice=null;swapChoice=null;persistFocus();
   }
   // A synced or manually saved result completes this exercise without logging it twice.
@@ -2311,20 +2384,8 @@ function readinessBase(){
  }))return JSON.parse(JSON.stringify(base));
  return JSON.parse(JSON.stringify(focusRun?.items||[]));
 }
-function plannedMinutes(x){
- const t=findTrack(x.id),st=spec(t),sides=st[4].includes('each')?2:1;
- return (x.goals.reduce((n,v)=>n+v,0)*(isSec(st[4])?1:3)*sides+(st[1]-1)*restOf(t,st))/60+1;
-}
-function readinessPreview(kind){
- const base=readinessBase();
- if(kind==='low')return {items:base.map(x=>({...x,mode:'light',goals:x.goals.map(v=>v===0?0:Math.max(1,Math.floor(v*.8)))}))};
- if(kind==='short'){
-  const budget=minutes&&minutes<=10?5:10,items=[];let used=0;
-  for(const x of base){const cost=plannedMinutes(x);if(items.length&&used+cost>budget)break;items.push(x);used+=cost;}
-  return {items,budget,estimate:Math.ceil(used)};
- }
- return {items:base};
-}
+function plannedMinutes(x){const t=findTrack(x.id),level=t.steps.findIndex((_,i)=>keyOf(t,i)===x.key);return LadderCoach.estimate(coachingModel(t,level<0?lvlOf(t):level),x.goals);}
+function readinessPreview(kind){return LadderCoach.adjustSession(readinessBase(),kind,{budget:minutes&&minutes<=10?5:10,cost:plannedMinutes});}
 function readinessView(){
  if(!canAdjustReadiness())return '';
  const kind=focusRun.readiness?.kind,label=kind==='low'?'Lighter workout today':kind==='short'?'Short workout today':kind==='ready'?'Ready for this workout':'How are you feeling today?';
@@ -2477,7 +2538,7 @@ function mountWorkoutTools(previous={}){
  dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
  const body=dialog.querySelector('.workout-tools-body');
  // Move existing controls so their data, event handlers, and IDs have a single owner.
- for(const el of [$('.readiness-check'),settings,$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
+ for(const el of [$('.readiness-check'),settings,$('.plan-coaching'),$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
  if(settings){settings.querySelector('summary').textContent='Time & workout settings';settings.querySelectorAll('[data-ui="min"]').forEach(b=>b.textContent=+b.dataset.m?b.dataset.m+' min':'All');}
  // Common controls are sections and direct actions, not nested accordions.
  const reveal=(details,title)=>{if(!details)return;const section=document.createElement('section');section.className=details.className+' tool-section';const heading=document.createElement('h3');heading.className='tool-heading';heading.textContent=title;section.append(heading);for(const child of [...details.children])if(child.tagName!=='SUMMARY')section.append(child);details.replaceWith(section);return section;};
@@ -2524,7 +2585,7 @@ function focusView(plan,top,more,recent){
   document.body.classList.toggle('focus-timing',r.phase==='rest'||!!runningHold);
   const saved=r.items.filter(x=>x.entry).length;
   let html=`<div class="focus-shell"><div class="focus-meta"><span>${r.phase==='finished'||!r.items.length?r.items.length+' '+(r.items.length===1?'exercise':'exercises'):'Exercise '+(r.at+1)+' of '+r.items.length}${minutes&&r.readiness?.kind!=='short'?' · '+minutes+' min':''}${r.readiness?.kind==='low'?' · Lighter day':r.readiness?.kind==='short'?' · Short workout':''}${saved?' · '+saved+' saved':''}</span><details class="focus-edit"><summary>${r.readiness?.kind==='short'?'Short workout':minutes?minutes+' min':'All moves'} · Edit workout</summary>${top}</details></div>`;
-  html+=readinessView();
+  html+=readinessView()+coachingView();
   const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
   if(away>=7)html+=`<p class="focus-next">Welcome back. Targets repeat your last results within the exercise range, so ease back in.</p>`;
   if(!t){return html+`<section class="focus-stage"><div class="focus-rest"><h2>All caught up.</h2><p class="focus-next">Nothing due here. Rest, or choose another workout.</p></div></section></div>`+sheet();}
@@ -2657,22 +2718,11 @@ function viewToday(){
   if(!vis.length){
     return top+`<div class="card empty"><img src="assets/brand/ladder-mark-v3.svg" alt=""><h2>Nothing to show</h2><p>${routine&&routine.items.length?"Every move in this routine is hidden. Add them back on the Exercises tab.":routine?"This routine has no moves yet. Edit it on the Exercises tab.":filter==="All"?"Everything is hidden. Add moves back on the Exercises tab.":`Every ${esc(filter)} move is hidden. Add them back on the Exercises tab.`}</p></div>`;
   }
-  const recent=vis.filter(t=>recentlyDone(t)).sort((a,b)=>lastFor(b.id).ts-lastFor(a.id).ts);
-  const due=vis.filter(t=>!recentlyDone(t) && lastFor(t.id)).sort((a,b)=>score(b)-score(a));
-  // New moves in a balanced order (push, legs, core, pull…) so a first session isn't all upper body
-  const PATTERN=["push","squat","core","row","hinge","pull","dip"];
-  const pat=t=>{ const i=PATTERN.indexOf(t.id); return i<0?99+allTracks().indexOf(t):i; };
-  const fresh=vis.filter(t=>!lastFor(t.id)).sort((a,b)=>(FOCUS[focusOf(b.id)]-FOCUS[focusOf(a.id)]) || (pat(a)-pat(b)));
-  const veteran = state.log.length>0;
-  // Fill the time you have: overdue moves first, at most one new move if you already train
-  const plan=[]; let used=0, newCount=0;
-  const fits = t => minutes===0 || plan.length===0 || used+minutesFor(t) <= minutes+1;
-  for(const t of due){ if(fits(t)){ plan.push(t); used+=minutesFor(t); } }
-  const capNew = veteran && filter==="All";   // a routine or type you picked gets filled with its own moves
-  for(const t of fresh){ if(capNew && newCount>=1) break; if(fits(t)){ plan.push(t); used+=minutesFor(t); newCount++; } }
-  ensureFocus(plan);
+  const report=coachingPlan(vis),plan=report.selected.map(x=>findTrack(x.id));
+  const recent=report.recent.map(findTrack),available=report.available.map(findTrack);
+  ensureFocus(plan,report);
   const frozenIds=new Set(focusRun.items.flatMap(x=>[x.id,...(x.swap?[x.swap.original.id]:[])]));
-  const more=[...due,...fresh].filter(t=>!frozenIds.has(t.id));
+  const more=available.filter(t=>!frozenIds.has(t.id));
   return focusView(plan,top,more,recent);
 }
 
@@ -3175,6 +3225,7 @@ $("#view").addEventListener("keydown",e=>{
   e.target.dispatchEvent(new Event('change',{bubbles:true}));
 });
 $("#view").addEventListener("change",e=>{
+  if(e.target.matches('[data-coach-days]')){setCoachingPreference('days',Number(e.target.value));return;}
   const input=e.target.closest('[data-set-count]');if(input){saveSetCountInput(input);return;}
   const cb=e.target.closest("input[data-rt]"); if(!cb||!editing) return;
   editing.name=$("#rName")?.value ?? editing.name;
@@ -3388,7 +3439,7 @@ document.addEventListener('focusin',event=>{
   const target=event.target;
   if(target.closest('.wrap')&&!target.closest('dialog')&&target.matches('button,input,select,summary,a')&&target.matches(':focus-visible'))setTimeout(()=>{
     if(!target.isConnected||document.activeElement!==target)return;
-    const r=target.getBoundingClientRect(),nav=document.querySelector('nav').getBoundingClientRect();
+    const r=target.getBoundingClientRect();if(r.bottom<=r.top)return;const nav=document.querySelector('nav').getBoundingClientRect();
     const viewportEnd=window.visualViewport?Math.min(innerHeight,visualViewport.offsetTop+visualViewport.height):innerHeight;
     const end=nav.width>innerWidth/2?Math.min(nav.top,viewportEnd):viewportEnd;
     if(r.bottom>end-12)window.scrollBy(0,r.bottom-end+12);else if(r.top<12)window.scrollBy(0,r.top-12);

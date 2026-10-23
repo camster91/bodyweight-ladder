@@ -132,3 +132,11 @@ body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88
  nav .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
  nav .tabs button{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.25;height:auto;padding:8px 2px}
 }
+.plan-coaching{border-top:1px solid var(--line);padding:14px 0;margin:8px 0;color:var(--ink)}
+.plan-coaching>summary{min-height:44px;padding:12px 0;cursor:pointer;color:var(--accent);font-size:14px;font-weight:650}
+.plan-coaching p,.plan-coaching li{font-size:14px;line-height:1.6}.plan-coaching .cue{font-size:12px}
+.plan-coaching ul{list-style:none;padding:0;margin:12px 0}.plan-coaching li{padding:10px 0;border-top:1px solid var(--line)}
+.plan-coaching li b,.plan-coaching li span,.plan-coaching label{display:block}.plan-coaching li span{color:var(--muted)}
+.plan-coaching h3{font-size:16px;margin:20px 0 8px}.plan-coaching label{margin:16px 0 6px;font-size:14px}.plan-coaching select{width:100%}
+.coaching-goals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.coaching-goals button{min-height:48px;white-space:normal;line-height:1.4;padding:10px 6px}
+.coaching-goals button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent);font-weight:650}
