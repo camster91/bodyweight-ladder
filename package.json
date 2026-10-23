@@ -10,6 +10,9 @@
     "controls:docs": "node scripts/build-controls-docs.cjs",
     "coach:sync": "node scripts/sync-coaching.cjs",
     "coach:check": "node scripts/sync-coaching.cjs --check",
+    "support:sync": "node scripts/sync-support.cjs",
+    "support:check": "node scripts/sync-support.cjs --check",
+    "review:photos": "node scripts/build-photo-review.cjs",
     "start": "npx --yes serve@14.2.4 ."
   },
   "devDependencies": {

@@ -140,3 +140,14 @@ body[data-view]:not(.in-setup) .wrap{padding-bottom:calc(var(--app-nav-height,88
 .plan-coaching h3{font-size:16px;margin:20px 0 8px}.plan-coaching label{margin:16px 0 6px;font-size:14px}.plan-coaching select{width:100%}
 .coaching-goals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.coaching-goals button{min-height:48px;white-space:normal;line-height:1.4;padding:10px 6px}
 .coaching-goals button[aria-pressed="true"]{background:var(--chip);border-color:var(--accent);color:var(--accent);font-weight:650}
+.support-entry{text-align:center;margin:4px 0 16px}
+.support-entry button{min-height:44px;background:transparent;border:0;color:var(--color-action);font:inherit;font-size:13px;padding:10px 16px}
+.app-support{overflow:auto;overscroll-behavior:contain;max-height:85dvh}
+.app-support>a{display:flex;min-height:48px;align-items:center;justify-content:center;white-space:normal;text-align:center;text-decoration:none;margin-bottom:20px}
+.app-support summary{min-height:44px;cursor:pointer;padding:12px 0;font-weight:600}
+.app-support textarea{box-sizing:border-box;width:100%;min-height:180px;max-height:30dvh;font:12px/1.5 ui-monospace,monospace;resize:vertical;padding:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px}
+.support-actions{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+.support-actions button{flex:1;min-height:44px}
+.app-problem-notice{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);margin:0 0 16px}
+.app-problem-notice p{margin:0 0 8px}.app-problem-notice button{min-height:44px;margin:4px 12px 0 0}
+body:has(#appSupport[open]){overflow:hidden}
