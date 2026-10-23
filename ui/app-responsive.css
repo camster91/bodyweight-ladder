@@ -163,6 +163,9 @@ body:has(#appSupport[open]){overflow:hidden}
 .pending-workout{display:flex;align-items:center;justify-content:space-between;gap:var(--space-inset);padding:var(--space-inset);margin-bottom:var(--space-inset);background:var(--color-selected);border:1px solid var(--color-stroke);border-radius:var(--panel-radius)}
 .pending-workout h2{font-size:var(--scale-type-title);margin:var(--scale-space-2) 0}.pending-workout p{margin:var(--scale-space-2) 0}.pending-workout .cue{font-size:var(--type-meta)}
 .pending-workout button{flex-shrink:0}
+.progress-pending-note{padding:var(--space-inset);border-top:1px solid var(--color-stroke)}
+.progress-pending-note h2{font-size:var(--type-body);margin:0 0 var(--scale-space-2)}
+.progress-pending-note p{font-size:var(--type-control);line-height:1.6;color:var(--color-ink-secondary);margin:0}
 .library-filters{display:flex;gap:var(--scale-space-2);overflow-x:auto;padding:var(--scale-space-1) 0 var(--space-control);scrollbar-width:thin}
 .library-filters button{flex:none;white-space:nowrap;min-height:var(--target-min)}
 body[data-view="ladders"] .library-filters button[aria-pressed="true"]{background:var(--color-selected);border-color:var(--color-action);color:var(--color-action);font-weight:650}
