@@ -13,6 +13,8 @@
     "support:sync": "node scripts/sync-support.cjs",
     "support:check": "node scripts/sync-support.cjs --check",
     "review:photos": "node scripts/build-photo-review.cjs",
+    "technique:sync": "node scripts/sync-technique.cjs",
+    "technique:check": "node scripts/sync-technique.cjs --check",
     "start": "npx --yes serve@14.2.4 ."
   },
   "devDependencies": {
