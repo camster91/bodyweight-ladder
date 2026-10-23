@@ -31,7 +31,7 @@ try{
  console.log('PASS trend gains compare the same set count and name the correct baseline');
  w=boot([base],{levels:{push:'push:diamond-push-up'}});assert(w.document.querySelector('.progress-exercises').textContent.includes('No saved sets on this step yet'));assert.equal(w.document.querySelector('.progress-exercises .spark'),null);
  console.log('PASS an unlogged selected step does not inherit another step\u0027s trend');
- w=boot([]);assert(w.document.querySelector('.progress-empty'));assert.equal(w.document.querySelector('.progress-empty img:not(.brand-symbol)'),null);assert.equal(w.document.querySelectorAll('.personal-best').length,0);
+ w=boot([]);assert(w.document.querySelector('.progress-empty'));const photo=w.document.querySelector('.progress-empty-art img');assert(photo);assert.equal(photo.alt,'');assert.equal(photo.parentElement.getAttribute('aria-hidden'),'true');assert.equal(w.document.querySelectorAll('.personal-best').length,0);assert.equal(w.document.querySelector('.week-day,.spark,.record-value'),null);
  console.log('PASS empty Progress explains how records begin without sample achievements');
 }finally{windows.forEach(w=>w.close());}
 process.exit(0);
