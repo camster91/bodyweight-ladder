@@ -29,6 +29,19 @@ try{
  assert(dom.window.eval('viewLadders()').includes('data-photo-credits'));
  console.log('PASS library, workout and substitutions show the selected variation; custom exercises never inherit an unrelated image');
 
+ dom.window.eval('setupDraft=null;setupIntro=true;setupStage=0');
+ const welcome=JSDOM.fragment(dom.window.eval('viewSetup()'));
+ assert.equal(welcome.querySelectorAll('.onboard-preview img').length,3);
+ assert.equal(welcome.querySelectorAll('.onboard-preview svg').length,0);
+ for(const img of welcome.querySelectorAll('.onboard-preview img'))assert(fs.existsSync(path.join(root,img.getAttribute('src'))));
+ dom.window.eval("setupDraft={groups:new Set(['Mobility']),gear:new Set(),level:'some'};setupIntro=false;setupStage=4");
+ const review=JSDOM.fragment(dom.window.eval('viewSetup()'));
+ assert.equal(review.querySelector('.onboard-pool img').getAttribute('src'),dom.window.eval('thumbOf(setupAvailableTracks()[0],setupPreviewLevel(setupAvailableTracks()[0]))'));
+ const empty=JSDOM.fragment(dom.window.eval('viewHistory()'));
+ assert(empty.querySelector('.progress-empty-art img').getAttribute('src').endsWith('.webp'));
+ assert(!empty.querySelector('.progress-empty-art .brand-symbol'));
+ console.log('PASS welcome, plan review and empty Progress use photos; review imagery follows selected focus');
+
  const card=JSDOM.fragment(dom.window.eval('fullCard(TRACKS.find(t=>t.id==="ankle"),true)'));
  assert(card.querySelector('.cue').textContent.includes('3 sec down'));assert(card.querySelector('.exercise-reference figcaption').textContent.includes('AI-generated pose reference'));
  assert(!card.querySelector('img[src="img/cheer.webp"]'));
