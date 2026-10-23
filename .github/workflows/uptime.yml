@@ -1,8 +1,8 @@
 name: Live site availability
 
 on:
-  schedule:
-    - cron: '7,22,37,52 * * * *'
+  # Manual only: GitHub's runner timed out connecting to this VPS on 2026-10-23.
+  # Recurring availability checks use the separate local Codex heartbeat.
   workflow_dispatch:
 
 permissions: {}
