@@ -1581,6 +1581,33 @@ body[data-view] button[data-control="choice"]{white-space:normal;overflow-wrap:b
  body .workout-tools .workout-tools-body{padding-left:max(var(--space-inset),env(safe-area-inset-left,0px));padding-right:max(var(--space-inset),env(safe-area-inset-right,0px))}
 }
 
+/* Settings and routine editing share the app's control rhythm. */
+.app-settings .settings-section{border-top:1px solid var(--color-stroke);padding-block:var(--space-inset)}
+.app-settings .settings-section h3{font-size:var(--type-meta);color:var(--color-ink-secondary);margin:0 0 var(--space-control)}
+.app-settings .settings-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-inset);width:100%;text-align:left;white-space:normal}
+.settings-row-copy{min-width:0}.settings-row-title,.settings-row-detail{display:block}
+.settings-row-detail{margin-top:var(--scale-space-1);font-size:var(--type-meta);font-weight:400;color:var(--color-ink-secondary);line-height:1.5}
+.app-settings [data-display-done]{width:100%;margin-top:var(--space-control)}
+.routine-editor-header h2{margin-bottom:var(--scale-space-2)}
+.routine-selection-summary{color:var(--color-ink-secondary);font-size:var(--type-control);line-height:1.5;margin:var(--space-control) 0 var(--space-inset)}
+#routineEditor fieldset{border:0;padding:0;min-width:0;margin:var(--space-inset) 0}
+#routineEditor legend{padding:0;margin-bottom:var(--space-control)}
+.routine-pick-copy{min-width:0;overflow-wrap:break-word}.routine-pick-copy small{display:block;color:var(--color-ink-secondary);font-size:var(--type-meta);line-height:1.5;margin-top:var(--scale-space-1)}
+#routineEditor .pick{min-height:72px;align-items:center;gap:var(--space-control)}
+#routineEditor .pick input{flex:none;width:20px;height:20px;accent-color:var(--color-action)}
+#routineEditor .pick:has(input:checked){border-color:var(--color-action);background:var(--color-selected)}
+#routineEditor .pick:focus-within{outline:var(--focus-width) solid var(--color-action);outline-offset:var(--focus-offset)}
+.routine-validation{color:var(--color-critical);font-size:var(--type-control)}
+.lui-toast{box-sizing:border-box}.lui-toast>span{min-width:0;overflow-wrap:break-word;line-height:1.5}.lui-toast .lui-button{flex:none}
+@media(max-width:399px){.lui-toast{flex-wrap:wrap}.lui-toast>span{flex-basis:100%}}
+
+.routine-discard{padding:var(--space-inset);border:1px solid var(--color-stroke);background:var(--color-selected);border-radius:var(--button-radius);margin-bottom:var(--space-inset)}
+.routine-discard p{margin:0 0 var(--space-control)}.routine-discard>div{display:flex;flex-wrap:wrap;gap:var(--space-control)}
+.routine-validation:empty{display:none}
+
+.routine-selection-summary>b,.routine-selection-summary>span{display:block}.routine-selection-summary>span{margin-top:var(--scale-space-1)}
+.routine-discard button{margin:var(--scale-space-1)}
+
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
 
@@ -1754,7 +1781,7 @@ body.library-sheet-open{overflow:hidden}
     <img src="img/icon.webp" alt="Bodyweight Ladder" width="34" height="34">
     <h1 id="viewTitle">Today</h1>
     <span class="date" id="today"></span>
-    <button class="appearance-toggle" aria-label="Display settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button>
+    <button class="appearance-toggle" aria-label="App settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-.5 2-1.7 1L5 5.5 3 9l1.5 1.5v2L3 14l2 3.5 1.8-.5 1.7 1 .5 2h4l.5-2 1.7-1 1.8.5 2-3.5-1.5-1.5v-2L19 9l-2-3.5-1.8.5-1.7-1L13 3Z"/><circle cx="11" cy="11.5" r="3"/></svg></button>
     <button id="syncDot" class="dot local" aria-label="Storage status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H5V3h1m9 0v5h4M8 14l3 3 5-6"/></svg></button>
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
@@ -2438,7 +2465,7 @@ function openProgressBackup(opener){
   d.querySelector('[data-backup-download]').onclick=()=>{try{downloadProgressBackup();message.textContent='Backup download requested. Check your downloads before closing this page.';}catch(e){message.textContent='The download could not start. Keep this page open and try again.';}};
   d.querySelector('#backupFile').onchange=async e=>{const selected=++selection;pending=null;apply.disabled=true;preview.hidden=true;message.textContent='';const f=e.target.files[0];if(!f)return;try{if(f.size>BACKUP_LIMIT)throw new Error('Choose a backup smaller than 5 MB.');const parsed=parseProgressBackup(await f.text());if(selected!==selection)return;const plan=planProgressRestore(parsed);pending=parsed;preview.textContent='Backup from '+parsed.createdAt+'. '+parsed.state.log.length+' completed exercise records. Adds '+plan.added+' records; removes '+plan.removed+' previously deleted records. Duplicate workouts won’t be added. The newest version of each training setting is used; this device wins ties. Your next workout will refresh.';preview.hidden=false;apply.disabled=false;}catch(err){if(selected===selection)message.textContent=err.message;}};
   apply.onclick=()=>{if(!pending)return;apply.disabled=true;try{const plan=applyProgressRestore(pending);pending=null;message.textContent='Backup merged and saved on this device. '+plan.added+' exercise records added.';preview.hidden=true;}catch(e){message.textContent=e.message;apply.disabled=false;}};
-  d.querySelector('.preferences-head button').onclick=()=>d.close();d.addEventListener('close',()=>{selection++;d.remove();document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
+  d.querySelector('.preferences-head button').onclick=()=>d.close();d.addEventListener('close',()=>{selection++;d.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
   document.body.append(d);applyComponentSystem(d);document.body.classList.add('preferences-open');if(d.showModal)d.showModal();else d.setAttribute('open','');d.querySelector('button').focus();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-backup]');if(!b)return;if(b.dataset.backup==='retry'){const saved=saveLocal(),session=persistFocus();setNote();toast(saved&&session?'Progress saved on this device.':'Save still failed. Download a backup before leaving.');}else openProgressBackup(b);});
@@ -2788,8 +2815,20 @@ function mountWorkoutTools(previous={}){
  if(alternatives){
   const section=reveal(alternatives,'Choose an alternative');
   const action=document.createElement('button');action.className='tool-action';action.dataset.ui='toolalternatives';action.innerHTML='<span>Change this exercise</span><span aria-hidden="true">→</span>';section.before(action);
-  const back=document.createElement('button');back.className='tool-back';back.dataset.ui='toolmain';back.textContent='← Back to options';section.prepend(back);
+  const back=document.createElement('button');back.className='tool-back';back.dataset.ui='toolmain';back.dataset.toolReturn='toolalternatives';back.textContent='← Back to options';section.prepend(back);
   section.dataset.toolPanel='alternatives';section.id='workoutAlternatives';action.setAttribute('aria-controls',section.id);action.setAttribute('aria-expanded',String(workoutToolsPanel==='alternatives'));
+ }
+ // Keep the workout queue close to the common actions; editing and extra moves share one secondary page.
+ const secondary=body.querySelector('.workout-secondary');
+ if(secondary){
+  const advanced=document.createElement('section');advanced.className='tool-section';advanced.dataset.toolPanel='advanced';advanced.id='workoutAdvanced';
+  const back=document.createElement('button');back.className='tool-back';back.dataset.ui='toolmain';back.dataset.toolReturn='tooladvanced';back.textContent='← Back to options';advanced.append(back);
+  const editor=secondary.querySelector('.focus-advanced');if(editor)advanced.append(editor);
+  for(const child of [...secondary.children])if(!child.classList.contains('focus-workout'))advanced.append(child);
+  if(advanced.children.length>1){
+   const action=document.createElement('button');action.className='tool-action';action.dataset.ui='tooladvanced';action.setAttribute('aria-controls',advanced.id);action.setAttribute('aria-expanded',String(workoutToolsPanel==='advanced'));action.innerHTML='<span>More workout options</span><span aria-hidden="true">→</span>';
+   secondary.after(action,advanced);
+  }
  }
  const rest=shell.querySelector('.focus-stage[data-phase="rest"] .focus-rest');if(rest){const quick=document.createElement('div');quick.className='rest-quick-actions';quick.setAttribute('role','group');quick.setAttribute('aria-label','Rest controls');for(const b of [...rest.querySelectorAll('[data-focus="add"],[data-focus="undo"]')])quick.append(b);rest.append(quick);}
  const restControls=[...shell.querySelectorAll('.focus-actions [data-focus="another"]')];
@@ -2814,9 +2853,10 @@ function mountWorkoutTools(previous={}){
  dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeWorkoutTools();});
  const storage=document.createElement('p');storage.className='workout-storage';storage.textContent=$('#saveNote')?.textContent||'';body.append(storage);
  // Apply the subpage after every control has been moved into its final position.
- const alternativesPanel=body.querySelector('[data-tool-panel="alternatives"]'),showAlternatives=!!alternativesPanel&&workoutToolsPanel==='alternatives';
- for(const child of [...body.children])child.hidden=showAlternatives?child!==alternativesPanel:child===alternativesPanel;
- if(showAlternatives){dialog.querySelector('#workoutToolsTitle').textContent='Change exercise';dialog.querySelector('[data-ui="workouttoolsclose"]').setAttribute('aria-label','Close exercise alternatives');}
+ const activePanel=workoutToolsPanel!=='main'?body.querySelector(`[data-tool-panel="${workoutToolsPanel}"]`):null;
+ if(!activePanel)workoutToolsPanel='main';
+ for(const child of [...body.children])child.hidden=activePanel?child!==activePanel:!!child.dataset.toolPanel;
+ if(activePanel){const alternatives=workoutToolsPanel==='alternatives';dialog.querySelector('#workoutToolsTitle').textContent=alternatives?'Change exercise':'More workout options';dialog.querySelector('[data-ui="workouttoolsclose"]').setAttribute('aria-label',alternatives?'Close exercise alternatives':'Close more workout options');}
  body.querySelectorAll('button').forEach(control=>control.type='button');
  body.querySelectorAll('[data-focus="choose"]').forEach(control=>{const name=control.closest('.focus-ex-row')?.querySelector('span')?.firstChild?.textContent?.trim();if(name)control.setAttribute('aria-label','Start '+name);});
  if(hold){
@@ -3001,17 +3041,21 @@ let editing=null; // {id,name,items:Set}
 function routinesCard(tracks){
   if(editing){
     const groups=["Strength","Tendon","Mobility","Stretch","Weights","Custom"];
-    return `<section class="card" id="routineEditor"><h2>${editing.id?"Edit routine":"New routine"}</h2>
-      <div class="addform"><label for="rName">Name</label><input id="rName" maxlength="30" value="${esc(editing.name)}" placeholder="e.g. Morning 10 min"></div>
-      ${groups.map(g=>{ const ts=tracks.filter(t=>groupOf(t)===g&&!isHidden(t.id)); if(!ts.length) return "";
-        return `<div class="label sect">${g}</div><div class="picks">${ts.map(t=>`<label class="pick"><input type="checkbox" data-rt="${t.id}" ${editing.items.has(t.id)?"checked":""}>${exerciseThumbnail(t)}<span>${esc(t.name)}</span></label>`).join("")}</div>`; }).join("")}
-      <div class="sticky-actions"><button class="ghost" data-ract="cancel">Cancel</button><button class="primary" data-ract="save">Save routine (<span id="rCount">${editing.items.size}</span>)</button></div>
+    const selected=tracks.filter(t=>editing.items.has(t.id));
+    return `<section class="card routine-editor" id="routineEditor" aria-labelledby="routineEditorTitle"><div class="routine-editor-header"><h2 id="routineEditorTitle">${editing.id?"Edit routine":"New routine"}</h2><p>Choose the exercises you want together. Saving opens this routine on Today.</p></div>
+      <div class="addform"><label for="rName">Routine name</label><input id="rName" maxlength="30" value="${esc(editing.name)}" placeholder="e.g. Morning movement" autocomplete="off" aria-describedby="routineValidation"></div>
+      <p class="routine-selection-summary" id="routineSelection" role="status" aria-live="polite"><b><span id="rCount">${selected.length}</span> selected</b><span id="routineSelectionHint">${selected.some(t=>isHidden(t.id))?'Hidden exercises stay in this routine, but do not appear on Today.':'Select at least one exercise. Each uses your current step and set count.'}</span></p>
+      ${groups.map(g=>{ const ts=tracks.filter(t=>groupOf(t)===g&&(!isHidden(t.id)||editing.items.has(t.id))); if(!ts.length) return "";
+        return `<fieldset class="routine-pick-group"><legend class="label">${esc(g)}</legend><div class="picks">${ts.map(t=>`<label class="pick"><input type="checkbox" data-rt="${t.id}" ${editing.items.has(t.id)?"checked":""}>${exerciseThumbnail(t)}<span class="routine-pick-copy"><b>${esc(t.name)}</b><small>${isHidden(t.id)?'Hidden from Today':esc(spec(t)[0])}</small></span></label>`).join("")}</div></fieldset>`; }).join("")}
+      <p class="routine-validation" id="routineValidation" role="alert">${esc(editing.error||'')}</p>
+      ${editing.cancelPending?`<div class="routine-discard" role="group" aria-label="Unsaved routine changes"><p>Discard your unsaved changes?</p><button data-ract="keep">Keep editing</button><button class="danger" data-ract="discard">Discard changes</button></div>`:''}
+      <div class="sticky-actions"><button class="ghost" data-ract="cancel">Cancel</button><button class="primary" data-ract="save">Save &amp; use routine</button></div>
       ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
     </section>`;
   }
   if(!routinesOpen) return `<section class="card" id="routinesCard"><button class="exrow plain" data-ui="rtoggle" aria-expanded="false"><span class="mini-t"><b>Your routines</b><span>${state.routines.length} ${state.routines.length===1?"routine":"routines"} · Choose or edit a training plan</span></span><span class="chev">▾</span></button></section>`;
   return `<section class="card" id="routinesCard"><div class="track-head"><h2>Routines</h2><button class="ghost small" data-ract="new">+ New</button><button class="icon" data-ui="rtoggle" aria-expanded="true" aria-label="Collapse routines">▴</button></div>
-    <div class="stack" style="gap:6px">${state.routines.map(r=>`<div class="rrow"><span><b>${esc(r.name)}</b><span>${esc(r.items.map(id=>findTrack(id)?.name).filter(Boolean).join(", ")||"No moves yet")}</span></span><button data-ract="edit" data-r="${esc(r.id)}">Edit</button></div>`).join("") || `<p class="muted">No routines yet.</p>`}</div></section>`;
+    <div class="stack" style="gap:6px">${state.routines.map(r=>`<div class="rrow"><span><b>${esc(r.name)}</b><span>${r.items.length} ${r.items.length===1?'exercise':'exercises'} · ${esc(r.items.map(id=>findTrack(id)?.name).filter(Boolean).join(", ")||"No moves yet")}</span></span><button data-ract="edit" data-r="${esc(r.id)}" aria-label="Edit ${esc(r.name)}">Edit</button></div>`).join("") || `<p class="muted">No routines yet.</p>`}</div></section>`;
 }
 const LIBRARY_HERO_IMAGES = [
  "assets/brand/studio-recovery-v3-small.webp",
@@ -3398,20 +3442,23 @@ function applyAppearance(value){
  store.set('bwl-appearance',theme);
  document.querySelectorAll('[data-appearance]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.appearance===theme)));
 }
-function openAppearance(){
+function openAppearance(event){
  if(document.querySelector('.app-preferences'))return;
- const dialog=document.createElement('dialog');dialog.className='app-preferences';dialog.setAttribute('aria-labelledby','appearanceTitle');
- dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">Display</h2><button aria-label="Close display settings" autofocus>×</button></div><p>Choose the appearance that feels right for you.</p><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p><button data-display-support aria-haspopup="dialog">Report a problem</button><button class="primary" data-display-done>Done</button>';
- const close=()=>{document.body.classList.remove('preferences-open');dialog.remove();document.querySelector('.appearance-toggle')?.focus({preventScroll:true});};
+ const opener=event?.currentTarget||document.activeElement;
+ const dialog=document.createElement('dialog');dialog.id='appSettings';dialog.className='app-preferences app-settings';dialog.setAttribute('aria-labelledby','appearanceTitle');
+ dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">App settings</h2><button aria-label="Close app settings" autofocus>×</button></div><section class="settings-section"><h3>Appearance</h3><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p></section><section class="settings-section"><h3>Your progress</h3><button class="settings-row" data-settings-backup aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Backup & restore</span><span class="settings-row-detail">Download your progress or restore a saved copy.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Help</h3><button class="settings-row" data-display-support aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Report a problem</span><span class="settings-row-detail">Open a private email draft. No account needed.</span></span><span aria-hidden="true">›</span></button></section><button class="primary" data-display-done>Done</button>';
+ const close=()=>{if(dialog.open&&dialog.close)dialog.close();else dialog.dispatchEvent(new Event('close'));};
+ dialog.addEventListener('close',()=>{dialog.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
  dialog.querySelector('.preferences-head button').addEventListener('click',close);
  dialog.querySelector('[data-display-done]').addEventListener('click',close);
- dialog.querySelector('[data-display-support]').addEventListener('click',()=>{close();window.LadderSupport.open(document.querySelector('.appearance-toggle'));});
+ dialog.querySelector('[data-settings-backup]').addEventListener('click',e=>openProgressBackup(e.currentTarget));
+ dialog.querySelector('[data-display-support]').addEventListener('click',e=>window.LadderSupport.open(e.currentTarget));
  dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
  dialog.addEventListener('click',e=>{const choice=e.target.closest('[data-appearance]');if(choice){applyAppearance(choice.dataset.appearance);return;}if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
- dialog.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const buttons=[...dialog.querySelectorAll('button')],first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
  document.body.append(dialog);applyComponentSystem(dialog);applyAppearance(store.get('bwl-appearance','system'));document.body.classList.add('preferences-open');
  if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');dialog.querySelector('button').focus({preventScroll:true});
 }
+
 document.querySelector('.appearance-toggle').addEventListener('click',openAppearance);
 function animateAppScreen(){
  const view=document.getElementById('view');view.getAnimations?.().forEach(a=>a.cancel());
@@ -3419,7 +3466,7 @@ function animateAppScreen(){
  view.animate([{opacity:.35,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:240,easing:'cubic-bezier(.22,1,.36,1)'});
 }
 
-function go(t,{restoreScroll=false}={}){const previous=tab;viewScrollPositions.set(tab,window.scrollY||0);if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t;confirmDel=null;editing=null;sheetOpen=false;hideToast();render();window.scrollTo(0,restoreScroll?(viewScrollPositions.get(t)||0):0);if(previous!==t){animateAppScreen();$('#pageAnnouncement').textContent=$('#viewTitle').textContent;}}
+function go(t,{restoreScroll=false}={}){const previous=tab;viewScrollPositions.set(tab,window.scrollY||0);if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t;confirmDel=null;sheetOpen=false;hideToast();render();window.scrollTo(0,restoreScroll?(viewScrollPositions.get(t)||0):0);if(previous!==t){animateAppScreen();$('#pageAnnouncement').textContent=$('#viewTitle').textContent;}}
 document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;if(b.dataset.tab===tab){window.scrollTo({top:0,behavior:motionBehavior()});return;}go(b.dataset.tab,{restoreScroll:true}); });
 $("#syncDot").addEventListener("click",e=>openProgressBackup(e.currentTarget));
 $("#syncWarn").addEventListener("click",()=>{ toast(storageProblems.size?'Device save failed. Keep this page open and back up progress.':"Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
@@ -3434,6 +3481,7 @@ function applySearch(){
   const status=$('#exSearchStatus');if(status){status.hidden=!q&&exCategory==='All';status.textContent=(q||exCategory!=='All')?(count?count+' '+(count===1?'ladder':'ladders')+' found':'No matching exercise ladders in this category'):'';}
 }
 $("#view").addEventListener("input",e=>{
+  if(e.target.id==='rName'&&editing){editing.name=e.target.value;editing.error='';e.target.removeAttribute('aria-invalid');const message=$('#routineValidation');if(message)message.textContent='';return;}
   if(e.target.id==="exSearch"){ exQuery=e.target.value; applySearch(); return; }
   if(e.target.closest('#addForm')&&document.querySelector('#addForm [aria-invalid="true"]'))validateCustomExercise();
   if(e.target.matches('[data-set-count]')){if(e.target.hasAttribute('aria-invalid'))LadderControls.fieldError(e.target,'');return;}
@@ -3481,6 +3529,7 @@ function saveSetCountInput(input){
   if(summary)summary.textContent=`${n} sets · ${focusOf(t.id)==='normal'?'Balanced priority':focusOf(t.id)==='more'?'Higher priority':'Lower priority'}`;
 }
 $("#view").addEventListener("keydown",e=>{
+  if(e.target.id==='rName'&&e.key==='Enter'){e.preventDefault();$('#routineEditor [data-ract="save"]')?.click();return;}
   if(!e.target.matches('[data-set-count]')||!['Tab','Enter'].includes(e.key))return;
   if(e.key==='Enter')e.preventDefault();
   // Commit before native Tab chooses its next target, so disabled bounds are skipped.
@@ -3494,7 +3543,10 @@ $("#view").addEventListener("change",e=>{
   const cb=e.target.closest("input[data-rt]"); if(!cb||!editing) return;
   editing.name=$("#rName")?.value ?? editing.name;
   cb.checked ? editing.items.add(cb.dataset.rt) : editing.items.delete(cb.dataset.rt);
-  const n=$("#rCount"); if(n) n.textContent=editing.items.size;
+  const selected=allTracks().filter(t=>editing.items.has(t.id));
+  const n=$("#rCount"); if(n) n.textContent=selected.length;
+  const hint=$('#routineSelectionHint');if(hint)hint.textContent=selected.some(t=>isHidden(t.id))?'Hidden exercises stay in this routine, but do not appear on Today.':'Select at least one exercise. Each uses your current step and set count.';
+  editing.error='';const message=$('#routineValidation');if(message)message.textContent='';
 });
 $("#view").addEventListener("click",e=>{
   const swapButton=e.target.closest("[data-swap]");if(swapButton){if(['apply','restore'].includes(swapButton.dataset.swap))closeWorkoutTools();handleSwap(swapButton);return;}
@@ -3505,8 +3557,8 @@ $("#view").addEventListener("click",e=>{
   const u=e.target.closest("[data-ui]");
   if(u){
     const a=u.dataset.ui;
-    if(a==='toolalternatives'){workoutToolsPanel='alternatives';render();$('#workoutTools .workout-tools-body').scrollTop=0;document.querySelector('.tool-back')?.focus({preventScroll:true});return;}
-    if(a==='toolmain'){workoutToolsPanel='main';render();$('#workoutTools .workout-tools-body').scrollTop=0;document.querySelector('[data-ui="toolalternatives"]')?.focus({preventScroll:true});return;}
+    if(a==='toolalternatives'||a==='tooladvanced'){workoutToolsPanel=a==='tooladvanced'?'advanced':'alternatives';render();const body=$('#workoutTools .workout-tools-body');if(body)body.scrollTop=0;document.querySelector(`#workoutTools [data-tool-panel="${workoutToolsPanel}"] .tool-back`)?.focus({preventScroll:true});return;}
+    if(a==='toolmain'){const returnAction=u.dataset.toolReturn||'tooladvanced';workoutToolsPanel='main';render();const body=$('#workoutTools .workout-tools-body');if(body)body.scrollTop=0;document.querySelector(`#workoutTools [data-ui="${returnAction}"]`)?.focus({preventScroll:true});return;}
     if(a==='workouttools'){workoutToolsReturn='workoutToolsButton';workoutToolsOpen=true;render();return;}
     if(a==='technique'){openTechnique();return;}
     if(a==='techniqueclose'){closeTechnique();return;}
@@ -3553,15 +3605,23 @@ $("#view").addEventListener("click",e=>{
   if(ra){
     const act=ra.dataset.ract;
     if(editing && $("#rName")) editing.name=$("#rName").value;
-    if(act==="new"){ editing={id:null,name:"",items:new Set()}; confirmDel=null; render(); window.scrollTo(0,0); return; }
-    if(act==="edit"){ const r=state.routines.find(x=>x.id===ra.dataset.r); if(!r) return; editing={id:r.id,name:r.name,items:new Set(r.items)}; confirmDel=null; render(); window.scrollTo(0,0); return; }
-    if(act==="cancel"){ editing=null; confirmDel=null; render(); return; }
+    if(act==="new"){ editing={id:null,name:"",items:new Set(),original:JSON.stringify(['',[]])}; confirmDel=null; render(); window.scrollTo(0,0); $('#rName')?.focus({preventScroll:true}); return; }
+    if(act==="edit"){ const r=state.routines.find(x=>x.id===ra.dataset.r); if(!r) return; editing={id:r.id,name:r.name,items:new Set(r.items),original:JSON.stringify([r.name,[...r.items].sort()])}; confirmDel=null; render(); window.scrollTo(0,0); $('#rName')?.focus({preventScroll:true}); return; }
+    if(!editing)return;
+    if(act==='keep'){editing.cancelPending=false;render();$('#rName')?.focus({preventScroll:true});return;}
+    if(act==="cancel"||act==='discard'){
+      if(act==='cancel'&&JSON.stringify([editing.name,[...editing.items].sort()])!==editing.original){editing.cancelPending=true;render();$('#routineEditor [data-ract="keep"]')?.focus();return;}
+      const previousId=editing.id;editing=null;confirmDel=null;routinesOpen=true;render();
+      ([...document.querySelectorAll('[data-ract="edit"]')].find(b=>b.dataset.r===previousId)||$('#routinesCard [data-ract="new"]'))?.focus();return;
+    }
     if(act==="save"){
-      const name=(editing.name||"").trim(); if(!name){ toast("Give the routine a name"); $("#rName")?.focus(); return; }
-      if(!editing.items.size){ toast("Pick at least one exercise"); return; }
       const items=allTracks().map(t=>t.id).filter(id=>editing.items.has(id));
+      const name=(editing.name||"").trim();
+      const validation=message=>{editing.error=message;$('#routineValidation').textContent=message;};
+      if(!name){validation('Give your routine a name.');$('#rName')?.setAttribute('aria-invalid','true');$('#rName')?.focus();return;}
+      if(!items.length){validation('Select at least one exercise before saving.');$('#routineEditor input[data-rt]')?.focus();return;}
       let id=editing.id;
-      if(id){ const r=state.routines.find(x=>x.id===id); r.name=name; r.items=items; }
+      if(id){ const r=state.routines.find(x=>x.id===id); if(!r){validation('This routine was removed on another device. Your choices are still here. Choose Save as new routine to keep them.');ra.textContent='Save as new routine';editing.id=null;return;} r.name=name; r.items=items; }
       else { id="u"+Date.now().toString(36); state.routines.unshift({id, name, items}); }
       editing=null; filter="r:"+id; store.set("bwl-filter",filter); commit(); go("today"); toast(`Showing ${name}.`); return;
     }
@@ -3569,7 +3629,7 @@ $("#view").addEventListener("click",e=>{
       const key="r:"+editing.id;
       if(confirmDel!==key){ confirmDel=key; render(); return; }
       state.routines=state.routines.filter(x=>x.id!==editing.id); if(filter===key) filter="All";
-      editing=null; confirmDel=null; commit(); render(); toast("Routine deleted."); return;
+      editing=null; confirmDel=null; commit(); routinesOpen=true;render();$('#routinesCard [data-ract="new"]')?.focus();toast("Routine deleted."); return;
     }
   }
   const b=e.target.closest("button[data-act]"); if(!b) return;
@@ -3600,8 +3660,20 @@ $("#view").addEventListener("click",e=>{
   if(act==="set"){ setLevel(t.id,+b.dataset.l); toast(`Starting at ${t.steps[+b.dataset.l][0]}`); }
   if(act==="focus"){ const selected=b.dataset.f;state.prefs.focus[t.id]=selected;commit();render();document.querySelector(`[data-act="focus"][data-t="${t.id}"][data-f="${selected}"]`)?.focus({preventScroll:true}); }
   if(act==="setsInc"||act==="setsDec"){const n=Math.min(6,Math.max(1,st[1]+(act==="setsInc"?1:-1)));updateTrackSets(t,n);(document.querySelector(`[data-act="${act}"][data-t="${t.id}"]:not(:disabled)`)||document.getElementById(`sets-${t.id}`))?.focus({preventScroll:true});}
-  if(act==="hide"){ state.prefs.hidden[t.id]=true; expandedEx.delete(t.id);libraryPanel=null;commit();render();document.querySelector('[data-panel="hidden"]')?.focus({preventScroll:true});toast(`${t.name} hidden. Restore it from Hidden exercises.`); }
-  if(act==="show"){ const remaining=[...document.querySelectorAll('#librarySheet [data-act="show"]')],position=remaining.indexOf(b);delete state.prefs.hidden[t.id];commit();render();const next=[...document.querySelectorAll('#librarySheet [data-act="show"]')];(next[Math.min(position,next.length-1)]||document.querySelector(`[data-ui="ex"][data-t="${t.id}"]`))?.focus({preventScroll:true});toast(`${t.name} is back on Today.`); }
+  if(act==="hide"||act==="show"){
+    const hidden=act==='hide',remaining=[...document.querySelectorAll('#librarySheet [data-act="show"]')],position=remaining.indexOf(b);
+    if(hidden){state.prefs.hidden[t.id]=true;expandedEx.delete(t.id);libraryPanel=null;}else delete state.prefs.hidden[t.id];
+    commit();render();
+    const next=[...document.querySelectorAll('#librarySheet [data-act="show"]')];
+    (hidden?document.querySelector('[data-panel="hidden"]'):next[Math.min(position,next.length-1)]||document.querySelector(`[data-ui="ex"][data-t="${t.id}"]`))?.focus({preventScroll:true});
+    hideToast();LadderControls.toast(hidden?`${t.name} hidden from Today.`:`${t.name} is back on Today.`,{actionLabel:'Undo',action:()=>{
+      if(!findTrack(t.id)||isHidden(t.id)!==hidden){toast('This exercise has changed since that action.');return;}
+      if(hidden)delete state.prefs.hidden[t.id];else state.prefs.hidden[t.id]=true;
+      libraryPanel=null;commit();render();
+      (document.querySelector(`[data-ui="ex"][data-t="${t.id}"]`)||document.querySelector('[data-panel="hidden"]'))?.focus({preventScroll:true});
+      toast(hidden?`${t.name} restored.`:`${t.name} hidden again.`);
+    }});
+  }
   if(act==="del"){
     if(confirmDel!==t.id){ confirmDel=t.id;render();document.querySelector(`[data-act="del"][data-t="${t.id}"]`)?.focus({preventScroll:true});return; }
     state.custom=state.custom.filter(c=>c.id!==t.id); state.routines.forEach(r=>r.items=r.items.filter(id=>id!==t.id)); delete state.prefs.focus[t.id]; delete state.prefs.sets[t.id]; confirmDel=null;
