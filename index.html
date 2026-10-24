@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-23-recovery-timers',events=[];
+ const RELEASE='2026-10-24-header-controls',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -1667,6 +1667,19 @@ body.hold-review-open{overflow:hidden}
 .hold-review-actions{display:grid;gap:var(--space-control);margin-top:var(--space-section)}
 .hold-review-actions button{width:100%;white-space:normal}
 
+/* One global entry point; workout controls stay beside their own summary. */
+body[data-view] header.top .appearance-toggle{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-width:0;min-height:var(--target-min);padding:8px 12px;margin-left:auto;flex:none;border:1px solid var(--color-stroke);background:var(--color-surface);color:var(--color-ink-secondary);border-radius:var(--button-radius);font-size:var(--type-control);line-height:1.4}
+header.top .appearance-toggle>svg{width:18px;height:18px;flex:none}
+header.top .appearance-toggle .dot{display:none}
+header.top .appearance-toggle[data-attention="true"] .dot{display:block;position:absolute;inset:3px 3px auto auto;width:7px;height:7px;min-width:0;min-height:0;box-shadow:0 0 0 2px var(--color-surface);background:var(--color-critical);border-radius:50%}
+header.top .appearance-toggle .dot::after{content:none}
+body[data-view="today"] .focus-meta{justify-content:flex-start;gap:var(--space-control)}
+body[data-view="today"] .focus-meta>span{flex:0 1 auto}
+body[data-view] .workout-tools-button{display:inline-flex;gap:8px;white-space:nowrap;flex:none;margin:0}
+body[data-view] .workout-tools-button svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:18px;height:18px}
+.settings-save-status{font-size:var(--type-control);line-height:1.5;color:var(--color-ink-secondary);margin:0 0 var(--space-control);overflow-wrap:break-word}
+.settings-save-status.needs-attention{color:var(--color-critical)}
+
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
 
@@ -1840,8 +1853,7 @@ body.library-sheet-open{overflow:hidden}
     <img src="img/icon.webp" alt="Bodyweight Ladder" width="34" height="34">
     <h1 id="viewTitle">Today</h1>
     <span class="date" id="today"></span>
-    <button class="appearance-toggle" aria-label="App settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-.5 2-1.7 1L5 5.5 3 9l1.5 1.5v2L3 14l2 3.5 1.8-.5 1.7 1 .5 2h4l.5-2 1.7-1 1.8.5 2-3.5-1.5-1.5v-2L19 9l-2-3.5-1.8.5-1.7-1L13 3Z"/><circle cx="11" cy="11.5" r="3"/></svg></button>
-    <button id="syncDot" class="dot local" aria-label="Storage status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H5V3h1m9 0v5h4M8 14l3 3 5-6"/></svg></button>
+    <button class="appearance-toggle" aria-label="Settings" aria-haspopup="dialog" aria-controls="appSettings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-.5 2-1.7 1L5 5.5 3 9l1.5 1.5v2L3 14l2 3.5 1.8-.5 1.7 1 .5 2h4l.5-2 1.7-1 1.8.5 2-3.5-1.5-1.5v-2L19 9l-2-3.5-1.8.5-1.7-1L13 3Z"/><circle cx="11" cy="11.5" r="3"/></svg><span>Settings</span><span id="syncDot" class="dot local" aria-hidden="true"></span></button>
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
   <section id="cloudHistoryNotice" class="cloud-history-notice" role="status" hidden><strong>Your account keeps recent history.</strong><p>Your complete history stays on this device. Download a backup to move older history to another device.</p><button data-backup="open">Back up complete history</button></section>
@@ -2404,6 +2416,7 @@ function setNote(){
   const dot=$("#syncDot"); dot.className="dot "+sync; dot.title=storageMessage; dot.setAttribute("aria-label",storageMessage);
   $("#syncWarn").hidden = sync!=="error";
   updateStorageWarning();
+  updateSettingsStatus();
 }
 
 /* ---------- logic ---------- */
@@ -3015,7 +3028,7 @@ function openTechnique(){
 function mountWorkoutTools(previous={}){
  const shell=$('.focus-shell');if(!shell)return;
  const button=document.createElement('button');button.id='workoutToolsButton';button.type='button';button.className='workout-tools-button';button.dataset.ui='workouttools';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','workoutTools');button.setAttribute('aria-expanded',String(workoutToolsOpen));
- button.innerHTML='<span>Options</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>';
+ button.setAttribute('aria-label','Workout options');button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M9 4v6M15 14v6"/></svg><span>Workout</span>';
  const settings=$('.focus-edit');shell.querySelector('.focus-meta')?.append(button);
  const dialog=document.createElement('dialog');dialog.id='workoutTools';dialog.className='workout-tools';dialog.setAttribute('aria-labelledby','workoutToolsTitle');
  dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
@@ -3589,12 +3602,12 @@ function applyAppControls(root=document){
   else if(button.id==='syncDot')role='status';
   else if(button.matches('.primary'))role='primary';
   else if(button.matches('.danger,.xdel'))role='destructive';
-  else if(button.matches('.appearance-toggle,[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
+  else if(button.matches('[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
   else if(button.matches('.focus-stepper')||button.closest('.pm,.mini-step'))role='stepper';
   else if(button.matches('.onboard-choice'))role='selection';
   else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice'))role='choice';
   else if(button.matches('.exrow,.mini,.opt'))role='row';
-  else if(button.matches('.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
+  else if(button.matches('.appearance-toggle,.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
   button.dataset.control=role;
   if(role==='choice'){
    const group=button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice');
@@ -3692,11 +3705,16 @@ function applyAppearance(value){
  store.set('bwl-appearance',theme);
  document.querySelectorAll('[data-appearance]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.appearance===theme)));
 }
+function updateSettingsStatus(){
+ const trigger=document.querySelector('.appearance-toggle'),attention=storageProblems.size>0||['error','capacity','readonly'].includes(sync)||state.historyPartial===true;
+ trigger.dataset.attention=String(attention);trigger.setAttribute('aria-label',attention?'Settings, progress needs attention':'Settings');
+ const status=document.querySelector('#settingsSaveStatus');if(status){status.textContent=$('#saveNote').textContent;status.classList.toggle('needs-attention',attention);}
+}
 function openAppearance(event){
  if(document.querySelector('.app-preferences'))return;
  const opener=event?.currentTarget||document.activeElement;
  const dialog=document.createElement('dialog');dialog.id='appSettings';dialog.className='app-preferences app-settings';dialog.setAttribute('aria-labelledby','appearanceTitle');
- dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">App settings</h2><button aria-label="Close app settings" autofocus>×</button></div><section class="settings-section"><h3>Appearance</h3><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p></section><section class="settings-section"><h3>Your progress</h3><button class="settings-row" data-settings-backup aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Backup & restore</span><span class="settings-row-detail">Download your progress or restore a saved copy.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Help</h3><button class="settings-row" data-display-support aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Report a problem</span><span class="settings-row-detail">Open a private email draft. No account needed.</span></span><span aria-hidden="true">›</span></button></section><button class="primary" data-display-done>Done</button>';
+ dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">App settings</h2><button aria-label="Close app settings" autofocus>×</button></div><section class="settings-section"><h3>Appearance</h3><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p></section><section class="settings-section"><h3>Your progress</h3><p id="settingsSaveStatus" class="settings-save-status" role="status"></p><button class="settings-row" data-settings-backup aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Backup & restore</span><span class="settings-row-detail">Download your progress or restore a saved copy.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Help</h3><button class="settings-row" data-display-support aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Report a problem</span><span class="settings-row-detail">Open a private email draft. No account needed.</span></span><span aria-hidden="true">›</span></button></section><button class="primary" data-display-done>Done</button>';
  const close=()=>{if(dialog.open&&dialog.close)dialog.close();else dialog.dispatchEvent(new Event('close'));};
  dialog.addEventListener('close',()=>{dialog.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
  dialog.querySelector('.preferences-head button').addEventListener('click',close);
@@ -3705,7 +3723,7 @@ function openAppearance(event){
  dialog.querySelector('[data-display-support]').addEventListener('click',e=>window.LadderSupport.open(e.currentTarget));
  dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
  dialog.addEventListener('click',e=>{const choice=e.target.closest('[data-appearance]');if(choice){applyAppearance(choice.dataset.appearance);return;}if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
- document.body.append(dialog);applyComponentSystem(dialog);applyAppearance(store.get('bwl-appearance','system'));document.body.classList.add('preferences-open');
+ document.body.append(dialog);applyComponentSystem(dialog);applyAppearance(store.get('bwl-appearance','system'));updateSettingsStatus();document.body.classList.add('preferences-open');
  if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');dialog.querySelector('button').focus({preventScroll:true});
 }
 
@@ -3718,7 +3736,6 @@ function animateAppScreen(){
 
 function go(t,{restoreScroll=false}={}){const previous=tab;viewScrollPositions.set(tab,window.scrollY||0);if(t==='ladders'&&tab!=='ladders')rotateLibraryHero();workoutToolsOpen=false;document.body.classList.remove('workout-tools-open');tab=t;confirmDel=null;sheetOpen=false;hideToast();render();window.scrollTo(0,restoreScroll?(viewScrollPositions.get(t)||0):0);if(previous!==t){animateAppScreen();$('#pageAnnouncement').textContent=$('#viewTitle').textContent;}}
 document.querySelector("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;if(b.dataset.tab===tab){window.scrollTo({top:0,behavior:motionBehavior()});return;}go(b.dataset.tab,{restoreScroll:true}); });
-$("#syncDot").addEventListener("click",e=>openProgressBackup(e.currentTarget));
 $("#syncWarn").addEventListener("click",()=>{ toast(storageProblems.size?'Device save failed. Keep this page open and back up progress.':"Your workouts are saved on this phone. They'll sync when the connection is back."); pushCloud(); });
 function applySearch(){
   document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===exCategory)));

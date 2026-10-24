@@ -314,3 +314,16 @@ body.hold-review-open{overflow:hidden}
 .hold-review .hold-review-number{display:block;box-sizing:border-box;width:100%;min-height:var(--target-min);margin-block:var(--space-control);font-size:var(--type-title);font-variant-numeric:tabular-nums}
 .hold-review-actions{display:grid;gap:var(--space-control);margin-top:var(--space-section)}
 .hold-review-actions button{width:100%;white-space:normal}
+
+/* One global entry point; workout controls stay beside their own summary. */
+body[data-view] header.top .appearance-toggle{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-width:0;min-height:var(--target-min);padding:8px 12px;margin-left:auto;flex:none;border:1px solid var(--color-stroke);background:var(--color-surface);color:var(--color-ink-secondary);border-radius:var(--button-radius);font-size:var(--type-control);line-height:1.4}
+header.top .appearance-toggle>svg{width:18px;height:18px;flex:none}
+header.top .appearance-toggle .dot{display:none}
+header.top .appearance-toggle[data-attention="true"] .dot{display:block;position:absolute;inset:3px 3px auto auto;width:7px;height:7px;min-width:0;min-height:0;box-shadow:0 0 0 2px var(--color-surface);background:var(--color-critical);border-radius:50%}
+header.top .appearance-toggle .dot::after{content:none}
+body[data-view="today"] .focus-meta{justify-content:flex-start;gap:var(--space-control)}
+body[data-view="today"] .focus-meta>span{flex:0 1 auto}
+body[data-view] .workout-tools-button{display:inline-flex;gap:8px;white-space:nowrap;flex:none;margin:0}
+body[data-view] .workout-tools-button svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:18px;height:18px}
+.settings-save-status{font-size:var(--type-control);line-height:1.5;color:var(--color-ink-secondary);margin:0 0 var(--space-control);overflow-wrap:break-word}
+.settings-save-status.needs-attention{color:var(--color-critical)}
