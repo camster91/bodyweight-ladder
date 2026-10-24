@@ -340,3 +340,23 @@ body[data-view] .workout-tools-button svg{fill:none;stroke:currentColor;stroke-w
  body[data-view="today"] .focus-stage[data-phase="rest"] .focus-clock{font-size:44px;letter-spacing:-2px}
  body[data-view="today"] .focus-stage[data-phase="rest"] .focus-next{font-size:12px;line-height:1.5}
 }
+
+/* Timed holds keep the movement visible rather than becoming an anonymous clock. */
+.hold-context{display:grid;grid-template-columns:128px minmax(0,1fr);align-items:center;gap:var(--space-inset);width:min(100%,520px);text-align:left}
+.hold-context>div{min-width:0}.hold-context h2{font-size:clamp(24px,4vw,32px);line-height:1.15;overflow-wrap:break-word}
+.hold-context .exercise-thumb{width:128px;height:96px;object-fit:cover;flex:none;margin:0}
+.hold-context .focus-eyebrow{margin:0 0 4px}.hold-context .focus-howto{min-height:var(--target-min);padding:4px 0}
+.hold-form-cue{font-size:var(--type-control);line-height:1.5;color:var(--color-ink-secondary);text-align:center;max-width:440px;margin:0}
+body[data-view="today"] .focus-stage[data-running-hold="true"] .hold-running{gap:var(--space-control);width:100%}
+@media(max-width:699px) and (max-height:699px){
+ body[data-view="today"] .focus-stage[data-running-hold="true"]{padding-top:4px;min-height:0}
+ .hold-context{grid-template-columns:88px minmax(0,1fr);gap:12px}
+ .hold-context .exercise-thumb{width:88px;height:72px}
+ .hold-context h2{font-size:24px}
+ body[data-view="today"] .focus-stage[data-running-hold="true"] .hold-running{gap:8px}
+ body[data-view="today"] .focus-stage[data-running-hold="true"] .focus-clock{font-size:56px;letter-spacing:-2px}
+ .hold-form-cue{font-size:12px}
+}
+.hold-guide-notice{padding:var(--space-control);margin-bottom:var(--space-inset);background:var(--color-selected);border-radius:var(--button-radius)}
+/* During a hold, planning stays out of the movement's way. */
+body[data-view="today"]:has(.hold-running) .plan-summary{display:none}
