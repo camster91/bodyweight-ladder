@@ -360,3 +360,10 @@ body[data-view="today"] .focus-stage[data-running-hold="true"] .hold-running{gap
 .hold-guide-notice{padding:var(--space-control);margin-bottom:var(--space-inset);background:var(--color-selected);border-radius:var(--button-radius)}
 /* During a hold, planning stays out of the movement's way. */
 body[data-view="today"]:has(.hold-running) .plan-summary{display:none}
+
+body.hold-preparation-open{overflow:hidden}
+.hold-preparation .exercise-thumb{display:block;width:100%;height:clamp(120px,22svh,220px);object-fit:contain;margin:0 0 var(--space-control);background:var(--art-bg)}
+.hold-preparation .workout-tools-body>p{font-size:var(--type-control);line-height:1.5;margin:12px 0}
+.hold-preparation-goal{font-weight:650;color:var(--color-action)}
+.hold-preparation-actions{display:grid;gap:8px;margin-top:var(--space-inset)}
+.hold-preparation-actions button{width:100%;white-space:normal}
