@@ -303,3 +303,14 @@ body.end-workout-open{overflow:hidden}
  body[data-view="today"] .focus-counter{margin-block:var(--scale-space-1)}
  body[data-view="today"] .focus-shell .focus-stage:has(.focus-counter) .focus-target{margin-block:0}
 }
+
+/* Native workout selector shares modal sizing and backdrop behavior. */
+dialog.sheet{box-sizing:border-box;top:auto;bottom:0;width:min(560px,100%);max-width:100%;margin:0 auto;border:1px solid var(--color-stroke);color:var(--color-ink);max-height:85dvh;overscroll-behavior:contain}
+dialog.sheet::backdrop{background:rgba(5,17,23,.55);backdrop-filter:blur(3px)}
+body:has(#workoutFilterSheet[open]){overflow:hidden}
+
+/* Long timer results need an explicit duration review before recording. */
+body.hold-review-open{overflow:hidden}
+.hold-review .hold-review-number{display:block;box-sizing:border-box;width:100%;min-height:var(--target-min);margin-block:var(--space-control);font-size:var(--type-title);font-variant-numeric:tabular-nums}
+.hold-review-actions{display:grid;gap:var(--space-control);margin-top:var(--space-section)}
+.hold-review-actions button{width:100%;white-space:normal}

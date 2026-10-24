@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-23-review-round-3',events=[];
+ const RELEASE='2026-10-23-recovery-timers',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -1656,6 +1656,17 @@ body.end-workout-open{overflow:hidden}
  body[data-view="today"] .focus-shell .focus-stage:has(.focus-counter) .focus-target{margin-block:0}
 }
 
+/* Native workout selector shares modal sizing and backdrop behavior. */
+dialog.sheet{box-sizing:border-box;top:auto;bottom:0;width:min(560px,100%);max-width:100%;margin:0 auto;border:1px solid var(--color-stroke);color:var(--color-ink);max-height:85dvh;overscroll-behavior:contain}
+dialog.sheet::backdrop{background:rgba(5,17,23,.55);backdrop-filter:blur(3px)}
+body:has(#workoutFilterSheet[open]){overflow:hidden}
+
+/* Long timer results need an explicit duration review before recording. */
+body.hold-review-open{overflow:hidden}
+.hold-review .hold-review-number{display:block;box-sizing:border-box;width:100%;min-height:var(--target-min);margin-block:var(--space-control);font-size:var(--type-title);font-variant-numeric:tabular-nums}
+.hold-review-actions{display:grid;gap:var(--space-control);margin-top:var(--space-section)}
+.hold-review-actions button{width:100%;white-space:normal}
+
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
 
@@ -1834,7 +1845,7 @@ body.library-sheet-open{overflow:hidden}
   </header>
   <button id="syncWarn" class="syncwarn" hidden>Not synced yet · saved on this phone</button>
   <section id="cloudHistoryNotice" class="cloud-history-notice" role="status" hidden><strong>Your account keeps recent history.</strong><p>Your complete history stays on this device. Download a backup to move older history to another device.</p><button data-backup="open">Back up complete history</button></section>
-  <section id="storageWarning" class="storage-warning" role="alert" hidden><strong>Some progress isn’t saved on this device.</strong><p id="storageWarningText"></p><button data-backup="open">Back up progress</button><button data-backup="retry">Try saving again</button></section>
+  <section id="storageWarning" class="storage-warning" role="alert" hidden><strong>Some progress isn’t saved on this device.</strong><p id="storageWarningText"></p><button data-backup="open">Back up progress</button><button data-backup="retry">Try saving again</button><button data-recovery-download hidden>Download recovery copy</button></section>
   <main id="view" tabindex="-1"></main>
   <div class="backup-entry"><button data-backup="open">Back up or restore progress</button></div>
   <p class="note" id="saveNote">Loading your progress…</p>
@@ -2268,21 +2279,67 @@ const sameData = (a,b) => JSON.stringify(a)===JSON.stringify(b);
 /* ---------- storage ---------- */
 let state = blank();
 const storageProblems=new Map();
-function storageProblem(key,message){storageProblems.set(key,message);updateStorageWarning();window.LadderSupport?.record('storage');}
+const storageRecovery={active:false,dirty:false,rawState:undefined,rawFocus:undefined};
+function captureRecoveryRaw(){
+ for(const [key,field]of [['bwl-state','rawState'],['bwl-focus','rawFocus']])if(storageRecovery[field]===undefined)try{storageRecovery[field]=localStorage.getItem(key);}catch(e){}
+}
+function quarantineSavedProgress(raw){
+ const firstFailure=!storageRecovery.active;
+ storageRecovery.active=true;if(raw!==undefined)storageRecovery.rawState=raw;captureRecoveryRaw();
+ // loadLocal is called only during boot, before the first render or user edits.
+ // The saved focus copy was loaded before main-state boot. Keep it in protected storage,
+ // rather than treating its old recorded sets as new work done after this failure.
+ if(firstFailure){focusRun=null;focusUndo=null;}
+ storageProblem('bwl-state','Saved progress could not be read. Original progress and unfinished-workout storage are protected from writes. Changes on this page are temporary.');
+}
+function recoveryHasTemporaryWork(){
+ return storageRecovery.dirty||!!hold||(focusRun?.items||[]).some(x=>x.values?.length||x.entry||x.value!==undefined||sessionHasDraft(x));
+}
+function retrySavedProgress(){
+ if(!storageRecovery.active)return false;
+ if(recoveryHasTemporaryWork()){storageProblem('bwl-state','Temporary work is present. Saved progress cannot be reopened without risking those changes. Download a recovery copy containing both copies and keep this page open.');return false;}
+ let raw,rawFocus,recovered,recoveredFocus=null;
+ try{
+  raw=localStorage.getItem('bwl-state');rawFocus=localStorage.getItem('bwl-focus');
+  if(raw===null)throw new Error('The saved progress is currently unavailable.');
+  recovered=parseSavedState(raw);
+  if(rawFocus!==null){const r=JSON.parse(rawFocus);if(r!==null&&(!r||r.v!==1||!Array.isArray(r.items)||r.items.length>100))throw new Error('The saved unfinished workout is not readable.');recoveredFocus=r;}
+ }catch(e){captureRecoveryRaw();storageProblem('bwl-state','Saved progress still cannot be reopened. Download a recovery copy and keep this page open. Original storage remains protected.');return false;}
+ // Reading and validation succeeded before either in-memory copy is replaced. No storage writes are needed here.
+ state=recovered;focusRun=recoveredFocus;focusUndo=null;idx=null;remember();
+ storageRecovery.active=false;storageRecovery.dirty=false;storageProblems.delete('bwl-state');storageProblems.delete('bwl-focus');
+ render();setNote();toast('Saved progress reopened. Keep a backup before leaving.');return true;
+}
+function downloadRecoveryCopy(){
+ captureRecoveryRaw();
+ const payload={app:'bodyweight-ladder-recovery',recoveryVersion:1,createdAt:new Date().toISOString(),notice:'Recovery material only. This file is not accepted by Merge backup. Keep it private; it may contain progress and unfinished workout details.',original:{stateReadable:storageRecovery.rawState!==undefined,focusReadable:storageRecovery.rawFocus!==undefined,state:storageRecovery.rawState??null,focus:storageRecovery.rawFocus??null},temporary:{state,focus:focusRun,drafts}};
+ const blob=new Blob([JSON.stringify(payload)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='bodyweight-ladder-recovery-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function storageProblem(key,message){storageProblems.set(key,message);setNote();window.LadderSupport?.record('storage');}
 function updateStorageWarning(){
   const warning=$('#storageWarning');if(!warning)return;
   warning.hidden=!storageProblems.size;
-  $('#storageWarningText').textContent=[...storageProblems.values()].join(' ')+' Keep this page open and download a backup before leaving. Backups include completed workouts, not unfinished sets.';
+  $('#storageWarningText').textContent=[...storageProblems.values()].join(' ')+(storageRecovery.active?' Keep this page open. A recovery copy includes original raw storage when readable and your temporary work; it is not a normal restorable backup. Keep it private.':' Keep this page open and download a backup before leaving. Backups include completed workouts, not unfinished sets.');
+  warning.querySelector('[data-backup="retry"]').textContent=storageRecovery.active?'Retry saved progress':'Try saving again';
+  const recoveryButton=warning.querySelector('[data-recovery-download]');if(recoveryButton)recoveryButton.hidden=!storageRecovery.active;
   const dot=$('#syncDot');dot.classList.toggle('error',!!storageProblems.size||sync==='error');
   dot.setAttribute('aria-label',storageProblems.size?'Progress may not be saved. Back up progress.':dot.title||'Storage status');
 }
 function writeLocal(key,value){
-  try{localStorage.setItem(key,value);if(localStorage.getItem(key)!==value)throw new Error('Storage verification failed');storageProblems.delete(key);updateStorageWarning();return true;}
+  if(storageRecovery.active&&['bwl-state','bwl-focus'].includes(key)){updateStorageWarning();return false;}
+  try{localStorage.setItem(key,value);if(localStorage.getItem(key)!==value)throw new Error('Storage verification failed');storageProblems.delete(key);setNote();return true;}
   catch(e){storageProblem(key,key==='bwl-focus'?'Your unfinished workout may be lost if you close or reload this page.':'Changes could not be saved. Browser storage may be full or unavailable.');return false;}
 }
+function parseSavedState(raw){
+ const saved=JSON.parse(raw);
+ if(!saved||typeof saved!=='object'||Array.isArray(saved)||!Array.isArray(saved.log))throw new Error('Saved progress has an invalid structure.');
+ return normalize(saved);
+}
 function loadLocal(){
-  try{const raw=localStorage.getItem('bwl-state');if(raw)return normalize(JSON.parse(raw));}
-  catch(e){storageProblem('bwl-state','Saved progress could not be read. Existing browser data has not been replaced.');}
+  let raw;
+  try{raw=localStorage.getItem('bwl-state');if(raw!==null)return parseSavedState(raw);}
+  catch(e){quarantineSavedProgress(raw);}
   return null;
 }
 function saveLocal(){return writeLocal('bwl-state',JSON.stringify(state));}
@@ -2292,6 +2349,7 @@ let lastFlat = {};
 function stampNow(){ return Math.max(Date.now(), ...Object.values(state.stamps).map(n=>n+1)); }
 function remember(){ lastFlat = flatten(state); }
 function commit(weak){
+  if(storageRecovery.active)storageRecovery.dirty=true;
   const f=flatten(state), now=weak ? 1 : stampNow();
   for(const k of new Set([...Object.keys(f),...Object.keys(lastFlat)])) if(f[k]!==lastFlat[k]) state.stamps[k]=now;
   lastFlat=f; state.updated=Date.now(); saveLocal(); pushCloud();
@@ -2305,11 +2363,12 @@ function cloudSnapshot(source){
  return body;
 }
 async function pushCloud(){
-  if(!docRef) return;                         // not connected yet: the first sync merges local changes
+  if(storageRecovery.active||!docRef)return; // Quarantined originals and temporary state never upload.
   if(writing){ again=true; return; }
   writing=true; clearTimeout(retryTimer);
   try{
     const body=cloudSnapshot(state);
+    if(new Blob([JSON.stringify(body)]).size>240000){writing=false;again=false;setSync('capacity');return;}
     await docRef.set(body);
     cloudHistoryLimited=body.historyPartial===true;
     tries=0; setSync("ok");
@@ -2328,18 +2387,20 @@ function setNote(){
     error:"Not synced yet. Saved on this phone and retrying.",
     local:"Progress saves in this browser only.",
     starting:"Loading your progress…",
-    readonly:"Can't save to your account here. Progress saves on this phone."
+    readonly:"Can't save to your account here. Progress saves on this phone.",
+    capacity:"This history exceeds the account copy’s capacity. It has not been uploaded. Keep this page open and back up your available progress. Sync can retry after the saved data changes."
   }[sync];
   const partial=state.historyPartial===true;
-  const storageMessage=partial?msg+' This device may have only part of your history. Restore a backup from a device holding the older records.':msg;
+  const localProblem=storageRecovery.active?'Saved storage is protected. Work on this page is temporary until recovery.':storageProblems.size?'Some changes are only in memory; device saving failed. Keep this page open and download a backup.':msg;
+  const storageMessage=partial?localProblem+' This device may have only part of your history. Restore a backup from a device holding the older records.':localProblem;
   $("#saveNote").textContent = storageMessage;
   const cloudNotice=$("#cloudHistoryNotice");if(cloudNotice){
-    cloudNotice.hidden=!cloudHistoryLimited&&!partial;
-    cloudNotice.querySelector('strong').textContent=partial?'This device may have only part of your history.':'Your account keeps recent history.';
-    cloudNotice.querySelector('p').textContent=partial?'An account or backup copy may omit older records. Merge a backup from a device with the missing history. Downloads here include only the records available on this device.':'Your complete history stays on this device. Download a backup to move older history to another device.';
+    cloudNotice.hidden=!cloudHistoryLimited&&!partial&&sync!=='capacity';
+    cloudNotice.querySelector('strong').textContent=sync==='capacity'?'Account capacity reached.':partial?'This device may have only part of your history.':'Your account keeps recent history.';
+    cloudNotice.querySelector('p').textContent=sync==='capacity'?'The account copy is too large to upload, even after keeping only recent exercise records. No local history or deletion markers were removed. Download a backup; changes to saved data can allow sync to resume.':partial?'An account or backup copy may omit older records. Merge a backup from a device with the missing history. Downloads here include only the records available on this device.':'Your complete history stays on this device. Download a backup to move older history to another device.';
     cloudNotice.querySelector('button').textContent=partial?'Back up or merge history':'Back up complete history';
   }
-  $("#saveNote").classList.toggle("warn", sync==="error");
+  $("#saveNote").classList.toggle("warn", sync==="error"||sync==="capacity"||!!storageProblems.size);
   const dot=$("#syncDot"); dot.className="dot "+sync; dot.title=storageMessage; dot.setAttribute("aria-label",storageMessage);
   $("#syncWarn").hidden = sync!=="error";
   updateStorageWarning();
@@ -2515,6 +2576,7 @@ function planProgressRestore(backup){
   return {next,added:next.log.filter(e=>!state.log.some(old=>entryId(old)===entryId(e))).length,removed:state.log.filter(e=>!next.log.some(n=>entryId(n)===entryId(e))).length};
 }
 function downloadProgressBackup(){
+  if(storageRecovery.active)throw new Error('Original saved progress is unreadable. Download the recovery copy instead; a normal backup here would contain only temporary progress.');
   const text=JSON.stringify(makeProgressBackup()),blob=new Blob([text],{type:'application/json'});
   if(blob.size>BACKUP_LIMIT)throw new Error('Your complete history exceeds the 5 MB backup limit. No partial backup was downloaded. Keep this page open; your existing history has not been removed.');
   // Never offer a file this version would reject when the person needs it later.
@@ -2523,6 +2585,7 @@ function downloadProgressBackup(){
   a.href=url;a.download='bodyweight-ladder-backup-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
 function applyProgressRestore(backup){
+  if(storageRecovery.active)throw new Error('Saved storage is protected after a read failure. Download a recovery copy before attempting to recover the original progress. Merge is disabled until that read succeeds.');
   if(hold||focusRun?.phase==='rest'||focusRun?.items.some(x=>!x.entry&&(x.values?.length||sessionHasDraft(x))))throw new Error('Finish the current exercise before restoring. Your unfinished sets and edits stay on this device.');
   const plan=planProgressRestore(backup);
   // Do not change in-memory history or sync until the combined copy is saved and read back.
@@ -2537,6 +2600,7 @@ function openProgressBackup(opener){
   if($('#progressBackup'))return;
   const d=document.createElement('dialog');d.id='progressBackup';d.className='app-preferences progress-backup';d.setAttribute('aria-labelledby','backupTitle');
   d.innerHTML='<div class="preferences-head"><h2 id="backupTitle">Protect your progress</h2><button aria-label="Close backup and restore" autofocus>×</button></div><p>Your progress is stored in this browser. Clearing site data or changing devices can remove it.</p><section><h3>Keep a backup</h3><p>Download your complete saved exercise history, exercise levels, custom exercises and routines. History is not automatically removed on this device. Backups support up to 5 MB. Unfinished sets, workout time and display preferences stay on this device.</p><button class="primary" data-backup-download>Download backup</button><p class="cue">Keep this file somewhere private. Files are read on your device. Restored progress is saved in this browser.</p></section><section><h3>Restore a backup</h3><label for="backupFile">Choose a Bodyweight Ladder JSON backup</label><input id="backupFile" type="file" accept=".json,application/json"><div id="backupPreview" hidden></div><p id="backupMessage" role="status" aria-live="polite"></p><button class="primary" data-backup-apply disabled>Merge backup</button></section>';
+  if(storageRecovery.active){const recovery=document.createElement('section');recovery.innerHTML='<h3>Recover unreadable saved progress</h3><p>Original browser storage is protected. Changes on this page are temporary. Download raw storage and temporary work together for recovery. This private file cannot be restored with Merge backup.</p><button data-recovery-download>Download recovery copy</button>';d.querySelector('section').before(recovery);}
   if(state.historyPartial){const coverage=document.createElement('p');coverage.className='cue';coverage.textContent='This device may have only part of your history. A download preserves all records available here and keeps that warning. Merge another backup to add missing records; merging cannot prove that all history is present.';d.querySelector('section').before(coverage);}
   let pending=null,selection=0;
   const message=d.querySelector('#backupMessage'),preview=d.querySelector('#backupPreview'),apply=d.querySelector('[data-backup-apply]');
@@ -2546,7 +2610,7 @@ function openProgressBackup(opener){
   d.querySelector('.preferences-head button').onclick=()=>d.close();d.addEventListener('close',()=>{selection++;d.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
   document.body.append(d);applyComponentSystem(d);document.body.classList.add('preferences-open');if(d.showModal)d.showModal();else d.setAttribute('open','');d.querySelector('button').focus();
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-backup]');if(!b)return;if(b.dataset.backup==='retry'){const saved=saveLocal(),session=persistFocus();setNote();toast(saved&&session?'Progress saved on this device.':'Save still failed. Download a backup before leaving.');}else openProgressBackup(b);});
+document.addEventListener('click',e=>{const recovery=e.target.closest('[data-recovery-download]');if(recovery){try{downloadRecoveryCopy();toast('Recovery download requested. Check Downloads. This is not a normal backup.');}catch(err){toast('Recovery download could not start. Keep this page open.');}return;}const b=e.target.closest('[data-backup]');if(!b)return;if(b.dataset.backup==='retry'){if(storageRecovery.active){retrySavedProgress();return;}const saved=saveLocal(),session=persistFocus();setNote();toast(saved&&session?'Progress saved on this device.':'Save still failed. Download a backup before leaving.');}else openProgressBackup(b);});
 const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
 let minutes = +store.get("bwl-min","20");
 const MIN_OPTS=[5,10,20,30,60,0];
@@ -3035,13 +3099,14 @@ function focusView(plan,top,more,recent){
   const away=state.log.length?Math.floor((Date.now()-index().newest)/DAY):0;
   if(away>=7)html+=`<p class="focus-next">Welcome back. Targets repeat your last results within the exercise range, so ease back in.</p>`;
   if(!t){return html+`<section class="focus-stage"><div class="focus-rest"><h2>All caught up.</h2><p class="focus-next">Nothing due here. Rest, or choose another workout.</p></div></section></div>`+sheet();}
+  const confirmingZero=confirmZero===t.id&&x.value===0&&x.values.length===st[1]-1&&x.values.every(v=>v===0);
   const stageKey=[r.phase,r.at,x.values.length,runningHold?'hold-'+hold.side:'work'].join(':');
   html+=`<section class="focus-stage" data-stage="${stageKey}" data-phase="${r.phase}" aria-label="Current set"><p class="focus-saved" id="focusSaved" aria-hidden="true">${focusNotice&&focusNotice.until>Date.now()?esc(focusNotice.text)+' ✓':''}</p>`;
   if(r.phase==='finished')html+=`<div class="focus-rest focus-finish"><span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span><h2 class="finish-title">Workout complete.</h2><p class="brand-finish-note">You made time for you.</p><p class="focus-next finish-totals">${r.items.length} ${r.items.length===1?'exercise':'exercises'} · ${r.items.reduce((n,x)=>n+x.values.length,0)} ${r.items.reduce((n,x)=>n+x.values.length,0)===1?'set':'sets'} saved</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="progress">View progress</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;
   else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest · Take a breather.</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="add">Add 30 seconds</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])} · Set ${x.values.length+1}${hold.sides>1?' · Side '+hold.side:''}</p><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Goal ${hold.goal} seconds${hold.sides>1?' per side':''}<strong>Breathe. Stay steady.</strong></p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
   else if(validAdvancedDraft(x)&&sessionRecordedCount(x)===st[1])html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])}</p><h2>Sets ready to save.</h2><p>${st[1]} ${st[1]===1?'set':'sets'} marked done. Review your numbers or save this exercise to Progress.</p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-act="save" data-t="${t.id}">Save exercise</button><button class="focus-link" data-focus="reviewadvanced">Review sets</button></div>`;
-  else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${exerciseThumbnail(t,sessionLevel(t),false)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length||(validAdvancedDraft(x)&&x.advancedDraft.done.includes(i))?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps to record'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary>${techniqueContent(t,sessionLevel(t),st)}</details>${swapView()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed?'hold':'complete'}">${timed?'Start hold':'Complete set'}</button></div>`;
+  else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${exerciseThumbnail(t,sessionLevel(t),false)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length||(validAdvancedDraft(x)&&x.advancedDraft.done.includes(i))?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps to record'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary>${techniqueContent(t,sessionLevel(t),st)}</details>${swapView()}${confirmingZero?'<p class="cue focus-zero-confirm">All sets are 0. Confirm to record this exercise with zero values, or adjust the number.</p>':''}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed&&!confirmingZero?'hold':'complete'}">${confirmingZero?(timed?'Confirm zero-second set':'Confirm zero-rep set'):timed?'Start hold':'Complete set'}</button></div>`;
   html+='</section>';
   html+='<div class="workout-secondary">';
   html+=`<details class="focus-workout"><summary>Your workout · ${r.items.length} ${r.items.length===1?'exercise':'exercises'}</summary><div class="session-queue">${r.items.map((a,i)=>{const tr=findTrack(a.id);return `<div class="focus-ex-row"><span>${esc(sessionSpec(tr)[0])}<small>${a.entry?'Saved':sessionRecordedCount(a)+' of '+a.goals.length+' sets complete'+(sessionHasDraft(a)?' · Draft saved':'')}</small></span>${!a.entry?(i===r.at?'<span class="status-chip" aria-current="step">Current</span>':`<button class="focus-link" data-focus="choose" data-i="${i}">Start</button>`):''}</div>`;}).join('')}</div><details class="focus-advanced"><summary>Edit all sets</summary><p class="cue">Correct any set, or save an exercise early. Only entered or marked sets are saved; untouched targets are not recorded.</p><div class="session-workspace"><div class="session-main">${fullCard(t,true)}</div><aside class="session-queue">${r.items.filter(a=>a.id!==t.id&&!a.entry).map(a=>miniRow(findTrack(a.id),'plan')).join('')}</aside></div></details></details>`;
@@ -3061,7 +3126,7 @@ function completeFocus(value=focusValue()){
   }else vals=[...x.values,value];
   let entry=null;
   if(vals.length===st[1]){
-    drafts[t.id]=vals.map(String);entry=saveSets(t,{focus:true});if(!entry){focusRun=before;if(validAdvancedDraft(focusItem()))rehydrateAdvancedDraft(focusItem());persistFocus();return;}x.entry=entryId(entry);
+    drafts[t.id]=vals.map(String);entry=saveSets(t,{focus:true});if(!entry){focusRun=before;if(validAdvancedDraft(focusItem()))rehydrateAdvancedDraft(focusItem());persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});return;}x.entry=entryId(entry);
   }
   x.values=vals;delete x.value;focusUndo={before,entry};
   if(!entry){if(validAdvancedDraft(x))rehydrateAdvancedDraft(x);else{drafts[t.id]=x.goals.map((v,i)=>String(x.values[i]??v));completedSets[t.id]=new Set(x.values.map((_,i)=>i));}}
@@ -3185,12 +3250,27 @@ function sheet(){
   const shown=allTracks().filter(t=>!isHidden(t.id));
   const groups=["Strength","Tendon","Mobility","Stretch","Weights","Custom"].filter(g=>shown.some(t=>groupOf(t)===g));
   const opt=(f,label,sub)=>`<button class="opt" data-ui="pick" data-f="${esc(f)}" aria-pressed="${filter===f}"><b>${esc(label)}</b>${sub?`<span>${esc(sub)}</span>`:""}</button>`;
-  return `<div class="scrim" data-ui="close"></div><div class="sheet" role="dialog" aria-label="What to show">
-    <div class="sheet-head"><h2>What to show</h2><button class="icon" data-ui="close" aria-label="Close">✕</button></div>
+  return `<dialog id="workoutFilterSheet" class="sheet" aria-labelledby="workoutFilterTitle">
+    <div class="sheet-head"><h2 id="workoutFilterTitle">What to show</h2><button class="icon" data-ui="close" aria-label="Close workout selection">✕</button></div>
     <div class="label">Type</div><div class="opts">${opt("All","Everything")}${groups.map(g=>opt(g,g,shown.filter(t=>groupOf(t)===g).length+" moves")).join("")}</div>
     <div class="label sect">Routines</div><div class="opts">${state.routines.map(r=>opt("r:"+r.id,r.name,r.items.map(id=>findTrack(id)).filter(t=>t&&!isHidden(t.id)).length+" moves")).join("")||`<p class="muted">No routines yet.</p>`}</div>
     <button class="ghost" data-ui="routines" style="margin-top:8px">Make or edit routines</button>
-  </div>`;
+  </dialog>`;
+}
+function focusWorkoutSelectionReturn(){
+  const target=$('#workoutToolsButton')||$('#focusPrimary')||$('#viewTitle');
+  if(target){if(!target.matches('button,a,input,select,textarea,[tabindex]'))target.tabIndex=-1;target.focus({preventScroll:true});}
+}
+function closeFilterSheet(){
+  const dialog=$('#workoutFilterSheet');if(dialog?.open)dialog.close();
+  sheetOpen=false;render();focusWorkoutSelectionReturn();
+}
+function mountFilterSheet(){
+  const dialog=$('#workoutFilterSheet');if(!sheetOpen||!dialog)return;
+  dialog.addEventListener('cancel',e=>{e.preventDefault();closeFilterSheet();});
+  dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeFilterSheet();});
+  dialog.showModal();
+  (dialog.querySelector('.opt[aria-pressed="true"]')||dialog.querySelector('button'))?.focus();
 }
 
 function libraryFilters(tracks){return '<div class="library-filters" role="group" aria-label="Exercise category">'+['All','Strength','Tendon','Mobility','Stretch','Weights','Custom'].filter(g=>g==='All'||g===exCategory||tracks.some(t=>groupOf(t)===g)).map(g=>`<button type="button" data-ui="category" data-category="${g}" aria-pressed="${exCategory===g}">${{All:'All',Tendon:'Tendons & joints',Stretch:'Stretching',Weights:'Carries & weights'}[g]||g}</button>`).join('')+'</div>';}
@@ -3578,6 +3658,7 @@ function render(){
   if(tab==="ladders") applySearch();
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.tab===tab?"true":"false"));
   mountLibraryPanel();
+  mountFilterSheet();
   if(panelAction&&libraryPanel){const buttons=[...document.querySelectorAll('#librarySheet [data-act]')];(buttons.find(b=>b.dataset.act===panelAction&&b.dataset.t===panelTrack&&b.dataset.f===panelFrequency)||$('#libraryPanelTitle'))?.focus({preventScroll:true});}
   if(hadLibraryPanel&&!libraryPanel&&tab==='ladders')(document.querySelector(`[data-ui="ex"][data-t="${panelTrack}"]`)||document.querySelector('[data-panel="hidden"]')||document.querySelector('[data-panel="custom"]'))?.focus({preventScroll:true});
   applyComponentSystem();
@@ -3744,9 +3825,9 @@ $("#view").addEventListener("click",e=>{
     if(a==='workouttoolsclose'){closeWorkoutTools();return;}
     if(a==='min'||a==='sheet')closeWorkoutTools();
     if(a==="min"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); minutes=+u.dataset.m; store.set("bwl-min",String(minutes)); showMore=false; render(); return; }
-    if(a==="sheet"){ sheetOpen=true; render(); $(".sheet .opt[aria-pressed=true]")?.focus(); return; }
-    if(a==="close"){ sheetOpen=false; render(); $(".showbtn")?.focus(); return; }
-    if(a==="pick"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); filter=u.dataset.f; store.set("bwl-filter",filter); sheetOpen=false; showMore=false; render(); window.scrollTo(0,0); return; }
+    if(a==="sheet"){ sheetOpen=true; render(); return; }
+    if(a==="close"){closeFilterSheet();return;}
+    if(a==="pick"){ if(hold){toast("Finish or cancel the running hold first.");return;} stopTimer(); hideToast(); filter=u.dataset.f; store.set("bwl-filter",filter); sheetOpen=false; showMore=false; render(); window.scrollTo(0,0); focusWorkoutSelectionReturn();return; }
     if(a==="routines"){ routinesOpen=true; go("ladders"); return; }
     if(a==="more"){ showMore=!showMore; render(); return; }
     if(a==="rtoggle"){ routinesOpen=!routinesOpen; render(); return; }
@@ -3867,7 +3948,7 @@ $("#view").addEventListener("click",e=>{
     libraryPanel=null;commit();render();document.querySelector('[data-panel="custom"]')?.focus({preventScroll:true});toast(`${t.name} deleted.`);
   }
 });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape" && sheetOpen){ sheetOpen=false; render(); $(".showbtn")?.focus(); } });
+// Native workout-selection dialog dispatches cancel for Escape.
 
 /* ---------- rest + hold timer (one pill at the bottom) ---------- */
 let restEnd=0, restTick=null, wake=null, hold=null, buzzed=false;
@@ -3925,8 +4006,38 @@ function finishHold(){
   if(raw<0){ stopTimer(); toast("Hold cancelled."); return; }          // stopped during the countdown
   const lvl=sessionLevel(t), st=sessionSpec(t);
   if(h.i>=st[1]){ stopTimer(); return; }
-  let secs=Math.floor(raw); const cap=Math.max(h.goal*3,120);
-  if(secs>cap){ secs=cap; toast(`Capped at ${cap}s. Fix the number if that's wrong.`); }
+  const secs=Math.floor(raw),cap=Math.min(9999,Math.max(h.goal*3,120));
+  if(secs>cap){reviewHoldDuration(h,t,secs,cap);return;}
+  recordHoldDuration(h,t,secs);
+}
+function reviewHoldDuration(h,t,elapsed,cap){
+  if($('#holdReview'))return;
+  const session=focusRun,key=keyOf(t,sessionLevel(t)),sets=sessionSpec(t)[1],opener=document.activeElement;
+  stopTimer();
+  const d=document.createElement('dialog');d.id='holdReview';d.className='workout-tools hold-review';d.setAttribute('aria-labelledby','holdReviewTitle');d.setAttribute('aria-describedby','holdReviewDescription');
+  d.innerHTML=`<div class="workout-tools-head"><h2 id="holdReviewTitle">Check this hold duration</h2><button type="button" data-hold-discard aria-label="Discard this timed set">×</button></div><form class="workout-tools-body"><p id="holdReviewDescription">The timer measured ${elapsed} seconds${h.sides>1?' on side '+h.side:''}. That exceeds the ${cap}-second automatic limit. Check the number before using it. This timed set has not been recorded.</p><label for="holdReviewSeconds">Seconds you actually held</label><input class="hold-review-number" id="holdReviewSeconds" type="number" inputmode="numeric" min="0" max="9999" step="1" required value="${Math.min(9999,cap)}"><p class="cue">${esc(sessionSpec(t)[0])} · Set ${h.i+1}${h.sides>1?' · Side '+h.side:''}. ${h.sides>1?'Both sides must be finished; the shorter duration is recorded.':'Only the duration you confirm will be recorded.'}</p><p class="hold-review-error" role="alert"></p><div class="hold-review-actions"><button class="primary" type="submit">${h.sides>1&&h.side===1?'Use duration & next side':'Use this duration'}</button><button type="button" data-hold-discard>Discard timing</button></div></form>`;
+  let accepted=false;
+  const close=()=>{if(d.open)d.close();else d.remove();};
+  d.querySelectorAll('[data-hold-discard]').forEach(b=>b.addEventListener('click',close));
+  d.querySelector('form').addEventListener('submit',e=>{
+    e.preventDefault();const input=d.querySelector('#holdReviewSeconds'),value=Number(input.value);
+    if(!input.value.trim()||!Number.isInteger(value)||value<0||value>9999){d.querySelector('.hold-review-error').textContent='Enter a whole number from 0 to 9,999 seconds.';input.focus();return;}
+    if(focusRun!==session||!findTrack(t.id)||keyOf(t,sessionLevel(t))!==key||sessionSpec(t)[1]!==sets||(h.focus&&focusItem()?.id!==t.id)){
+      d.querySelector('.hold-review-error').textContent='This workout changed. Discard this timing and time the set again.';return;
+    }
+    accepted=true;close();recordHoldDuration(h,t,value);
+  });
+  d.addEventListener('cancel',e=>{e.preventDefault();close();});
+  d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
+  d.addEventListener('close',()=>{
+    d.remove();document.body.classList.remove('hold-review-open');
+    if(!accepted){render();announceTimer('Timing discarded. No set recorded.');if(opener?.isConnected&&opener.getClientRects().length)opener.focus({preventScroll:true});else($('#workoutTools[open] [data-act="hold"]')||$('#focusPrimary'))?.focus({preventScroll:true});}
+  },{once:true});
+  document.body.append(d);applyComponentSystem(d);document.body.classList.add('hold-review-open');d.showModal();d.querySelector('#holdReviewSeconds').focus({preventScroll:true});
+  announceTimer('Long hold duration needs review. No set has been recorded.');
+}
+function recordHoldDuration(h,t,secs){
+  const lvl=sessionLevel(t),st=sessionSpec(t);
   if(h.sides>1 && h.side===1){                                          // time the other side next
     hold={...h, first:secs}; stopTimer(); hold=null;
     const keep={first:secs}; startHold(t,2); hold.first=keep.first; if(h.focus){hold.focus=true;hold.goal=h.goal;announceTimer(`Get ready. ${st[0]}, hold for ${hold.goal} seconds, side 2.`);render();$('[data-focus="cancel"]')?.focus({preventScroll:true});} return;
@@ -3988,6 +4099,7 @@ $('.nav-brand').insertAdjacentHTML('afterbegin',brandMark());
 $('header.top').insertAdjacentHTML('afterbegin',`<span class="app-brand-mark" aria-hidden="true">${brandMark()}</span>`);
 render(); setNote();
 (async()=>{
+  if(storageRecovery.active){setSync('local');return;}
   let dbApi=null, uid=null;
   try{
     dbApi = await window.claude?.use?.("db");
@@ -3998,12 +4110,14 @@ render(); setNote();
   connect(dbApi.doc("data/users/"+uid+"/state"));
 })();
 async function connect(ref){
+  if(storageRecovery.active)return;
   setSync("syncing");
   let remote=null;
   for(let a=0;a<2 && remote===null;a++){
     try{ const snap=await ref.get(); remote = snap.exists ? normalize(snap.data()) : false; }
     catch(e){ if(a===0) await new Promise(r=>setTimeout(r,1500+Math.random()*1500)); }
   }
+  if(storageRecovery.active)return;
   if(remote===null){ setSync("error"); setTimeout(()=>connect(ref),30000); return; }
   // Join this device's copy (including anything logged while we waited) with the cloud copy
   const merged = remote ? merge(state, remote) : state;
@@ -4018,7 +4132,7 @@ async function connect(ref){
 function listen(ref){
   try{
     ref.onSnapshot(snap=>{
-      if(!snap.exists || snap.metadata.hasPendingWrites) return;
+      if(storageRecovery.active||!snap.exists || snap.metadata.hasPendingWrites)return;
       const other = normalize(snap.data());
       const m = merge(state, other);
       if(!sameData(m, state)){ state = m; remember(); saveLocal(); softRender(); }
