@@ -97,12 +97,12 @@ function applyAppControls(root=document){
   else if(button.id==='syncDot')role='status';
   else if(button.matches('.primary'))role='primary';
   else if(button.matches('.danger,.xdel'))role='destructive';
-  else if(button.matches('.appearance-toggle,[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
+  else if(button.matches('[data-ui="techniqueclose"],[data-ui="workouttoolsclose"]')||button.closest('.preferences-head,.workout-tools-head,.photo-credits header'))role='icon';
   else if(button.matches('.focus-stepper')||button.closest('.pm,.mini-step'))role='stepper';
   else if(button.matches('.onboard-choice'))role='selection';
   else if(button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice'))role='choice';
   else if(button.matches('.exrow,.mini,.opt'))role='row';
-  else if(button.matches('.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
+  else if(button.matches('.appearance-toggle,.focus-link,.focus-howto,.tool-action,.tool-back,.photo-credit-link,.onboard-back,.onboard-skip,.erow'))role='quiet';
   button.dataset.control=role;
   if(role==='choice'){
    const group=button.closest('.seg,.readiness-options,.effort-options,.appearance-options,.lui-choice');
