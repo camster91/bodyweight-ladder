@@ -327,3 +327,16 @@ body[data-view] .workout-tools-button{display:inline-flex;gap:8px;white-space:no
 body[data-view] .workout-tools-button svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:18px;height:18px}
 .settings-save-status{font-size:var(--type-control);line-height:1.5;color:var(--color-ink-secondary);margin:0 0 var(--space-control);overflow-wrap:break-word}
 .settings-save-status.needs-attention{color:var(--color-critical)}
+
+/* Direct rest adjustments stay usable on compact timer bars. */
+.timer:has([data-tm="subtract"]){box-sizing:border-box;gap:6px}
+.timer [data-tm="subtract"],.timer [data-tm="add"]{flex:none;white-space:nowrap}
+@media(max-width:359px){.timer:has([data-tm="subtract"]) .tlabel{display:none}.timer:has([data-tm="subtract"]) #timerText{min-width:44px}}
+@media(max-width:699px) and (max-height:699px){
+ body[data-view="today"] .focus-stage[data-phase="rest"]{padding-top:4px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-rest{gap:8px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-eyebrow{margin:0}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-ring{width:112px;height:112px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-clock{font-size:44px;letter-spacing:-2px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-next{font-size:12px;line-height:1.5}
+}
