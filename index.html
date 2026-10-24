@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-24-hold-context',events=[];
+ const RELEASE='2026-10-24-hold-preparation',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -1713,6 +1713,13 @@ body[data-view="today"] .focus-stage[data-running-hold="true"] .hold-running{gap
 /* During a hold, planning stays out of the movement's way. */
 body[data-view="today"]:has(.hold-running) .plan-summary{display:none}
 
+body.hold-preparation-open{overflow:hidden}
+.hold-preparation .exercise-thumb{display:block;width:100%;height:clamp(120px,22svh,220px);object-fit:contain;margin:0 0 var(--space-control);background:var(--art-bg)}
+.hold-preparation .workout-tools-body>p{font-size:var(--type-control);line-height:1.5;margin:12px 0}
+.hold-preparation-goal{font-weight:650;color:var(--color-action)}
+.hold-preparation-actions{display:grid;gap:8px;margin-top:var(--space-inset)}
+.hold-preparation-actions button{width:100%;white-space:normal}
+
 /* Embedded display font. No runtime third-party request or extra public file route.
 Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
 
@@ -3198,6 +3205,28 @@ function undoFocus(){
   if(u.entry){state.log=state.log.filter(e=>entryId(e)!==entryId(u.entry));state.deleted=[...new Set([...state.deleted,entryId(u.entry)])];commit();}
   focusRun=u.before;focusRun.phase='work';focusRun.restEnd=0;delete drafts[focusItem().id];delete completedSets[focusItem().id];persistFocus();hideToast();render();$('#focusPrimary')?.focus({preventScroll:true});
 }
+function beginFocusHold(t){
+ const x=focusItem();if(hold||!x||x.id!==t.id||focusRun.phase!=='work')return;
+ holdNext[t.id]=x.values.length;startHold(t);hold.focus=true;hold.goal=focusValue();
+ announceTimer('Get ready for '+sessionSpec(t)[0]+'. You have 10 seconds to get into position. Hold for '+hold.goal+' seconds.');
+ render();$('[data-focus="cancel"]')?.focus({preventScroll:true});
+}
+function openHoldPreparation(t){
+ if($('#holdPreparation'))return;
+ const item=focusItem(),session=focusRun,key=item.key,st=sessionSpec(t),opener=$('#focusPrimary');
+ const d=document.createElement('dialog');d.id='holdPreparation';d.className='workout-tools hold-preparation';d.setAttribute('aria-labelledby','holdPreparationTitle');
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="holdPreparationTitle">Get ready for ${esc(st[0])}</h2><button type="button" data-hold-prep-back aria-label="Close exercise preparation">×</button></div><div class="workout-tools-body">${exerciseThumbnail(t,sessionLevel(t))}<p class="hold-preparation-goal">${focusValue()} seconds${st[4].includes('each')?' each side':''} · ${st[1]} sets</p><p>${esc(st[5])}</p><p id="holdPreparationMessage" role="status">Take your time to review the movement. When you tap “I’m ready”, you’ll have 10 seconds to get into position.</p><div class="hold-preparation-actions"><button type="button" class="primary" data-hold-prep-ready>I’m ready — start ${esc(st[0])}</button><button type="button" data-hold-prep-back>Back to exercise</button></div></div>`;
+ let starting=false;
+ const close=()=>d.close();
+ d.querySelectorAll('[data-hold-prep-back]').forEach(b=>b.addEventListener('click',close));
+ d.querySelector('[data-hold-prep-ready]').addEventListener('click',()=>{
+  if(hold||focusRun!==session||focusItem()!==item||!findTrack(t.id)||focusItem().key!==key||focusRun.phase!=='work'){$('#holdPreparationMessage').textContent='The workout changed. Go back and review the exercise again.';return;}
+  starting=true;close();beginFocusHold(t);
+ });
+ d.addEventListener('cancel',e=>{e.preventDefault();close();});
+ d.addEventListener('close',()=>{d.remove();document.body.classList.remove('hold-preparation-open');if(!starting&&opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
+ document.body.append(d);applyComponentSystem(d);document.body.classList.add('hold-preparation-open');d.showModal();d.querySelector('[data-hold-prep-back]').focus({preventScroll:true});
+}
 function handleFocus(b){
   const a=b.dataset.focus,x=focusItem(),t=x&&findTrack(x.id);
   if(a==='progress'){go('history');return;}
@@ -3211,7 +3240,7 @@ function handleFocus(b){
   if(!t)return;
   if(a==='plus'||a==='minus'){const previous=focusValue();x.value=Math.min(9999,Math.max(0,previous+(a==='plus'?1:-1)*stepInc(sessionSpec(t))));persistFocus();rollFocusNumber(previous,x.value);return;}
   if(a==='complete'){completeFocus();return;}
-  if(a==='hold'){if(hold)return;holdNext[t.id]=x.values.length;startHold(t);hold.focus=true;hold.goal=focusValue();announceTimer(`Get ready. ${sessionSpec(t)[0]}, hold for ${hold.goal} seconds${hold.sides>1?', side '+hold.side:''}.`);render();$('[data-focus="cancel"]')?.focus({preventScroll:true});return;}
+  if(a==='hold'){if(hold)return;if(!x.values.length)openHoldPreparation(t);else beginFocusHold(t);return;}
   if(a==='finish'){finishHold();return;}
   if(a==='cancel'){stopTimer();announceTimer('Hold cancelled. No set recorded.');render();$('#focusPrimary')?.focus({preventScroll:true});}
 }
@@ -4034,7 +4063,7 @@ function startHold(t, side){
   primeAudio();
   const lvl=sessionLevel(t), st=sessionSpec(t), i=holdNext[t.id]??0, g=sessionGoals(t,lvl,st)[i];
   const sides = st[4].includes("each") ? 2 : 1;
-  hold={tid:t.id, i, goal:g, start:Date.now()+3000, side:side||1, sides, first:hold?.first}; buzzed=false;
+  hold={tid:t.id, i, goal:g, start:Date.now()+10000, side:side||1, sides, first:hold?.first}; buzzed=false;
   announceTimer(`Get ready. ${st[0]}, hold for ${g} seconds${sides>1?', side '+hold.side:''}.`);
   const label = `Set ${i+1}${sides>1?` · side ${hold.side}`:""}`;
   showTimer(`<span class="tlabel">${label}</span><span id="timerText"></span><button data-tm="done">Stop</button><button data-tm="cancel" aria-label="Cancel hold">✕</button>`);
