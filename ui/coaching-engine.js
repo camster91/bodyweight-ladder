@@ -14,7 +14,7 @@ const LadderCoach=(()=>{
   const base=Array.from({length:st.sets},(_,i)=>clamp(last.sets[i]??last.sets.at(-1))),days=[],seen=new Set();
   for(const e of history){const day=e.day||new Date(e.ts).toDateString();if(e.ts<last.ts-28*DAY||e.sets.length!==st.sets||seen.has(day))continue;seen.add(day);days.push(e);if(days.length===4)break;}
   const hasStep=!t.custom&&t.level<t.stepCount-1,result=(kind,title,reason,values=base,level)=>({kind,title,reason,goals:values,...(level===undefined?{}:{level})});
-  if(now-last.ts>=21*DAY)return result('return','Rebuild after time away','This step was last recorded at least three weeks ago. Trim one increment from each target, within this step’s range, before building again.',base.map(v=>clamp(v-inc)));
+  if(now-last.ts>=21*DAY)return result('return','Rebuild after time away','This step was last recorded at least three weeks ago. Trim one increment from each target, within this step range, before building again.',base.map(v=>clamp(v-inc)));
   if(now-last.ts>7*DAY)return result('return','Ease back in','It has been over a week since this step. Repeat your last targets before building again.');
   if(last.effort==='hard'){
    if(days.length>=2&&days[0]===last&&days.slice(0,2).every(e=>e.effort==='hard'&&e.sets.some(v=>v<st.min))&&!t.custom&&t.level>0)return result('down','Try an easier step','Two separate training days felt hard and fell below the range. An easier variation is available.',base,t.level-1);
@@ -42,7 +42,7 @@ const LadderCoach=(()=>{
    const st=t.step,last=baseline[0],values=Array.from({length:st.sets},(_,i)=>Math.min(st.max,Math.max(st.min,last?.sets[i]??last?.sets.at(-1)??st.min)));
    decision={kind:'hold',title:'Keep the targets steady',reason:note,goals:values};
   }
-  return {...decision,version:VERSION,estimatedMinutes:estimate(t,decision.goals),pattern:p,recovery:{recent,caution,note,cadenceHours:cadence,weekSets,hoursSince:active?Math.max(0,(now-active.ts)/3600000):null},evidence:{matchingSessions:baseline.length,distinctDays:new Set(baseline.map(e=>e.day||new Date(e.ts).toDateString())).size,lastEffort:baseline[0]?.effort||null},hasHistory:own.length>0};
+  return {...decision,version:VERSION,estimatedMinutes:estimate(t,decision.goals),pattern:p,recovery:{recent,caution,note,nextEligibleAt:recent?active.ts+DAY:null,cadenceHours:cadence,weekSets,hoursSince:active?Math.max(0,(now-active.ts)/3600000):null},evidence:{matchingSessions:baseline.length,distinctDays:new Set(baseline.map(e=>e.day||new Date(e.ts).toDateString())).size,lastEffort:baseline[0]?.effort||null},hasHistory:own.length>0};
  }
  function plan(models,context={}){
   const now=context.now||0,preferences=prefs(context.preferences),allLog=validHistory(context.history,now),decisions=models.map((t,i)=>({t,i,d:evaluate(t,context)}));
@@ -64,8 +64,21 @@ const LadderCoach=(()=>{
   if(!selected.length){const fallback=decisions.filter(x=>!x.d.recovery.recent).sort((a,b)=>priority(b)-priority(a)||firstRank(a)-firstRank(b))[0];if(fallback)add(fallback,!fallback.d.hasHistory);}
   const weekDays=new Set(allLog.filter(e=>e.ts>=(context.weekStart??now-7*DAY)&&e.sets.some(v=>v>0)).map(e=>e.day||new Date(e.ts).toDateString())).size;
   const goalName={balanced:'Balanced training',strength:'Strength focus',movement:'Movement focus'}[preferences.goal];
-  const summary=`${goalName}. ${weekDays} of ${preferences.days} planned training days recorded this week. ${weekDays>=preferences.days?'Your weekly target is met; another workout is optional.':'This is a planning target, not a requirement to catch up.'}${recent.length?' Exercises recorded in the last 24 hours are left out of the automatic plan.':''}`;
-  return {version:VERSION,generatedAt:now,preferences,weekDays,summary,estimatedMinutes:Math.ceil(used),overBudget:!!budget&&used>budget+1,selected:selected.map(x=>({id:x.t.id,decision:x.d,reason:reasons[x.t.id]})),recent:recent.map(x=>x.t.id),available:decisions.filter(x=>!recent.includes(x)&&!selected.includes(x)).map(x=>x.t.id)};
+  const summary=`${goalName}. ${weekDays} of ${preferences.days} training days recorded toward your weekly participation goal. ${weekDays>=preferences.days?'Your weekly target is met; another workout is optional.':'This is a planning target, not a requirement to catch up.'}${recent.length?' Exercises recorded in the last 24 hours are left out of the automatic plan.':''}`;
+  const eligible=decisions.filter(x=>!x.d.recovery.recent),remaining=eligible.filter(x=>!selected.includes(x)),estimatedMinutes=Math.ceil(used),overBudget=!!budget&&used>budget+1;
+  const blocked=recent.map(x=>({id:x.t.id,reason:'recorded-within-24h',nextEligibleAt:x.d.recovery.nextEligibleAt}));
+  const nextEligibleAt=blocked.length?Math.min(...blocked.map(x=>x.nextEligibleAt)):null,reasonCodes=[],explanations=[];
+  if(!decisions.length){reasonCodes.push('no-movements');explanations.push('No movements are included in these choices. Choose a routine or include another exercise.');}
+  else if(!eligible.length){reasonCodes.push('all-recently-recorded');explanations.push('Every movement in these choices was recorded in the last 24 hours. Wait until one is eligible, choose another routine, or browse other movements.');}
+  if(budget&&selected.length&&used<budget-1){
+   if(remaining.some(x=>!x.d.hasHistory)&&Number.isFinite(cap)&&added>=cap){reasonCodes.push('new-movement-pacing');explanations.push('Only one new movement is introduced at a time after your first workout. This can make the plan shorter.');}
+   if(remaining.some(x=>used+x.d.estimatedMinutes>budget+1)){reasonCodes.push('remaining-movements-over-budget');explanations.push('Some remaining movements do not fit the time left in your chosen budget.');}
+   if(!remaining.length){reasonCodes.push('eligible-volume-below-budget');explanations.push('The eligible movements in these choices take less time than your budget. Your time choice is a limit, not a promise to fill every minute.');}
+  }
+  if(overBudget){reasonCodes.push('minimum-workout-over-budget');explanations.push('One movement is included even though it exceeds your time budget. You can adjust the workout before starting.');}
+  if(recent.length){reasonCodes.push('recent-movements-excluded');explanations.push('Movements recorded in the last 24 hours are excluded from this automatic selection. This uses logged history, not measured recovery or readiness.');}
+  const weeklyTarget={kind:'participation',days:preferences.days,recordedDays:weekDays,remainingDays:Math.max(0,preferences.days-weekDays),explanation:'Your weekly target counts days with recorded work. It does not schedule a different workout for every day or override the 24-hour exclusion.'};
+  return {version:VERSION,generatedAt:now,preferences,weekDays,summary,estimatedMinutes,overBudget,selected:selected.map(x=>({id:x.t.id,decision:x.d,reason:reasons[x.t.id]})),recent:recent.map(x=>x.t.id),available:remaining.map(x=>x.t.id),eligibility:{eligible:eligible.map(x=>x.t.id),blocked,nextEligibleAt},duration:{budgetMinutes:budget||null,estimatedMinutes,remainingMinutes:budget?Math.max(0,budget-estimatedMinutes):null,reasonCodes,explanation:explanations.join(' ')},weeklyTarget};
  }
  function adjustSession(items,kind,{budget=10,cost}={}){
   const base=JSON.parse(JSON.stringify(items));
