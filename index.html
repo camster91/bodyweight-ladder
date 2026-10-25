@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-24-section-colors',events=[];
+ const RELEASE='2026-10-25-layout-polish',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2074,6 +2074,47 @@ body .progress-backup section,body .equipment-preferences fieldset{border:0;bord
 @media(max-width:359px){body[data-view="history"] .progress-columns>.progress-section{padding:16px}body[data-view="history"] .journey-checkin{padding:12px}}
 @media(forced-colors:active){body[data-view] :is(.focus-stage,.plan-summary>button,.progress-week,.progress-section,.progress-log,.journey-month,.journey-checkin,.settings-section,.tool-section,.onboard-choice){background:Canvas;border-color:CanvasText;color:CanvasText}}
 /* LADDER_SECTION_COLORS_END */
+/* LADDER_LAYOUT_POLISH_START */
+/* Shared rhythm: color groups sections; space separates controls and content. */
+body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:20px 16px 16px;height:auto}
+body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{width:100%;box-sizing:border-box}
+body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{background:var(--surface);border-color:var(--line)}
+body[data-view="today"] .focus-stage:has(.focus-counter) .focus-stepper{box-shadow:none}
+body[data-view="today"] .planning-details{padding-block:4px;background:transparent;border-color:var(--line)}
+body[data-view="today"] .planning-details>summary{color:var(--muted);font-size:var(--type-control)}
+body[data-view="ladders"] .library-filters{flex-wrap:wrap;overflow:visible;gap:6px;padding:4px 0 8px}
+body[data-view="ladders"] .library-filters button{padding-inline:12px;min-height:44px;font-size:var(--type-control);box-shadow:none}
+body[data-view="ladders"] #routinesCard>.exrow{padding-inline:16px}
+body[data-view="ladders"] .stack>.exrow[data-g]{border:1px solid var(--line);border-radius:16px;margin-block:4px;height:auto}
+body[data-view="ladders"] .sect[data-grp]{margin-top:20px;margin-bottom:4px;background:transparent;border-radius:0;padding:8px 4px}
+body[data-view="history"] .progress-page{gap:20px}
+body[data-view="history"] .progress-columns{gap:20px}
+body[data-view="history"] .progress-columns>.progress-section{border-color:var(--line)}
+body[data-view="history"] .personal-best{background:transparent;border-radius:0;padding-inline:0;box-shadow:none}
+@media(min-width:700px){
+ body[data-view="ladders"] #view>.stack{row-gap:8px;column-gap:16px}
+ body[data-view="ladders"] .stack>.exrow[data-g]{margin:0;height:100%;box-sizing:border-box}
+ body[data-view="history"] .progress-page{display:flex;flex-direction:column}
+ body[data-view="history"] .progress-page>.progress-week{position:static;width:100%;box-sizing:border-box}
+ body[data-view="history"] .progress-page>.progress-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;align-items:start}
+ body[data-view="history"] .progress-page>:is(.progress-exercises,.progress-log,.journey-month){width:100%;box-sizing:border-box;margin-top:0}
+ body[data-view="history"] .progress-week{display:grid;grid-template-columns:minmax(180px,1fr) minmax(260px,1.4fr);column-gap:32px;align-items:center}
+ body[data-view="history"] .progress-week>.label{grid-column:1/-1}
+ body[data-view="history"] .progress-week>.week-legend{grid-column:1/-1;margin-bottom:0}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:24px;column-gap:24px;box-sizing:border-box}
+}
+@media(min-width:1000px) and (min-height:700px){
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:minmax(0,1fr) minmax(280px,1fr);max-width:900px;margin-inline:auto;row-gap:20px}
+ body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{gap:20px}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{height:220px}
+}
+@media(max-width:359px){
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:16px 12px 12px}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:156px;height:156px}
+ body[data-view="ladders"] .library-filters button{padding-inline:10px}
+}
+@media(max-height:650px){body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding-top:12px}}
+/* LADDER_LAYOUT_POLISH_END */
 </style>
 
 <a class="skip-link" href="#view">Skip to main content</a>
