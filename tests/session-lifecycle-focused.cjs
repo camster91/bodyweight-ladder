@@ -8,7 +8,7 @@ function fixture(saved){
  function element(){return {listeners:{},classList:{add(){},remove(){},toggle(){}},setAttribute(){},focus(){},showModal(){this.open=true;},querySelector(s){this.children??=new Map();if(!this.children.has(s))this.children.set(s,element());return this.children.get(s);},querySelectorAll(s){return [this.querySelector(s)];},addEventListener(t,f){(this.listeners[t]??=[]).push(f);},close(){this.open=false;for(const f of this.listeners.close||[])f();},remove(){if(this.id)nodes.delete('#'+this.id);}};}
  const tracks=['push','core','squat'].map(id=>({id,steps:[[id,3,5,12,id==='core'?'sec':'reps','','Floor']]}));
  const c={Date:class extends Date{static now(){return now;}},Math,JSON,Set,LadderSessions:sessions,focusRun:saved?.run||{sessionId:'fixture',started:now,phase:'work',at:0,items:tracks.slice(0,2).map(t=>({id:t.id,key:t.id+':step',goals:[5,5,5],values:[]}))},state:saved?.state||{log:[],sessions:[]},hold:null,buzzed:false,focusUndo:null,drafts:{},completedSets:{},holdNext:{},lastSaveAt:0,storageRecovery:{active:false},workoutToolsPanel:'main',workoutToolsOpen:false,readinessChoice:null,swapChoice:null,
-  entryId:e=>e.ts+'|'+e.t,dayOf:ts=>new Date(ts).toISOString().slice(0,10),findTrack:id=>tracks.find(t=>t.id===id),lvlOf:()=>0,keyOf:t=>t.id+':step',spec:t=>t.steps[0],sessionLevel:()=>0,sessionSpec:t=>t.steps[0],goals:()=>[5,5,5],equipmentReady:()=>true,isHidden:()=>false,sessionHasDraft:x=>!!x.advancedDraft,
+  entryId:e=>e.ts+'|'+e.t,dayOf:ts=>new Date(ts).toISOString().slice(0,10),findTrack:id=>tracks.find(t=>t.id===id),lvlOf:()=>0,keyOf:t=>t.id+':step',spec:t=>t.steps[0],sessionLevel:()=>0,sessionSpec:t=>t.steps[0],goals:()=>[5,5,5],equipmentReady:()=>true,isHidden:()=>false,sessionHasDraft:x=>!!x.advancedDraft,isSec:u=>u.startsWith('sec'),exerciseThumbnail:()=>'<span class="exercise-thumb"><img src="pose.webp" alt=""></span>',
   writeLocal:(k,v)=>{stored[k]=v;return true;},saveLocal:()=>{stored.state=JSON.stringify(c.state);},pushCloud(){},commit(){c.saveLocal();},stopTimer(){c.hold=null;},render(){},closeWorkoutTools(){},announceTimer(){},toast(){},primeAudio(){},workoutCue(){},tick(){},applyComponentSystem(){},esc:x=>x,
   document:{activeElement:null,body:{classList:{add(){},remove(){}},append(d){nodes.set('#'+d.id,d);}},querySelector:()=>null,createElement:element,addEventListener(){}},
   $:s=>nodes.get(s)||null,
@@ -79,5 +79,11 @@ check('Applying and restoring an alternative preserves the earlier partial work'
  c.swapPreview=()=>({t:c.findTrack('squat'),goals:[5,5,5],light:false,st:c.spec(c.findTrack('squat'))});
  c.applySwap('squat',0);assert.equal(c.focusItem().id,'squat');assert.equal(c.focusItem().goals.length,2);assert.equal(c.state.log.length,1);assert.equal(c.focusRun.logRefs.length,1);
  c.restoreSwap();assert.equal(c.focusItem().id,'push');assert.equal(c.focusItem().goals.length,2);assert.equal(c.state.log.length,1);assert.deepEqual(Array.from(c.state.log[0].sets),[8]);
+});
+check('Paused preview names the next set and the frozen rest time',()=>{
+ const f=fixture();f.c.focusItem().values=[8];f.c.focusRun.phase='rest';f.c.focusRun.restDuration=90;f.c.focusRun.restEnd=f.c.Date.now()+37000;f.c.pauseWorkout();const markup=f.c.sessionPausedView();assert.match(markup,/Up next · Set 2 of 3/);assert.match(markup,/Rest paused · 0:37 left/);assert.match(markup,/<h3>push<\/h3>/);assert.match(markup,/Resume workout/);
+});
+check('Paused hold preview shows elapsed time and preparation without claiming completion',()=>{
+ const f=fixture();f.c.focusRun.at=1;f.c.hold={tid:'core',i:0,goal:5,start:f.c.Date.now()-3000,side:2,sides:2,first:4,focus:true};f.c.pauseWorkout();assert.match(f.c.sessionPausedView(),/Hold paused · 3 seconds elapsed · side 2/);assert.match(f.c.sessionPausedView(),/Continue · Set 1 of 3/);f.c.focusRun.pauseSnapshot.elapsedMs=0;f.c.focusRun.pauseSnapshot.readyMs=4000;assert.match(f.c.sessionPausedView(),/countdown paused · 4 seconds left/);assert.equal(f.c.state.log.length,0);
 });
 console.log(passed+' focused lifecycle checks passed.');
