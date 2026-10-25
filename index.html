@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-24-session-journey',events=[];
+ const RELEASE='2026-10-24-workout-cues',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -172,6 +172,45 @@ body:has(#equipmentPreferences[open]),body:has(#workoutExtras[open]){overflow:hi
 }
 /* LADDER_JOURNEY_CSS_END */
 .finish-partial-mark{display:grid;place-items:center;width:100px;height:100px;margin:auto;border-radius:50%;background:var(--surface2,var(--surface));color:var(--muted);font-size:48px}.planning-details{margin:12px 0;padding:12px 16px;border:1px solid var(--line);border-radius:16px}.planning-details>summary{min-height:44px;display:flex;align-items:center;font-weight:600}.focus-stage .journey-plan{max-width:540px;text-align:left}.focus-actions>[data-session-extra]{min-height:48px;width:100%}
+/* LADDER_CUES_CSS_START */
+.rest-preview{width:min(100%,440px);min-width:0;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:12px 16px}
+.rest-preview-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rest-preview .cue-mute,.workout-cue-settings .cue-mute,.workout-tools-body>.cue-mute{min-height:44px;padding:8px 12px;font-size:13px;white-space:normal}
+.rest-preview-main{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center}
+.rest-preview .exercise-thumb{width:88px;height:72px;margin:0;object-fit:cover;flex:none}
+.rest-preview-art{display:grid;gap:4px;padding:0;border:0;background:transparent;color:var(--accent);text-align:left;min-height:44px;min-width:44px;max-width:88px}.rest-preview-art>span{font-size:12px;line-height:1.4}
+.rest-preview-main>div{min-width:0}.rest-preview h2{font-size:20px;line-height:1.2;margin:0 0 6px;overflow-wrap:break-word}
+.rest-preview p{font-size:13px;line-height:1.5;margin:4px 0;color:var(--muted)}
+.rest-preview .rest-preview-gear{font-size:12px}.rest-preview .rest-preview-note{font-size:12px;margin:6px 0}
+.rest-preview .focus-howto{min-height:44px;padding:6px 0;margin:0}
+.workout-cue-settings>label{display:flex;align-items:center;gap:12px;min-height:48px;font-size:16px}
+.workout-cue-settings input{width:22px;height:22px;accent-color:var(--accent)}
+.workout-tools-body>.cue-mute{justify-self:start;text-align:left;margin:4px 0 8px}
+.journey-checkin .journey-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.journey-checkin .journey-actions>button{min-width:0;padding:8px;font-size:13px;line-height:1.35}
+body[data-view="today"] .focus-stage .rest-preview h2{font-size:20px;line-height:1.2;letter-spacing:-.3px}
+body[data-view="today"] .focus-stage .rest-preview button.rest-preview-art[data-control]{padding:0;border:0;background:transparent;box-shadow:none;min-width:44px;min-height:44px;border-radius:8px}
+body[data-view="today"] .focus-stage .rest-preview p{font-size:13px;line-height:1.5}
+@media(max-width:699px) and (min-height:700px){
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-ring{width:144px;height:144px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-clock{font-size:56px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-rest{gap:12px}
+}
+@media(max-width:699px) and (max-height:699px){
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-rest{display:flex;flex-wrap:wrap;flex-direction:row;justify-content:center;gap:8px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-eyebrow{width:100%}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-ring{width:88px;height:88px;flex:none}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-clock{font-size:32px}
+ .rest-preview{flex:1 1 160px;padding:6px 10px;border-radius:16px}
+ .rest-preview-main{grid-template-columns:52px minmax(0,1fr);gap:8px}.rest-preview .exercise-thumb{width:52px;height:52px}
+ .rest-preview h2{font-size:16px}.rest-preview p,.rest-preview .rest-preview-gear{font-size:11px;line-height:1.35}
+ body[data-view="today"] .focus-stage .rest-preview h2{font-size:16px;line-height:1.2}
+ body[data-view="today"] .focus-stage .rest-preview p{font-size:11px;line-height:1.35}
+ body[data-view="today"] .focus-stage .rest-preview button.cue-mute[data-control]{padding:4px;font-size:11px;min-height:44px}
+ .rest-preview-top .label{font-size:10px}.rest-preview .cue-mute{padding:4px;font-size:11px}
+ .rest-preview .rest-preview-note{font-size:11px;line-height:1.35}
+ .rest-quick-actions{width:100%}
+}
+/* LADDER_CUES_CSS_END */
 </style>
 </head>
 <body>
@@ -3179,7 +3218,7 @@ function applySwap(id,lvl){
  const replacement={id,key:keyOf(p.t,lvl),goals:p.goals.slice(0,original.remainingSets||p.goals.length),values:[],...(original.remainingSets?{remainingSets:original.remainingSets}:{}),restartAfter:nextSessionLogTs(id),...(p.light?{mode:'light'}:{}),swap:{original,index,...(existing?{existing}:{})}};
  focusRun.items=focusRun.items.filter(a=>a.id!==original.id&&a.id!==id);focusRun.items.splice(at,0,replacement);focusRun.at=at;
  for(const tid of new Set([id,original.id])){delete drafts[tid];delete completedSets[tid];delete holdNext[tid];}
- focusUndo=null;swapChoice=null;readinessChoice=null;persistFocus();render();$('#focusAnnouncement').textContent=p.st[0]+' selected for this workout.';$('#focusPrimary')?.focus({preventScroll:true});
+ focusUndo=null;swapChoice=null;readinessChoice=null;primeAudio();workoutCue('exercise');persistFocus();render();$('#focusAnnouncement').textContent=p.st[0]+' selected for this workout.';$('#focusPrimary')?.focus({preventScroll:true});
 }
 function restoreSwap(){
  const x=focusItem();if(!canSwapItem(x)||!x.swap)return;
@@ -3331,7 +3370,7 @@ function mountWorkoutTools(previous={}){
  const dialog=document.createElement('dialog');dialog.id='workoutTools';dialog.className='workout-tools';dialog.setAttribute('aria-labelledby','workoutToolsTitle');
  dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
  const body=dialog.querySelector('.workout-tools-body');
- body.insertAdjacentHTML('afterbegin',workoutActionsMarkup());
+ body.insertAdjacentHTML('afterbegin',workoutActionsMarkup()+cueMuteMarkup());
  // Move existing controls so their data, event handlers, and IDs have a single owner.
  for(const el of [$('.readiness-check'),settings,$('.focus-stage .coach-inline'),$('.focus-stage .focus-technique'),$('.focus-stage .swap-picker'),$('.focus-stage .swap-applied'),$('.workout-secondary')])if(el)body.append(el);
  if(settings){settings.querySelector('summary').textContent='Time & workout settings';settings.querySelectorAll('[data-ui="min"]').forEach(b=>{b.textContent=+b.dataset.m?b.dataset.m+' min':'No time limit';if(!+b.dataset.m)b.setAttribute('aria-label','No time limit');});}
@@ -3413,7 +3452,7 @@ function focusView(plan,top,more,recent){
   const stageKey=[r.phase,r.at,x.values.length,runningHold?'hold-'+hold.side:'work'].join(':');
   html+=`<section class="focus-stage" data-stage="${stageKey}" data-phase="${r.phase}" data-running-hold="${!!runningHold}" aria-label="Current set"><p class="focus-saved" id="focusSaved" aria-hidden="true">${focusNotice&&focusNotice.until>Date.now()?esc(focusNotice.text)+' ✓':''}</p>`;
   if(r.phase==='finished'){const totals=sessionTotals(r);html+=`<div class="focus-rest focus-finish">${r.endStatus==='partial'?'<span class="finish-partial-mark" aria-hidden="true">—</span>':'<span class="finish-mark" aria-hidden="true"><span class="finish-check-short"></span><span class="finish-check-long"></span></span>'}<h2 class="finish-title">${r.endStatus==='partial'?'Finished for today.':'Workout complete.'}</h2><p class="brand-finish-note">You made time for you.</p><p class="focus-next finish-totals">${totals.exercises} ${totals.exercises===1?'exercise':'exercises'} · ${totals.sets} ${totals.sets===1?'set':'sets'} saved${totals.skipped?' · '+totals.skipped+' skipped':''}</p>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="progress">Done for today</button><button data-session-extra="open">Add something else</button><button class="focus-link" data-focus="another">Plan another workout</button></div>`;}
-  else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest · Take a breather.</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div><p class="focus-next">Next<strong>${esc(st[0])} · Set ${x.values.length+1} of ${st[1]}</strong></p><button class="focus-link" data-focus="subtract" aria-label="Subtract 30 seconds from rest">−30s</button><button class="focus-link" data-focus="add" aria-label="Add 30 seconds to rest">+30s</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
+  else if(r.phase==='rest')html+=`<div class="focus-rest"><p class="focus-eyebrow">Rest · Take a breather.</p><div class="focus-ring"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46"/><circle class="focus-arc" id="focusArc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${focusRestOffset()}"/></svg><div class="focus-clock" id="focusClock" aria-label="Rest time remaining">${focusTime(Math.max(0,Math.ceil((r.restEnd-Date.now())/1000)))}</div></div>${restPreviewMarkup(t,x,st)}<button class="focus-link" data-focus="subtract" aria-label="Subtract 30 seconds from rest">−30s</button><button class="focus-link" data-focus="add" aria-label="Add 30 seconds to rest">+30s</button>${focusUndo?'<button class="focus-link" data-focus="undo">Undo last set</button>':''}</div>${focusFeedback()}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="skip">Skip rest</button></div>`;
   else if(runningHold)html+=`<div class="focus-rest hold-running"><div class="hold-context">${exerciseThumbnail(t,sessionLevel(t))}<div><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}${hold.sides>1?' · Side '+hold.side:''}</p><h2>${esc(st[0])}</h2><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to</button></div></div><div class="focus-clock" id="focusClock" aria-label="Hold elapsed time">${Date.now()<hold.start?'Get ready':Math.floor((Date.now()-hold.start)/1000)+'s'}</div><p class="focus-next">Hold for ${hold.goal} seconds${hold.sides>1?' per side':''}</p><p class="hold-form-cue">${esc(st[5])}</p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="finish" ${Date.now()<hold.start?'disabled':''}>${hold.sides>1&&hold.side===1?'Next side':'Finish hold'}</button><button class="focus-link" data-focus="cancel">Cancel hold</button></div>`;
   else if(validAdvancedDraft(x)&&sessionRecordedCount(x)===st[1])html+=`<div class="focus-rest"><p class="focus-eyebrow">${esc(st[0])}</p><h2>Sets ready to save.</h2><p>${st[1]} ${st[1]===1?'set':'sets'} marked done. Review your numbers or save this exercise to Progress.</p></div><div class="focus-actions"><button class="primary" id="focusPrimary" data-act="save" data-t="${t.id}">Save exercise</button><button class="focus-link" data-focus="reviewadvanced">Review sets</button></div>`;
   else html+=`<div class="focus-exercise"><div class="focus-exercise-art">${exerciseThumbnail(t,sessionLevel(t),false)}</div><div class="focus-exercise-copy"><p class="focus-eyebrow">Set ${x.values.length+1} of ${st[1]}</p><h2>${esc(st[0])}</h2><p class="focus-target">${x.mode==='light'?`Lighter goal: ${x.goals[x.values.length]} ${timed?'seconds':'reps'}`:`Aim for ${st[2]}–${st[3]} ${timed?'seconds':'reps'}`}${st[4].includes('each')?' each side':''}</p><button class="focus-howto" id="focusHowTo" data-ui="technique" aria-haspopup="dialog" aria-controls="techniqueSheet" aria-label="How to do ${esc(st[0])}">How to <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6v.1"/></svg></button></div></div>${!x.values.length?workCoach(t,x):''}<div class="focus-set-path" aria-hidden="true">${Array.from({length:st[1]},(_,i)=>`<span class="${i<x.values.length||(validAdvancedDraft(x)&&x.advancedDraft.done.includes(i))?'done':i===x.values.length?'current':''}"></span>`).join('')}</div><div class="focus-counter"><button class="focus-stepper" data-focus="minus" aria-label="Decrease ${timed?'seconds':'reps'}">−</button><div class="focus-dial"><div class="focus-number" id="focusValue" role="status" aria-live="polite">${focusValue()}</div><div class="focus-unit">${timed?'Hold duration · seconds':'Reps to record'}${st[4].includes('each')?' each side':''}</div></div><button class="focus-stepper" data-focus="plus" aria-label="Increase ${timed?'seconds':'reps'}">+</button></div><details class="focus-technique"><summary>View technique</summary>${techniqueContent(t,sessionLevel(t),st)}</details>${swapView()}${confirmingZero?'<p class="cue focus-zero-confirm">All sets are 0. Confirm to record this exercise with zero values, or adjust the number.</p>':''}<div class="focus-actions"><button class="primary" id="focusPrimary" data-focus="${timed&&!confirmingZero?'hold':'complete'}">${confirmingZero?(timed?'Confirm zero-second set':'Confirm zero-rep set'):timed?'Start '+esc(st[0]):'Complete set'}</button></div>`;
@@ -3424,7 +3463,7 @@ function focusView(plan,top,more,recent){
   if(recent.length)html+=`<button class="fold" data-ui="done" aria-expanded="${showDone}">Recently saved <span>${recent.length}</span></button>${showDone?recent.map(t=>opened.has(t.id)?fullCard(t,false):miniRow(t,'done')).join(''):''}`;
   return html+'</div></div>'+sheet();
 }
-function resumeFocus({background=false}={}){stopTimer();focusRun.phase='work';focusRun.restEnd=0;persistFocus();if(background)softRender();else{render();$('#focusPrimary')?.focus({preventScroll:true});}}
+function resumeFocus({background=false}={}){const next=focusItem(),changed=focusRun?.restFrom&&focusRun.restFrom!==next?.id;primeAudio();workoutCue(changed?'exercise':'rest');announceTimer('Rest finished. '+(next?sessionSpec(findTrack(next.id))[0]+' is ready.':'Next set is ready.'));stopTimer();focusRun.phase='work';focusRun.restEnd=0;persistFocus();if(background)softRender();else{render();$('#focusPrimary')?.focus({preventScroll:true});}}
 function completeFocus(value=focusValue()){
   const x=focusItem();if(!x||focusRun.phase!=='work'||x.entry)return;
   if(hold){toast('Finish or cancel the running hold first.');return;}
@@ -3442,7 +3481,7 @@ function completeFocus(value=focusValue()){
   if(!entry){if(validAdvancedDraft(x))rehydrateAdvancedDraft(x);else{drafts[t.id]=x.goals.map((v,i)=>String(x.values[i]??v));completedSets[t.id]=new Set(x.values.map((_,i)=>i));}}
   if(entry){const next=focusRun.items.findIndex(sessionPending);if(next<0){focusRun.phase='finished';focusRun.endStatus=sessionTotals(focusRun).completed===focusRun.items.length?'completed':'partial';}else focusRun.at=next;}
   if(entry)showFocusSaved(st[0]);else clearFocusNotice();
-  if(focusRun.phase!=='finished'){focusRun.phase='rest';focusRun.restDuration=restOf(t,st);focusRun.restEnd=Date.now()+focusRun.restDuration*1000;startRest(focusRun.restDuration,focusRun.restEnd);}
+  if(focusRun.phase!=='finished'){focusRun.restFrom=t.id;focusRun.phase='rest';focusRun.restDuration=restOf(t,st);focusRun.restEnd=Date.now()+focusRun.restDuration*1000;startRest(focusRun.restDuration,focusRun.restEnd);}
   persistFocus();pulseFocusCompletion();render();$('#focusPrimary')?.focus({preventScroll:true});
   // The rest/completion screen already confirms the action and keeps Undo available.
   hideToast();
@@ -3484,7 +3523,7 @@ function handleFocus(b){
   if(a==='skip'){resumeFocus();return;}
   if(a==='subtract'){adjustRest(-30);return;}
   if(a==='add'){addFocusRest();return;}
-  if(a==='choose'){if(focusRun?.phase==='paused'){toast('Resume your paused workout first.');return;}if(hold){toast('Finish or cancel the running hold first.');return;}stopTimer();focusRun.at=+b.dataset.i;focusRun.phase='work';persistFocus();render();return;}
+  if(a==='choose'){if(focusRun?.phase==='paused'){toast('Resume your paused workout first.');return;}if(hold){toast('Finish or cancel the running hold first.');return;}const changed=focusRun.at!==+b.dataset.i;stopTimer();focusRun.at=+b.dataset.i;focusRun.phase='work';if(changed){primeAudio();workoutCue('exercise');}persistFocus();render();return;}
   if(!t)return;
   if(a==='plus'||a==='minus'){const previous=focusValue();x.value=Math.min(9999,Math.max(0,previous+(a==='plus'?1:-1)*stepInc(sessionSpec(t))));persistFocus();rollFocusNumber(previous,x.value);return;}
   if(a==='complete'){completeFocus();return;}
@@ -4038,6 +4077,7 @@ function openAppearance(event){
  const opener=event?.currentTarget||document.activeElement;
  const dialog=document.createElement('dialog');dialog.id='appSettings';dialog.className='app-preferences app-settings';dialog.setAttribute('aria-labelledby','appearanceTitle');
  dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">App settings</h2><button aria-label="Close app settings" autofocus>×</button></div><section class="settings-section"><h3>Appearance</h3><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p></section><section class="settings-section"><h3>Your progress</h3><p id="settingsSaveStatus" class="settings-save-status" role="status"></p><button class="settings-row" data-settings-backup aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Backup & restore</span><span class="settings-row-detail">Download your progress or restore a saved copy.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Workout equipment</h3><button class="settings-row" data-settings-equipment aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Equipment & supports</span><span class="settings-row-detail">Confirm what your exercise variations need.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Help</h3><button class="settings-row" data-display-support aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Report a problem</span><span class="settings-row-detail">Open a private email draft. No account needed.</span></span><span aria-hidden="true">›</span></button></section><button class="primary" data-display-done>Done</button>';
+ dialog.querySelector('.settings-section').insertAdjacentHTML('afterend',cueSettingsMarkup());
  const close=()=>{if(dialog.open&&dialog.close)dialog.close();else dialog.dispatchEvent(new Event('close'));};
  dialog.addEventListener('close',()=>{dialog.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
  dialog.querySelector('.preferences-head button').addEventListener('click',close);
@@ -4303,9 +4343,7 @@ async function grabWake(){
 }
 // A short beep as well as a buzz, because iPhones can't vibrate from a web page
 let actx=null;
-function primeAudio(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); }catch(e){} }
-function beep(n){ try{ if(!actx) return; for(let i=0;i<n;i++){ const o=actx.createOscillator(), g=actx.createGain(), t0=actx.currentTime+i*0.22; o.frequency.value=880; g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.25,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+0.18); o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0+0.2); } }catch(e){} }
-const buzz = p => { try{ navigator.vibrate&&navigator.vibrate(p); }catch(e){} beep(p.length>1?2:1); };
+function primeAudio(){ if(cuePrefs.muted||!cuePrefs.sound)return;try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume()?.catch(()=>{}); }catch(e){} }
 function showTimer(html){ const el=$("#timer"); el.innerHTML=html;const clock=el.querySelector('#timerText');if(clock){clock.setAttribute('role','timer');clock.setAttribute('aria-live','off');clock.setAttribute('aria-label',hold?'Hold elapsed time':'Rest time remaining');}el.hidden=false; document.body.classList.add("timing"); }
 function announceTimer(message){$('#timerAnnouncement').textContent=message;}
 function startRest(sec,deadline){
@@ -4332,10 +4370,10 @@ function tick(){
     const doneBtn=$("#timer [data-tm=done]"); if(doneBtn) doneBtn.hidden = el<0;
     if(hold.focus){const clock=$("#focusClock");if(clock)clock.textContent=el<0?"Ready "+Math.ceil(-el):Math.floor(el)+"s";const finish=$("[data-focus=finish]");if(finish)finish.disabled=el<0;}
     if(el<0){ tx.textContent="Get ready "+Math.ceil(-el); return; }
-    if(!hold.announcedStart){hold.announcedStart=true;announceTimer(`Start holding. Goal ${hold.goal} seconds${hold.sides>1?', side '+hold.side:''}.`);}
+    if(!hold.announcedStart){hold.announcedStart=true;if(el<2&&hold.goal>0){workoutCue('start');announceTimer(`Start holding. Goal ${hold.goal} seconds${hold.sides>1?', side '+hold.side:''}.`);}else announceTimer('Hold timer: '+Math.floor(el)+' seconds elapsed.');}
     const s=Math.floor(el); tx.textContent=`${s}s / ${hold.goal}s`;
     $("#timer").classList.toggle("reached", s>=hold.goal);
-    if(s>=hold.goal && !buzzed){ buzzed=true; buzz([150,80,150]); announceTimer('Hold target reached. Finish when you’re ready.'); }
+    if(s>=hold.goal && !buzzed){ buzzed=true; workoutCue('target'); announceTimer('Hold target reached. Finish when you’re ready.'); }
     return;
   }
   const left=Math.max(0,Math.ceil((restEnd-Date.now())/1000));
@@ -4344,7 +4382,7 @@ function tick(){
     const clock=$("#focusClock");if(clock)clock.textContent=focusTime(left);
     const arc=$("#focusArc");if(arc)arc.setAttribute("stroke-dashoffset",String(focusRestOffset()));
   }
-  if(left===0){ const focusRest=focusRun?.phase==="rest";stopTimer(); buzz([200,100,200]);if(focusRest)resumeFocus({background:true});toast("Rest done. Next set."); }
+  if(left===0){ const focusRest=focusRun?.phase==="rest";stopTimer();if(focusRest)resumeFocus({background:true});else workoutCue('rest');toast("Rest done. Next set."); }
 }
 function finishHold(){
   const h=hold; if(!h) return; const t=findTrack(h.tid); if(!t){ stopTimer(); return; }
@@ -4484,17 +4522,25 @@ function planningExplanationView(report){
  const nextText=Number.isFinite(next)?next>now?'Next eligible movement: '+new Date(next).toLocaleString(undefined,{weekday:'short',hour:'numeric',minute:'2-digit'})+'.':'The waiting period in this explanation has passed. A new plan checks your latest saved work.':'';
  return `<section class="journey-plan" aria-label="Workout planning explanation"><p class="journey-source">${snapshot?'Saved planning snapshot. Your current workout keeps its original targets.':'Current selection · based on saved work and your choices.'}</p><p class="journey-estimate">${escape(estimateText)}</p>${explanation?`<p>${escape(explanation)}</p>`:''}${equipmentExcluded?`<p>${equipmentExcluded} ${equipmentExcluded===1?'movement needs':'movements need'} confirmed equipment availability.</p>`:''}${nextText?`<p>${escape(nextText)}</p>`:''}<div class="journey-actions"><button data-journey="browse">Browse exercises</button><button data-journey="all">Plan from all exercises</button></div><p class="journey-note">Changing the selection never overrides the 24-hour rule. Saved sets and unfinished work stay protected.</p></section>`;
 }
+function journeyCheckinCopy(data,prefs){
+ if(data.historyDays<28)return {heading:'A quick weekly check-in',text:`Your ${prefs.days}-day weekly participation goal is flexible. Make the next workout fit the time and energy you have.`};
+ const heading=data.historyDays<56?'Your first-month check-in':'Your monthly check-in';
+ const recap=`${data.current.days} ${data.current.days===1?'day':'days'} with recorded work · ${data.current.sets} ${data.current.sets===1?'set':'sets'} in the last 28 days.`;
+ const suggestion=!data.current.days?'When you return, choose a short or lighter workout.':data.partial>=2&&data.partial>data.completed?'Several sessions finished early. A shorter time budget may fit better.':data.improvements.length?'Matching results improved above. Keep your goal or choose a different focus.':'Review time, goals or energy to make the next workout fit.';
+ return {heading,text:recap+' '+suggestion};
+}
 function monthJourneyView(){
  const now=Date.now(),data=journeySummaryData(state.log,state.sessions,now),escape=journeyEscape,delta=(value,prior)=>value===prior?'Same as the previous 4 weeks':(value>prior?'+':'')+(value-prior)+' vs previous 4 weeks';
  const prefs=typeof LadderCoach!=='undefined'?LadderCoach.prefs(state.prefs?.coach):{days:3};
+ const checkin=journeyCheckinCopy(data,prefs);
  const gains=data.improvements.slice(0,3).map(record=>{
   const step=typeof stepByKey==='function'?stepByKey(record.key):null;if(!step)return '';
   const rawUnit=String(step.st[4]),measure=typeof isSec==='function'&&isSec(rawUnit)?'seconds':rawUnit.startsWith('rounds')?'rounds':'reps',side=rawUnit.includes('each')?' per side':'';
   return `<li><b>${escape(step.st[0])}</b><span>${record.firstTotal} → ${record.lastTotal} ${measure}${side} · ${record.count}-set total${record.mode==='light'?' · lighter workout':''}</span></li>`;
  }).join('');
- return `<section class="journey-month" aria-labelledby="journeyMonthTitle"><div class="journey-heading"><h2 id="journeyMonthTitle">Last 4 weeks</h2><p>Saved work over the last 28 days.</p></div><div class="journey-metrics"><div><strong>${data.current.days}</strong><span>days with recorded work</span><small>${escape(delta(data.current.days,data.previous.days))}</small></div><div><strong>${data.current.sets}</strong><span>sets recorded</span><small>${escape(delta(data.current.sets,data.previous.sets))}</small></div></div><p class="journey-outcomes">${data.completed} completed ${data.completed===1?'session':'sessions'} · ${data.partial} finished early</p>${data.unclassified?'<p class="journey-note">Some saved exercise history has no session outcome. Its work is included above; session completion is unknown.</p>':''}<p class="journey-note">A training day needs at least one positive saved result. Set totals include explicitly recorded zero results. Unfinished drafts are not included.</p>${gains?`<div class="journey-gains"><h3>Matching results that improved</h3><ul>${gains}</ul><p class="journey-note">First versus latest result in this window, on separate days, for the same step and number of sets. This describes your log, not a fitness assessment.</p></div>`:''}${data.historyDays>=7?`<div class="journey-checkin"><h3>A quick weekly check-in</h3><p>Your ${prefs.days}-day weekly participation goal is flexible. Make the next workout fit the time and energy you have.</p><div class="journey-actions"><button data-journey="review" data-review="time">Review time</button><button data-journey="review" data-review="goal">Review goal</button><button data-journey="review" data-review="energy">Review energy</button></div></div>`:'<p class="journey-note">Your first weekly check-in appears after 7 days of saved history.</p>'}</section>`;
+ return `<section class="journey-month" aria-labelledby="journeyMonthTitle"><div class="journey-heading"><h2 id="journeyMonthTitle">Last 4 weeks</h2><p>Saved work over the last 28 days.</p></div><div class="journey-metrics"><div><strong>${data.current.days}</strong><span>days with recorded work</span><small>${escape(delta(data.current.days,data.previous.days))}</small></div><div><strong>${data.current.sets}</strong><span>sets recorded</span><small>${escape(delta(data.current.sets,data.previous.sets))}</small></div></div><p class="journey-outcomes">${data.completed} completed ${data.completed===1?'session':'sessions'} · ${data.partial} finished early</p>${data.unclassified?'<p class="journey-note">Some saved exercise history has no session outcome. Its work is included above; session completion is unknown.</p>':''}<p class="journey-note">A training day needs at least one positive saved result. Set totals include explicitly recorded zero results. Unfinished drafts are not included.</p>${gains?`<div class="journey-gains"><h3>Matching results that improved</h3><ul>${gains}</ul><p class="journey-note">First versus latest result in this window, on separate days, for the same step and number of sets. This describes your log, not a fitness assessment.</p></div>`:''}${data.historyDays>=7?`<div class="journey-checkin"><h3>${escape(checkin.heading)}</h3><p>${escape(checkin.text)}</p><div class="journey-actions"><button data-journey="review" data-review="time">Review time</button><button data-journey="review" data-review="goal">Review goal</button><button data-journey="review" data-review="energy">Review energy</button></div></div>`:'<p class="journey-note">Your first weekly check-in appears after 7 days of saved history.</p>'}</section>`;
 }
-if(typeof module!=='undefined'&&module.exports)module.exports={journeySummaryData,planningExplanationView,monthJourneyView};
+if(typeof module!=='undefined'&&module.exports)module.exports={journeySummaryData,planningExplanationView,journeyCheckinCopy,monthJourneyView};
 /* LADDER_JOURNEY_END */
 /* LADDER_WORKOUT_EXTRAS_START */
 /* Explicit workout extensions; never an automatic recovery recommendation. */
@@ -4552,6 +4598,47 @@ function openWorkoutExtras(opener=document.activeElement){
 }
 document.addEventListener('click',e=>{const opener=e.target.closest('[data-session-extra="open"]');if(opener)openWorkoutExtras(opener);});
 /* LADDER_WORKOUT_EXTRAS_END */
+/* LADDER_CUES_JS_START */
+/* Device-only workout cues. No speech, permissions prompt, or workout mutations. */
+const LadderCueSettings=(()=>{
+ const normalize=p=>({sound:p?.sound!==false,vibration:p?.vibration!==false,muted:p?.muted===true});
+ const patterns={rest:[[523,0,.12],[659,.17,.16]],exercise:[[523,0,.1],[659,.14,.1],[784,.28,.16]],start:[[784,0,.18]],target:[[659,0,.14],[523,.2,.18]]};
+ const vibrations={rest:[180,80,180],exercise:[90,70,90,70,180],start:[120],target:[150,80,150]};
+ return {normalize,patterns,vibrations};
+})();
+let cuePrefs;try{cuePrefs=LadderCueSettings.normalize(JSON.parse(store.get('bwl-cues','null')));}catch(e){cuePrefs=LadderCueSettings.normalize();}
+const activeCueSounds=new Set();
+function workoutCue(kind){
+ if(cuePrefs.muted||!Object.hasOwn(LadderCueSettings.patterns,kind))return;
+ if(cuePrefs.vibration)try{navigator.vibrate?.(LadderCueSettings.vibrations[kind]);}catch(e){}
+ if(!cuePrefs.sound||!actx||actx.state!=='running')return;
+ try{for(const [frequency,delay,duration]of LadderCueSettings.patterns[kind]){
+  const oscillator=actx.createOscillator(),gain=actx.createGain(),start=actx.currentTime+delay;
+  oscillator.type='sine';oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.12,start+.015);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  activeCueSounds.add(oscillator);oscillator.connect(gain).connect(actx.destination);oscillator.start(start);oscillator.stop(start+duration+.02);oscillator.onended=()=>{activeCueSounds.delete(oscillator);oscillator.disconnect();gain.disconnect();};
+ }}catch(e){}
+}
+function cueMuteMarkup(){return `<button type="button" class="cue-mute" data-cue-mute>${cuePrefs.muted?'Unmute cues':'Mute cues'}</button>`;}
+function cueSettingsMarkup(){return `<section class="settings-section workout-cue-settings"><h3>Workout cues</h3><label><input type="checkbox" data-cue-setting="sound"${cuePrefs.sound?' checked':''}> Sound</label><label><input type="checkbox" data-cue-setting="vibration"${cuePrefs.vibration?' checked':''}> Vibration</label>${cueMuteMarkup()}<p class="appearance-note" data-cue-status>${cueStatusText()}</p><p class="appearance-note">Cues mark rest ending, a new exercise, hold starting and hold target reached. Sound needs a browser that allows playback; vibration depends on your device. Keep the workout visible for timely cues.</p></section>`;}
+function cueStatusText(){return cuePrefs.muted?'All workout cues are muted.':!cuePrefs.sound&&!cuePrefs.vibration?'Sound and vibration are off.':'Cues use '+[cuePrefs.sound?'sound':'',cuePrefs.vibration?'vibration':''].filter(Boolean).join(' and ')+'.';}
+function saveCuePreferences(){
+ writeLocal('bwl-cues',JSON.stringify(cuePrefs));
+ document.querySelectorAll('[data-cue-mute]').forEach(b=>{b.textContent=cuePrefs.muted?'Unmute cues':'Mute cues';});
+ document.querySelectorAll('[data-cue-setting]').forEach(input=>{input.checked=cuePrefs[input.dataset.cueSetting];});
+ document.querySelectorAll('[data-cue-status]').forEach(el=>{el.textContent=cueStatusText();});
+ if(cuePrefs.muted||!cuePrefs.sound){for(const oscillator of activeCueSounds)try{oscillator.stop();}catch(e){}activeCueSounds.clear();}
+ if(cuePrefs.muted||!cuePrefs.vibration)try{navigator.vibrate?.(0);}catch(e){}
+ if(!cuePrefs.muted&&cuePrefs.sound)primeAudio();
+ announceTimer(cueStatusText());
+}
+function restPreviewMarkup(t,x,st){
+ const changed=focusRun?.restFrom&&focusRun.restFrom!==t.id,check=equipmentCheck(t,sessionLevel(t)),needs=check.requirements.groups.filter(g=>!g.anyOf.includes('floor')).map(g=>g.description);
+ return `<section class="rest-preview" aria-label="Next exercise preview"><div class="rest-preview-top"><span class="label">${changed?'Up next':'Next set'}</span>${cueMuteMarkup()}</div><div class="rest-preview-main"><button type="button" class="rest-preview-art" data-ui="technique" aria-label="How to do ${esc(st[0])}">${exerciseThumbnail(t,sessionLevel(t))}<span>How to</span></button><div><h2>${esc(st[0])}</h2><p>Set ${x.values.length+1} of ${st[1]} · ${isSec(st[4])?x.goals[x.values.length]+' seconds'+(st[4].includes('each')?' per side':''):x.goals[x.values.length]+(String(st[4]).startsWith('rounds')?' rounds':' reps')+(st[4].includes('each')?' per side':'')}</p><p class="rest-preview-gear">${needs.length?'Have ready: '+esc(needs.join(' and ')):'Floor space · No extra equipment'}</p></div></div>${!check.compatible?'<p class="rest-preview-note">Check your equipment before starting this saved exercise.</p>':''}${isSec(st[4])?'<p class="rest-preview-note">When rest ends, review the exercise and tap Start. The hold waits for you.</p>':''}</section>`;
+}
+document.addEventListener('click',e=>{if(!e.target.closest('[data-cue-mute]'))return;cuePrefs.muted=!cuePrefs.muted;saveCuePreferences();});
+document.addEventListener('change',e=>{const input=e.target.closest('[data-cue-setting]');if(!input||!['sound','vibration'].includes(input.dataset.cueSetting))return;cuePrefs[input.dataset.cueSetting]=input.checked;saveCuePreferences();});
+if(typeof module!=='undefined'&&module.exports)module.exports=LadderCueSettings;
+/* LADDER_CUES_JS_END */
 /* LADDER_WORKOUT_SESSION_START */
 /* Durable workout actions. Embedded after app/timer declarations and before boot. */
 function sessionPending(x){return !!x&&!x.entry&&!x.skipped&&!x.omitted;}
@@ -4593,7 +4680,7 @@ function pauseWorkout({quiet=false}={}){
  if(!focusRun||focusRun.phase==='finished'||focusRun.phase==='paused')return false;
  if(hold&&hold.tid!==focusItem()?.id){toast('Finish or cancel the running hold before changing this workout. Its timer is still running.');return false;}
  const now=Date.now();let p={kind:'work'};
- if(hold){const h=hold,x=focusItem();p={kind:'hold',tid:h.tid,key:x?.key,i:h.i,goal:h.goal,elapsedMs:Math.max(0,now-h.start),readyMs:Math.max(0,h.start-now),side:h.side,sides:h.sides,focus:!!h.focus,...(h.first===undefined?{}:{first:h.first})};}
+ if(hold){const h=hold,x=focusItem();p={kind:'hold',tid:h.tid,key:x?.key,i:h.i,goal:h.goal,elapsedMs:Math.max(0,now-h.start),readyMs:Math.max(0,h.start-now),side:h.side,sides:h.sides,focus:!!h.focus,announcedStart:!!h.announcedStart,targetReached:!!buzzed,...(h.first===undefined?{}:{first:h.first})};}
  else if(focusRun.phase==='rest')p={kind:'rest',remainingMs:Math.max(0,Math.min(3600000,focusRun.restEnd-now)),duration:Math.min(3600,focusRun.restDuration||0)};
  focusRun.pauseSnapshot=validSessionPause(p)?p:{kind:'work'};stopTimer();focusRun.phase='paused';focusRun.pausedAt=now;focusUndo=null;persistFocus();
  if(!quiet){closeWorkoutTools();render();announceTimer('Workout paused. Recorded sets are kept. Resume when ready.');document.querySelector('[data-session-action="resume"]')?.focus({preventScroll:true});}
@@ -4605,7 +4692,7 @@ function resumeWorkout(){
  delete focusRun.pauseSnapshot;delete focusRun.pausedAt;focusRun.phase='work';focusRun.resumeDay=dayOf(Date.now());focusUndo=null;
  if(p.kind==='rest'&&p.remainingMs>0){focusRun.phase='rest';focusRun.restDuration=p.duration||p.remainingMs/1000;focusRun.restEnd=Date.now()+p.remainingMs;startRest(p.remainingMs/1000,focusRun.restEnd);}
  if(p.kind==='hold'){
-  const t=findTrack(p.tid);if(t){holdNext[t.id]=p.i;startHold(t,p.side);Object.assign(hold,{goal:p.goal,start:Date.now()+p.readyMs-p.elapsedMs,focus:p.focus,side:p.side,sides:p.sides,...(p.first===undefined?{}:{first:p.first})});tick();}
+  const t=findTrack(p.tid);if(t){holdNext[t.id]=p.i;startHold(t,p.side);Object.assign(hold,{goal:p.goal,start:Date.now()+p.readyMs-p.elapsedMs,focus:p.focus,announcedStart:p.announcedStart===true,side:p.side,sides:p.sides,...(p.first===undefined?{}:{first:p.first})});buzzed=p.targetReached===true;tick();}
  }
  persistFocus();render();announceTimer('Workout resumed.');$('#focusPrimary')?.focus({preventScroll:true});
 }
@@ -4632,7 +4719,7 @@ function savePendingSessionItem(x){
 function advanceWorkoutItem(){
  const next=focusRun.items.findIndex(sessionPending);focusRun.restEnd=0;
  if(next<0){focusRun.phase='finished';focusRun.endStatus=focusRun.closedEarly||focusRun.items.some(x=>x.skipped||x.omitted||!x.entry||!state.log.some(e=>entryId(e)===x.entry&&e.sets.length>=x.goals.length))?'partial':'completed';focusRun.ended=Date.now();}
- else{focusRun.at=next;focusRun.phase='work';delete focusRun.pauseSnapshot;}
+ else{focusRun.at=next;focusRun.phase='work';delete focusRun.pauseSnapshot;primeAudio();workoutCue('exercise');}
  persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});
 }
 function finishWorkoutToday({startNew=false}={}){
