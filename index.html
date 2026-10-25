@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-25-clear-resume',events=[];
+ const RELEASE='2026-10-25-simpler-sheets',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2139,6 +2139,26 @@ body[data-view="today"] .focus-shell>.focus-stage.focus-paused{padding:24px;gap:
 body[data-view="today"] .focus-paused>.paused-status{color:var(--ink);font-size:var(--type-body);font-weight:600;font-variant-numeric:tabular-nums}
 body[data-view="today"] .focus-paused>.paused-save-note{font-size:var(--type-control)}
 @media(max-width:359px){body[data-view="today"] .focus-shell>.focus-stage.focus-paused{padding:20px 16px}.paused-next{gap:12px}.paused-next>.exercise-thumb{width:88px;height:68px;flex-basis:88px}.paused-next h3{font-size:20px}}
+/* Native fields retain platform behavior with explicit shared light/dark colors. */
+body input:not([type="checkbox"]):not([type="radio"]),body select,body textarea{background-color:var(--color-surface);color:var(--color-ink)}
+body select{box-sizing:border-box;border:1px solid var(--color-field-stroke,var(--color-stroke));padding:10px 12px;line-height:1.4;font-family:inherit}
+body select option{background:var(--color-surface);color:var(--color-ink)}
+body .plan-sheet .workout-tools-body.plan-coaching{padding:20px;margin:0;border-top:0}
+body .plan-sheet .plan-preferences{padding:0;background:transparent;border-radius:0}
+.plan-preferences label:first-child{margin-top:0}
+.plan-week-summary{padding:12px 16px;background:var(--section-plan);border-radius:12px;margin:16px 0;line-height:1.5;font-size:var(--type-control)}
+.plan-week-summary b{display:block;color:var(--ink)}
+.plan-sheet .plan-equipment{width:100%;text-align:left;margin:12px 0}
+.plan-rationale{border-block:1px solid var(--line);margin:16px 0}
+.plan-rationale>summary,.equipment-more>summary{min-height:48px;padding:12px 0;box-sizing:border-box;cursor:pointer;font-size:var(--type-control);font-weight:650;line-height:1.5}
+.plan-rationale>.journey-plan{margin-top:12px}
+.plan-sheet .plan-done{width:100%;margin-top:8px;min-height:48px}
+.equipment-more{border-block:1px solid var(--line);margin:16px 0}
+.equipment-more>summary>span{font-weight:400;color:var(--muted);margin-left:8px}
+.equipment-more>fieldset{margin-block:16px}
+.equipment-preferences .equipment-setting{grid-template-columns:minmax(0,1fr) 152px;gap:12px}
+@media(max-width:359px){.equipment-preferences .equipment-setting{grid-template-columns:1fr;gap:6px;padding-block:12px}}
+@media(forced-colors:active){body select,body select option,body textarea{background:Canvas;color:CanvasText}}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -2923,7 +2943,18 @@ function mountPlanSummary(){
  const why=current?report.summary:'This saved workout keeps its original targets. Your current preferences shape your next workout.';
  const list=(focusRun?.items||[]).filter(x=>findTrack(x.id)).map(item=>{const chosen=current?report.selected.find(x=>x.id===item.id):null,decision=item.coaching?.decision||chosen?.decision;return `<li><b>${esc(sessionSpec(findTrack(item.id))[0])}</b>${decision?`<p>${esc(decision.title)} · ${esc(decision.reason)}</p>`:''}<span>${esc(item.swap?'You chose this alternative. Its targets stay separate.':chosen?.reason||'Kept from your saved workout.')}</span></li>`;}).join('');
  const d=document.createElement('dialog');d.id='planSummary';d.className='workout-tools plan-sheet';d.setAttribute('aria-labelledby','planSummaryTitle');
- d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div><div class="workout-tools-body plan-coaching"><div class="plan-preferences"><label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">A weekly participation goal, not fixed workout days. No catch-up sets. Changes apply to the next workout once any sets are recorded.</p></div><h3>This week so far</h3><p>${days} of ${p.days} target days recorded this week. ${days>=p.days?'Your weekly target is met; another workout is optional.':'A flexible target, with no catch-up sets.'}</p><button data-equipment-open>Your equipment & supports</button><h3>Why this workout</h3>${current?'<p class="cue">Planning snapshot from when this workout was created. The week count above reflects your latest saved results; the selections and targets below keep their original explanation.</p>':''}<p>${esc(why)}</p>${current?planningExplanationView(report):`<p>About ${estimate} minutes including rests. Actual time varies.</p>`}${minutes&&estimate>minutes+1?`<p class="cue">This exercise block exceeds the ${minutes}-minute setting. Choose fewer sets or a shorter workout if needed.</p>`:''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy. Its saved targets stay in place.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices. They do not measure physical recovery.</p></div>`;
+ const updatesNow=canAdjustReadiness()&&!focusRun?.readiness?.kind;
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div>
+ <div class="workout-tools-body plan-coaching"><div class="plan-preferences">
+ <label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select>
+ <label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select>
+ <p class="cue">Saved as you choose. ${updatesNow?'Updates this workout before your first set.':'Applies to your next workout; current targets stay unchanged.'}</p></div>
+ <div class="plan-week-summary"><b>${days} ${days===1?'day':'days'} trained this week</b><span>${days>=p.days?'Weekly goal met. Another workout is optional.':'Aim for '+p.days+' days, whenever they fit. No catch-up sets.'}</span></div>
+ <h3>This workout</h3><p>${focusRun?.items?.length?focusRun.items.length+' '+(focusRun.items.length===1?'exercise':'exercises')+' · about '+estimate+' minutes including rests.':'No automatic workout from these choices yet.'}</p>
+ ${minutes&&estimate>minutes+1?`<p class="cue">This plan exceeds your ${minutes}-minute setting. You can choose a shorter workout.</p>`:''}
+ <button class="plan-equipment" data-equipment-open>Your equipment & supports <span aria-hidden="true">→</span></button>
+ <details class="plan-rationale"><summary>Why these exercises?</summary>${current?'<p class="cue">Saved when this workout was planned. Current targets stay in place.</p>':''}<p>${esc(why)}</p>${current?planningExplanationView(report):''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices; they do not measure physical recovery.</p></details>
+ <button class="primary plan-done" data-ui="planclose">Done</button></div>`;
  const preferenceNote=d.querySelector('.plan-preferences .cue');preferenceNote.id='planPreferenceNote';
  d.querySelectorAll('.plan-preferences select').forEach(select=>select.setAttribute('aria-describedby',preferenceNote.id));
  d.addEventListener('cancel',e=>{e.preventDefault();closePlanSummary();});
@@ -3880,7 +3911,7 @@ function viewLadders(){
       return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog" aria-label="How to do ${esc(st[0])}">How to do this <span aria-hidden="true">→</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog" aria-label="Training settings for ${esc(t.name)}">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Balanced priority':focusOf(t.id)==='more'?'Higher priority':'Lower priority'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
     }).join("");
   }
-  html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Changes apply immediately. Adjust how this movement fits your workouts.</p>${controls(t)}</div>`).join('')}`;
+  html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Preferences save now. Started workouts keep their saved exercises and targets.</p>${controls(t)}</div>`).join('')}`;
   if(hidden.length) html+=`<section data-library-content="hidden"><h3>Keep your library yours.</h3><p class="cue">These don't show on Today. Your progress is kept.</p><div class="stack" style="gap:8px">${hidden.map(t=>`
     <div class="hid">${exerciseThumbnail(t)}<span><b>${esc(t.name)}</b><span>${esc(spec(t)[0])}</span></span><button data-act="show" data-t="${t.id}" aria-label="Add ${esc(t.name)} back to Today">Add back</button></div>`).join("")}</div></section>`;
   html+=`<section class="custom-exercise" data-library-content="custom"><p class="cue">Anything you want to track: burpees, a stretch, a sport drill.</p>
@@ -4598,10 +4629,11 @@ function openEquipmentPreferences(opener=document.activeElement,reason){
  const existing=document.getElementById('equipmentPreferences');
  if(existing){existing.querySelector('select')?.focus();return;}
  const d=document.createElement('dialog');d.id='equipmentPreferences';d.className='app-preferences equipment-preferences';d.setAttribute('aria-labelledby','equipmentTitle');
- const caps=LadderEquipment.normalize(state.prefs.equipment),baseline=['floor','wall','chair'],keys=Object.keys(LadderEquipment.CAPABILITIES);
+ const caps=LadderEquipment.normalize(state.prefs.equipment),baseline=['floor','wall','chair','bar','weights'],keys=Object.keys(LadderEquipment.CAPABILITIES),other=keys.filter(key=>!baseline.includes(key));
  const field=key=>`<label class="equipment-setting" for="equipment-${key}"><span>${esc(LadderEquipment.CAPABILITIES[key])}</span><select id="equipment-${key}" data-equipment-key="${key}">${[['true','Available'],['false','Not available'],['unknown','Unconfirmed']].map(([value,label])=>`<option value="${value}"${value===(caps[key]===null?'unknown':String(caps[key]))?' selected':''}>${label}</option>`).join('')}</select></label>`;
  const reasonText=typeof reason==='string'?reason:reason?.message;
- d.innerHTML=`<div class="preferences-head"><h2 id="equipmentTitle">Your equipment</h2><button type="button" data-equipment-close aria-label="Close equipment settings" autofocus>×</button></div>${reasonText?`<section class="equipment-reason" role="status">${reason?.title?`<h3>${esc(reason.title)}</h3>`:''}<p>${esc(reasonText)}</p></section>`:''}<p>Confirm what you can use. Unconfirmed supports stay out of new automatic workouts. Your recorded sets and current workout are kept.</p><p class="cue">Availability does not certify that furniture or equipment can support your weight. Confirm the specific support and load needed for the exercise.</p><form data-equipment-form><fieldset><legend>Home basics</legend>${baseline.map(field).join('')}</fieldset><fieldset><legend>Equipment and supports</legend>${keys.filter(key=>!baseline.includes(key)).map(field).join('')}</fieldset><p class="cue">Changes can update a workout before its first set. Started and paused workouts keep their saved exercises.</p><div class="equipment-actions"><button type="submit" class="primary">Save equipment</button><button type="button" data-equipment-close>Cancel</button></div></form>`;
+ const supportGroups=[['Strength supports',['counter','bench','dipBars','straightDipBar','twoChairs','lowBar','doorway','table','balanceSupport','anchor']],['Weights & resistance',['band','post','towel','pairWeights','heavyBag','pinchLoad','swingLoad']],['Floor accessories',['mat','step']]];
+ d.innerHTML=`<div class="preferences-head"><h2 id="equipmentTitle">Your equipment</h2><button type="button" data-equipment-close aria-label="Close equipment settings" autofocus>×</button></div>${reasonText?`<section class="equipment-reason" role="status">${reason?.title?`<h3>${esc(reason.title)}</h3>`:''}<p>${esc(reasonText)}</p></section>`:''}<p>Confirm what you can use. Unconfirmed equipment stays out of new automatic workouts.</p><form data-equipment-form><fieldset><legend>Common equipment</legend>${baseline.map(field).join('')}</fieldset><details class="equipment-more"${reasonText?' open':''}><summary>More equipment & supports <span>${other.length} options</span></summary>${supportGroups.map(([label,group])=>`<fieldset><legend>${label}</legend>${group.filter(key=>other.includes(key)).map(field).join('')}</fieldset>`).join('')}</details><p class="cue">Confirm that each support can carry the load required by the exercise. Availability alone does not confirm this.</p><p class="cue">Started and paused workouts keep their saved exercises.</p><div class="equipment-actions"><button type="submit" class="primary">Save equipment</button><button type="button" data-equipment-close>Cancel</button></div></form>`;
  let rerender=false;
  d.querySelectorAll('[data-equipment-close]').forEach(b=>b.addEventListener('click',()=>d.close()));
  d.addEventListener('click',e=>{if(e.target===d){const rect=d.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)d.close();}});
