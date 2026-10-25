@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-25-workout-controls',events=[];
+ const RELEASE='2026-10-25-clear-resume',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2128,6 +2128,17 @@ body .workout-session-actions>[data-session-action="finish"]{grid-column:1/-1}
 .exercise-thumb.is-photo{background:#eee9df;isolation:isolate}
 .exercise-thumb.is-photo img{object-fit:contain;object-position:center;filter:none}
 @media(min-width:700px){body .workout-session-actions{grid-template-columns:repeat(3,minmax(0,1fr))}body .workout-session-actions>[data-session-action="finish"]{grid-column:auto}}
+/* The paused screen answers what, where and when without opening another panel. */
+body[data-view="today"] .focus-shell>.focus-stage.focus-paused{padding:24px;gap:16px;box-sizing:border-box;width:100%;max-width:640px;margin-inline:auto}
+.paused-next{display:flex;align-items:center;gap:16px;min-width:0;padding-block:8px}
+.paused-next>.exercise-thumb{width:112px;height:84px;flex:0 0 112px}
+.paused-next>div{min-width:0}
+.paused-next .label{margin:0 0 6px;font-size:var(--type-meta);line-height:1.5}
+.paused-next h3{font-size:22px;line-height:1.2;letter-spacing:-.4px;margin:0 0 6px;overflow-wrap:break-word}
+.paused-next p:last-child{margin:0;font-size:var(--type-control);color:var(--muted);line-height:1.5}
+body[data-view="today"] .focus-paused>.paused-status{color:var(--ink);font-size:var(--type-body);font-weight:600;font-variant-numeric:tabular-nums}
+body[data-view="today"] .focus-paused>.paused-save-note{font-size:var(--type-control)}
+@media(max-width:359px){body[data-view="today"] .focus-shell>.focus-stage.focus-paused{padding:20px 16px}.paused-next{gap:12px}.paused-next>.exercise-thumb{width:88px;height:68px;flex-basis:88px}.paused-next h3{font-size:20px}}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -2902,7 +2913,7 @@ function coachingWeekDays(){
 }
 function coachingView(){
  const p=LadderCoach.prefs(state.prefs.coach),days=coachingWeekDays();
- return `<section class="plan-summary" aria-label="Your training plan"><button data-ui="plansummary" aria-haspopup="dialog"><span><b>${coachGoalName(p.goal)} · ${p.days} ${p.days===1?'day':'days'}/week</b><small>${days} of ${p.days} days this week · Why & adjust</small></span><span aria-hidden="true">→</span></button></section>`;
+ return `<section class="plan-summary" aria-label="Your training plan"><button data-ui="plansummary" aria-haspopup="dialog"><span><b>${coachGoalName(p.goal)} · ${p.days} ${p.days===1?'day':'days'}/week</b><small>${days} ${days===1?'day':'days'} this week · Why & adjust</small></span><span aria-hidden="true">→</span></button></section>`;
 }
 function closePlanSummary(){planSummaryOpen=false;const d=$('#planSummary');d?.close();d?.remove();$('[data-ui="plansummary"]')?.focus({preventScroll:true});}
 function mountPlanSummary(){
@@ -4880,9 +4891,13 @@ function workoutActionsMarkup(){
  return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
 }
 function sessionPausedView(){
- const x=focusItem(),t=x&&findTrack(x.id),p=focusRun?.pauseSnapshot;
+ const x=focusItem(),t=x&&findTrack(x.id),p=validSessionPause(focusRun?.pauseSnapshot,x)?focusRun.pauseSnapshot:null;
  const older=focusRun&&dayOf(focusRun.started)!==dayOf(Date.now()),started=older?new Date(focusRun.started).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'';
- return `<section class="focus-stage focus-paused" aria-labelledby="sessionPausedTitle"><h2 id="sessionPausedTitle">${older?'Your unfinished workout.':'Workout paused.'}</h2>${older?`<p>Started ${esc(started)}. Continue where you left off or save it and choose today’s plan.</p>`:''}<p>Your recorded sets are kept.${p?.kind==='hold'?' The hold timer is frozen.':p?.kind==='rest'?' Your remaining rest is frozen.':''}</p>${t?`<p>Next: ${esc(sessionSpec(t)[0])}</p>`:''}<button type="button" class="primary" id="focusPrimary" data-session-action="resume">Resume workout</button>${older?'<button type="button" data-session-action="save-new">Save & start today’s plan</button>':''}</section>`;
+ const st=t?sessionSpec(t):null,index=p?.kind==='hold'?p.i:x?.advancedDraft?.done?x.goals.findIndex((_,i)=>!x.advancedDraft.done.includes(i)):x?.values?.length||0;
+ const set=Math.min(Math.max(0,index)+1,x?.goals?.length||1),clock=ms=>{const s=Math.ceil(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+ const status=p?.kind==='rest'?'Rest paused · '+clock(p.remainingMs)+' left':p?.kind==='hold'?p.readyMs>0?'Get-ready countdown paused · '+Math.ceil(p.readyMs/1000)+' seconds left':'Hold paused · '+Math.floor(p.elapsedMs/1000)+' seconds elapsed'+(p.sides>1?' · side '+p.side:''):'Ready when you are.';
+ const preview=t?`<div class="paused-next">${exerciseThumbnail(t,sessionLevel(t))}<div><p class="label">${p?.kind==='hold'?'Continue':'Up next'} · Set ${set} of ${x.goals.length}</p><h3>${esc(st[0])}</h3><p>${esc(p?.kind==='hold'?p.goal:x.goals[set-1])} ${isSec(st[4])?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p></div></div>`:'';
+ return `<section class="focus-stage focus-paused" aria-labelledby="sessionPausedTitle"><h2 id="sessionPausedTitle">${older?'Your unfinished workout.':'Workout paused.'}</h2>${older?`<p>Started ${esc(started)}. Continue here or save it and choose today’s plan.</p>`:''}${preview}<p class="paused-status" role="status">${esc(status)}</p><p class="paused-save-note">Recorded sets and edits stay on this device.</p><button type="button" class="primary" id="focusPrimary" data-session-action="resume">Resume workout</button>${older?'<button type="button" data-session-action="save-new">Save & start today’s plan</button>':''}</section>`;
 }
 function handleSessionAction(button){
  const action=typeof button==='string'?button:button?.dataset?.sessionAction;
