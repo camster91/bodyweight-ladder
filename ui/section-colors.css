@@ -1,0 +1,68 @@
+/* Section surfaces: OKLCH L=.945 C=.028, hues plan=165/training=250/progress=300/guidance=65.
+   Dark surfaces use L=.27 C=.032. Hex fallbacks are generated from those coordinates.
+   Color groups content; headings, labels and existing control states still carry meaning. */
+:root{
+ --section-plan:#dcf3e8;--section-training:#dfefff;--section-progress:#efe9fd;--section-guidance:#fbeada;
+ --section-plan-edge:#618374;--section-training-edge:#667d94;--section-progress-edge:#7e7592;--section-guidance-edge:#8d755e;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --section-plan:#172b22;--section-training:#1a2836;--section-progress:#292334;--section-guidance:#312315;
+ --section-plan-edge:#6d8f7f;--section-training-edge:#7289a1;--section-progress-edge:#8a809e;--section-guidance-edge:#9a816a;
+}}
+:root[data-theme="dark"]{
+ --section-plan:#172b22;--section-training:#1a2836;--section-progress:#292334;--section-guidance:#312315;
+ --section-plan-edge:#6d8f7f;--section-training-edge:#7289a1;--section-progress-edge:#8a809e;--section-guidance-edge:#9a816a;
+}
+/* Today: plan / work / rest / reflection are separate surfaces. */
+body[data-view="today"] .plan-summary>button{background:var(--section-plan);border-color:var(--section-plan-edge)}
+body[data-view="today"] .focus-shell>.focus-stage{background:var(--section-training);border:1px solid var(--section-training-edge);border-radius:24px;box-sizing:border-box;margin-block:12px}
+body[data-view="today"] .focus-shell>.focus-stage[data-phase="rest"],body[data-view="today"] .focus-shell>.focus-stage.focus-paused{background:var(--section-guidance);border-color:var(--section-guidance-edge)}
+body[data-view="today"] .focus-shell>.focus-stage[data-phase="finished"]{background:var(--section-plan);border-color:var(--section-plan-edge)}
+body[data-view="today"] .focus-stage .rest-preview{background:var(--section-training);border-color:var(--section-training-edge)}
+body[data-view="today"] .planning-details{background:var(--section-guidance);border-color:var(--section-guidance-edge)}
+body[data-view="today"] .focus-stage .effort-check{background:var(--section-progress);border-radius:16px}
+/* Exercises: one tint per labelled category, with guidance inside expanded cards. */
+body[data-view="ladders"] :is([data-g="Strength"],[data-grp="Strength"]){--section-fill:var(--section-training);--section-edge:var(--section-training-edge)}
+body[data-view="ladders"] :is([data-g="Tendon"],[data-grp="Tendon"],[data-g="Weights"],[data-grp="Weights"]){--section-fill:var(--section-plan);--section-edge:var(--section-plan-edge)}
+body[data-view="ladders"] :is([data-g="Mobility"],[data-grp="Mobility"],[data-g="Custom"],[data-grp="Custom"]){--section-fill:var(--section-progress);--section-edge:var(--section-progress-edge)}
+body[data-view="ladders"] :is([data-g="Stretch"],[data-grp="Stretch"]){--section-fill:var(--section-guidance);--section-edge:var(--section-guidance-edge)}
+body[data-view="ladders"] .stack>:is(.exrow[data-g],.exopen[data-g]){background:var(--section-fill);border-color:var(--section-edge)}
+body[data-view="ladders"] .sect[data-grp]{background:var(--section-fill);border-radius:10px;padding:8px 12px;color:var(--ink)}
+body[data-view="ladders"] .sect[data-grp]::before{background:var(--section-edge)}
+body[data-view="ladders"] .exopen>.exrow{background:transparent}
+body[data-view="ladders"] .library-current{background:var(--section-guidance)}
+body[data-view="ladders"] #routinesCard,body[data-view="ladders"] #routineEditor{background:var(--section-plan);border-color:var(--section-plan-edge)}
+body[data-view="ladders"] #routinesCard>.exrow{background:transparent}
+body[data-view="ladders"] .library-brand{background:var(--section-training)}
+body[data-view="ladders"] .library-actions>button:first-child{background:var(--section-progress);border-color:var(--section-progress-edge)}
+body[data-view="ladders"] .library-actions>button:nth-child(2),body[data-view="ladders"] .search-empty{background:var(--section-guidance);border-color:var(--section-guidance-edge)}
+/* Progress separates the week, records, recent activity, month and history. */
+body[data-view="history"] .progress-week{background:var(--section-plan);color:var(--ink);border:1px solid var(--section-plan-edge)}
+body[data-view="history"] .progress-week :is(.label,.progress-stats b,.week-count){color:var(--ink)}
+body[data-view="history"] .progress-week :is(.progress-stats span,.week-day>span,.week-legend){color:var(--muted)}
+body[data-view="history"] .progress-columns>.progress-section{padding:20px;border:1px solid var(--section-progress-edge);border-radius:20px;background:var(--section-progress)}
+body[data-view="history"] .progress-columns>.recent-training{background:var(--section-training);border-color:var(--section-training-edge)}
+body[data-view="history"] .progress-exercises{background:var(--section-training);border:1px solid var(--section-training-edge);border-radius:20px;padding:16px}
+body[data-view="history"] .journey-month,body[data-view="history"] .progress-empty{background:var(--section-progress);border-color:var(--section-progress-edge)}
+body[data-view="history"] .progress-log{background:var(--section-guidance);border:1px solid var(--section-guidance-edge);border-radius:20px;padding:16px}
+body[data-view="history"] .journey-checkin{background:var(--section-plan);padding:16px;border-radius:16px;border:1px solid var(--section-plan-edge)}
+body .pending-workout{background:var(--section-guidance);border-color:var(--section-guidance-edge)}
+/* Shared menus, forms and onboarding use the same section vocabulary. */
+body :is(.workout-tools-head,.preferences-head){background:var(--section-training)}
+body :is(.settings-section,.tool-section){border:0;border-radius:16px;padding:12px;margin-top:12px;background:var(--section-plan)}
+body :is(.settings-section,.tool-section):nth-of-type(4n+2){background:var(--section-training)}
+body :is(.settings-section,.tool-section):nth-of-type(4n+3){background:var(--section-progress)}
+body :is(.settings-section,.tool-section):nth-of-type(4n){background:var(--section-guidance)}
+body .workout-session-actions{background:var(--section-training);border:0;border-radius:16px;padding:12px}
+body #techniqueSheet .workout-tools-body,body #holdPreparation .workout-tools-body{background:var(--section-guidance)}
+body .plan-preferences,body .onboard-pool{background:var(--section-plan);border-radius:16px}
+body .onboard-review{background:var(--section-progress)}
+body .onboard-choice:not([aria-pressed="true"]){background:var(--section-training)}
+body .onboard-choice:nth-of-type(4n+2):not([aria-pressed="true"]){background:var(--section-plan)}
+body .onboard-choice:nth-of-type(4n+3):not([aria-pressed="true"]){background:var(--section-progress)}
+body .onboard-choice:nth-of-type(4n):not([aria-pressed="true"]){background:var(--section-guidance)}
+body .progress-backup section:first-of-type,body .equipment-preferences fieldset:first-of-type{background:var(--section-plan)}
+body .progress-backup section:nth-of-type(2),body .equipment-preferences fieldset:nth-of-type(2){background:var(--section-guidance)}
+body .progress-backup section,body .equipment-preferences fieldset{border:0;border-radius:16px;padding:12px}
+@media(max-width:359px){body[data-view="history"] .progress-columns>.progress-section{padding:16px}body[data-view="history"] .journey-checkin{padding:12px}}
+@media(forced-colors:active){body[data-view] :is(.focus-stage,.plan-summary>button,.progress-week,.progress-section,.progress-log,.journey-month,.journey-checkin,.settings-section,.tool-section,.onboard-choice){background:Canvas;border-color:CanvasText;color:CanvasText}}
