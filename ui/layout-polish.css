@@ -1,5 +1,5 @@
 /* Shared rhythm: color groups sections; space separates controls and content. */
-body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:20px 16px 16px;height:auto}
+body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:20px 16px 16px;height:auto;max-width:none;width:100%;margin-inline:0}
 body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{width:100%;box-sizing:border-box}
 body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{background:var(--surface);border-color:var(--line)}
 body[data-view="today"] .focus-stage:has(.focus-counter) .focus-stepper{box-shadow:none}
@@ -27,13 +27,27 @@ body[data-view="history"] .personal-best{background:transparent;border-radius:0;
  body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:24px;column-gap:24px;box-sizing:border-box}
 }
 @media(min-width:1000px) and (min-height:700px){
- body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:minmax(0,1fr) minmax(280px,1fr);max-width:900px;margin-inline:auto;row-gap:20px}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:minmax(0,1fr) minmax(280px,1fr);max-width:none;width:100%;margin-inline:0;row-gap:20px}
  body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{gap:20px}
  body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{height:220px}
 }
 @media(max-width:359px){
  body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:16px 12px 12px}
- body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:156px;height:156px}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:148px;height:148px}
+ body[data-view="today"] .focus-counter{gap:6px}
+ body[data-view="today"] .focus-counter .focus-stepper{width:44px;height:44px}
  body[data-view="ladders"] .library-filters button{padding-inline:10px}
 }
 @media(max-height:650px){body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding-top:12px}}
+/* One immediate safety control, one menu for the other workout actions. */
+body[data-view="today"] .focus-meta{flex-wrap:nowrap;gap:8px}
+body[data-view="today"] .focus-meta>span{flex:1;min-width:0;line-height:1.5}
+.workout-quick-controls{display:flex;align-items:center;gap:6px;flex:none}
+body[data-view="today"] .workout-quick-controls>button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 10px;margin:0;font-size:var(--type-control);white-space:nowrap;box-shadow:none}
+.workout-pause svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+body .workout-session-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+body .workout-session-actions>[data-session-action="finish"]{grid-column:1/-1}
+/* Preserve the whole pose in every exercise thumbnail, regardless of source. */
+.exercise-thumb.is-photo{background:#eee9df;isolation:isolate}
+.exercise-thumb.is-photo img{object-fit:contain;object-position:center;filter:none}
+@media(min-width:700px){body .workout-session-actions{grid-template-columns:repeat(3,minmax(0,1fr))}body .workout-session-actions>[data-session-action="finish"]{grid-column:auto}}

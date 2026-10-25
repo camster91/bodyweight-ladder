@@ -103,10 +103,14 @@ function finishWorkoutToday({startNew=false}={}){
  d.addEventListener('close',()=>{d.remove();document.body.classList.remove('end-workout-open');if(!accepted){render();document.querySelector('[data-session-action="resume"]')?.focus({preventScroll:true});}},{once:true});
  document.body.append(d);applyComponentSystem(d);document.body.classList.add('end-workout-open');d.showModal();d.querySelector('[data-session-finish-cancel]').focus({preventScroll:true});
 }
+function workoutPauseMarkup(){
+ if(!focusRun||!['work','rest'].includes(focusRun.phase)||!focusRun.items.some(sessionPending))return '';
+ return '<button type="button" id="workoutPauseButton" class="workout-pause" data-session-action="pause" aria-label="Pause workout"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5v10M13 5v10"/></svg><span>Pause</span></button>';
+}
 function workoutActionsMarkup(){
  if(!focusRun||focusRun.phase==='finished')return '';
  const paused=focusRun.phase==='paused';
- return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="${paused?'resume':'pause'}">${paused?'Resume':'Pause'}</button><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
+ return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
 }
 function sessionPausedView(){
  const x=focusItem(),t=x&&findTrack(x.id),p=focusRun?.pauseSnapshot;
