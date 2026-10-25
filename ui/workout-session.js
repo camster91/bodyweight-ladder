@@ -38,7 +38,7 @@ function pauseWorkout({quiet=false}={}){
  if(!focusRun||focusRun.phase==='finished'||focusRun.phase==='paused')return false;
  if(hold&&hold.tid!==focusItem()?.id){toast('Finish or cancel the running hold before changing this workout. Its timer is still running.');return false;}
  const now=Date.now();let p={kind:'work'};
- if(hold){const h=hold,x=focusItem();p={kind:'hold',tid:h.tid,key:x?.key,i:h.i,goal:h.goal,elapsedMs:Math.max(0,now-h.start),readyMs:Math.max(0,h.start-now),side:h.side,sides:h.sides,focus:!!h.focus,...(h.first===undefined?{}:{first:h.first})};}
+ if(hold){const h=hold,x=focusItem();p={kind:'hold',tid:h.tid,key:x?.key,i:h.i,goal:h.goal,elapsedMs:Math.max(0,now-h.start),readyMs:Math.max(0,h.start-now),side:h.side,sides:h.sides,focus:!!h.focus,announcedStart:!!h.announcedStart,targetReached:!!buzzed,...(h.first===undefined?{}:{first:h.first})};}
  else if(focusRun.phase==='rest')p={kind:'rest',remainingMs:Math.max(0,Math.min(3600000,focusRun.restEnd-now)),duration:Math.min(3600,focusRun.restDuration||0)};
  focusRun.pauseSnapshot=validSessionPause(p)?p:{kind:'work'};stopTimer();focusRun.phase='paused';focusRun.pausedAt=now;focusUndo=null;persistFocus();
  if(!quiet){closeWorkoutTools();render();announceTimer('Workout paused. Recorded sets are kept. Resume when ready.');document.querySelector('[data-session-action="resume"]')?.focus({preventScroll:true});}
@@ -50,7 +50,7 @@ function resumeWorkout(){
  delete focusRun.pauseSnapshot;delete focusRun.pausedAt;focusRun.phase='work';focusRun.resumeDay=dayOf(Date.now());focusUndo=null;
  if(p.kind==='rest'&&p.remainingMs>0){focusRun.phase='rest';focusRun.restDuration=p.duration||p.remainingMs/1000;focusRun.restEnd=Date.now()+p.remainingMs;startRest(p.remainingMs/1000,focusRun.restEnd);}
  if(p.kind==='hold'){
-  const t=findTrack(p.tid);if(t){holdNext[t.id]=p.i;startHold(t,p.side);Object.assign(hold,{goal:p.goal,start:Date.now()+p.readyMs-p.elapsedMs,focus:p.focus,side:p.side,sides:p.sides,...(p.first===undefined?{}:{first:p.first})});tick();}
+  const t=findTrack(p.tid);if(t){holdNext[t.id]=p.i;startHold(t,p.side);Object.assign(hold,{goal:p.goal,start:Date.now()+p.readyMs-p.elapsedMs,focus:p.focus,announcedStart:p.announcedStart===true,side:p.side,sides:p.sides,...(p.first===undefined?{}:{first:p.first})});buzzed=p.targetReached===true;tick();}
  }
  persistFocus();render();announceTimer('Workout resumed.');$('#focusPrimary')?.focus({preventScroll:true});
 }
@@ -77,7 +77,7 @@ function savePendingSessionItem(x){
 function advanceWorkoutItem(){
  const next=focusRun.items.findIndex(sessionPending);focusRun.restEnd=0;
  if(next<0){focusRun.phase='finished';focusRun.endStatus=focusRun.closedEarly||focusRun.items.some(x=>x.skipped||x.omitted||!x.entry||!state.log.some(e=>entryId(e)===x.entry&&e.sets.length>=x.goals.length))?'partial':'completed';focusRun.ended=Date.now();}
- else{focusRun.at=next;focusRun.phase='work';delete focusRun.pauseSnapshot;}
+ else{focusRun.at=next;focusRun.phase='work';delete focusRun.pauseSnapshot;primeAudio();workoutCue('exercise');}
  persistFocus();render();$('#focusPrimary')?.focus({preventScroll:true});
 }
 function finishWorkoutToday({startNew=false}={}){

@@ -1,0 +1,37 @@
+.rest-preview{width:min(100%,440px);min-width:0;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:12px 16px}
+.rest-preview-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rest-preview .cue-mute,.workout-cue-settings .cue-mute,.workout-tools-body>.cue-mute{min-height:44px;padding:8px 12px;font-size:13px;white-space:normal}
+.rest-preview-main{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center}
+.rest-preview .exercise-thumb{width:88px;height:72px;margin:0;object-fit:cover;flex:none}
+.rest-preview-art{display:grid;gap:4px;padding:0;border:0;background:transparent;color:var(--accent);text-align:left;min-height:44px;min-width:44px;max-width:88px}.rest-preview-art>span{font-size:12px;line-height:1.4}
+.rest-preview-main>div{min-width:0}.rest-preview h2{font-size:20px;line-height:1.2;margin:0 0 6px;overflow-wrap:break-word}
+.rest-preview p{font-size:13px;line-height:1.5;margin:4px 0;color:var(--muted)}
+.rest-preview .rest-preview-gear{font-size:12px}.rest-preview .rest-preview-note{font-size:12px;margin:6px 0}
+.rest-preview .focus-howto{min-height:44px;padding:6px 0;margin:0}
+.workout-cue-settings>label{display:flex;align-items:center;gap:12px;min-height:48px;font-size:16px}
+.workout-cue-settings input{width:22px;height:22px;accent-color:var(--accent)}
+.workout-tools-body>.cue-mute{justify-self:start;text-align:left;margin:4px 0 8px}
+.journey-checkin .journey-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.journey-checkin .journey-actions>button{min-width:0;padding:8px;font-size:13px;line-height:1.35}
+body[data-view="today"] .focus-stage .rest-preview h2{font-size:20px;line-height:1.2;letter-spacing:-.3px}
+body[data-view="today"] .focus-stage .rest-preview button.rest-preview-art[data-control]{padding:0;border:0;background:transparent;box-shadow:none;min-width:44px;min-height:44px;border-radius:8px}
+body[data-view="today"] .focus-stage .rest-preview p{font-size:13px;line-height:1.5}
+@media(max-width:699px) and (min-height:700px){
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-ring{width:144px;height:144px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-clock{font-size:56px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-rest{gap:12px}
+}
+@media(max-width:699px) and (max-height:699px){
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-rest{display:flex;flex-wrap:wrap;flex-direction:row;justify-content:center;gap:8px}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-eyebrow{width:100%}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-ring{width:88px;height:88px;flex:none}
+ body[data-view="today"] .focus-stage[data-phase="rest"] .focus-clock{font-size:32px}
+ .rest-preview{flex:1 1 160px;padding:6px 10px;border-radius:16px}
+ .rest-preview-main{grid-template-columns:52px minmax(0,1fr);gap:8px}.rest-preview .exercise-thumb{width:52px;height:52px}
+ .rest-preview h2{font-size:16px}.rest-preview p,.rest-preview .rest-preview-gear{font-size:11px;line-height:1.35}
+ body[data-view="today"] .focus-stage .rest-preview h2{font-size:16px;line-height:1.2}
+ body[data-view="today"] .focus-stage .rest-preview p{font-size:11px;line-height:1.35}
+ body[data-view="today"] .focus-stage .rest-preview button.cue-mute[data-control]{padding:4px;font-size:11px;min-height:44px}
+ .rest-preview-top .label{font-size:10px}.rest-preview .cue-mute{padding:4px;font-size:11px}
+ .rest-preview .rest-preview-note{font-size:11px;line-height:1.35}
+ .rest-quick-actions{width:100%}
+}
