@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-25-layout-polish',events=[];
+ const RELEASE='2026-10-25-workout-controls',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2076,7 +2076,7 @@ body .progress-backup section,body .equipment-preferences fieldset{border:0;bord
 /* LADDER_SECTION_COLORS_END */
 /* LADDER_LAYOUT_POLISH_START */
 /* Shared rhythm: color groups sections; space separates controls and content. */
-body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:20px 16px 16px;height:auto}
+body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:20px 16px 16px;height:auto;max-width:none;width:100%;margin-inline:0}
 body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-actions{width:100%;box-sizing:border-box}
 body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{background:var(--surface);border-color:var(--line)}
 body[data-view="today"] .focus-stage:has(.focus-counter) .focus-stepper{box-shadow:none}
@@ -2104,16 +2104,30 @@ body[data-view="history"] .personal-best{background:transparent;border-radius:0;
  body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:24px;column-gap:24px;box-sizing:border-box}
 }
 @media(min-width:1000px) and (min-height:700px){
- body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:minmax(0,1fr) minmax(280px,1fr);max-width:900px;margin-inline:auto;row-gap:20px}
+ body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){grid-template-columns:minmax(0,1fr) minmax(280px,1fr);max-width:none;width:100%;margin-inline:0;row-gap:20px}
  body[data-view="today"] .focus-stage:has(.focus-counter)>.focus-exercise{gap:20px}
  body[data-view="today"] .focus-stage:has(.focus-counter) .focus-exercise-art .exercise-thumb{height:220px}
 }
 @media(max-width:359px){
  body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding:16px 12px 12px}
- body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:156px;height:156px}
+ body[data-view="today"] .focus-stage:has(.focus-counter) .focus-dial{width:148px;height:148px}
+ body[data-view="today"] .focus-counter{gap:6px}
+ body[data-view="today"] .focus-counter .focus-stepper{width:44px;height:44px}
  body[data-view="ladders"] .library-filters button{padding-inline:10px}
 }
 @media(max-height:650px){body[data-view="today"] .focus-shell>.focus-stage:has(.focus-counter){padding-top:12px}}
+/* One immediate safety control, one menu for the other workout actions. */
+body[data-view="today"] .focus-meta{flex-wrap:nowrap;gap:8px}
+body[data-view="today"] .focus-meta>span{flex:1;min-width:0;line-height:1.5}
+.workout-quick-controls{display:flex;align-items:center;gap:6px;flex:none}
+body[data-view="today"] .workout-quick-controls>button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 10px;margin:0;font-size:var(--type-control);white-space:nowrap;box-shadow:none}
+.workout-pause svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+body .workout-session-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+body .workout-session-actions>[data-session-action="finish"]{grid-column:1/-1}
+/* Preserve the whole pose in every exercise thumbnail, regardless of source. */
+.exercise-thumb.is-photo{background:#eee9df;isolation:isolate}
+.exercise-thumb.is-photo img{object-fit:contain;object-position:center;filter:none}
+@media(min-width:700px){body .workout-session-actions{grid-template-columns:repeat(3,minmax(0,1fr))}body .workout-session-actions>[data-session-action="finish"]{grid-column:auto}}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -2898,7 +2912,7 @@ function mountPlanSummary(){
  const why=current?report.summary:'This saved workout keeps its original targets. Your current preferences shape your next workout.';
  const list=(focusRun?.items||[]).filter(x=>findTrack(x.id)).map(item=>{const chosen=current?report.selected.find(x=>x.id===item.id):null,decision=item.coaching?.decision||chosen?.decision;return `<li><b>${esc(sessionSpec(findTrack(item.id))[0])}</b>${decision?`<p>${esc(decision.title)} · ${esc(decision.reason)}</p>`:''}<span>${esc(item.swap?'You chose this alternative. Its targets stay separate.':chosen?.reason||'Kept from your saved workout.')}</span></li>`;}).join('');
  const d=document.createElement('dialog');d.id='planSummary';d.className='workout-tools plan-sheet';d.setAttribute('aria-labelledby','planSummaryTitle');
- d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div><div class="workout-tools-body plan-coaching"><div class="plan-preferences"><label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">A weekly participation goal, not fixed workout days. No catch-up sets. Changes apply to the next workout once any sets are recorded.</p></div><h3>This week so far</h3><p>${days} of ${p.days} target days recorded this week. ${days>=p.days?'Your weekly target is met; another workout is optional.':'A flexible target, with no catch-up sets.'}</p><button data-equipment-open>Your equipment & supports</button><h3>Why this workout</h3>${current?'<p class="cue">Planning snapshot from when this workout was created. The week count above reflects your latest saved results; the selections and targets below keep their original explanation.</p>':''}<p>${esc(why)}</p><p>About ${estimate} minutes including rests. Actual time varies.</p>${minutes&&estimate>minutes+1?`<p class="cue">This exercise block exceeds the ${minutes}-minute setting. Choose fewer sets or a shorter workout if needed.</p>`:''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy. Its saved targets stay in place.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices. They do not measure physical recovery.</p></div>`;
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="planSummaryTitle">Your plan</h2><button data-ui="planclose" aria-label="Close plan summary" autofocus>×</button></div><div class="workout-tools-body plan-coaching"><div class="plan-preferences"><label for="coachGoal">Training goal</label><select id="coachGoal" data-coach-goal>${['balanced','strength','movement'].map(v=>`<option value="${v}"${v===p.goal?' selected':''}>${coachGoalName(v)}</option>`).join('')}</select><label for="coachDays">Weekly target</label><select id="coachDays" data-coach-days>${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${p.days===n?' selected':''}>${n} ${n===1?'day':'days'} a week</option>`).join('')}</select><p class="cue">A weekly participation goal, not fixed workout days. No catch-up sets. Changes apply to the next workout once any sets are recorded.</p></div><h3>This week so far</h3><p>${days} of ${p.days} target days recorded this week. ${days>=p.days?'Your weekly target is met; another workout is optional.':'A flexible target, with no catch-up sets.'}</p><button data-equipment-open>Your equipment & supports</button><h3>Why this workout</h3>${current?'<p class="cue">Planning snapshot from when this workout was created. The week count above reflects your latest saved results; the selections and targets below keep their original explanation.</p>':''}<p>${esc(why)}</p>${current?planningExplanationView(report):`<p>About ${estimate} minutes including rests. Actual time varies.</p>`}${minutes&&estimate>minutes+1?`<p class="cue">This exercise block exceeds the ${minutes}-minute setting. Choose fewer sets or a shorter workout if needed.</p>`:''}${focusRun?.readiness?.kind?'<p>You adjusted this workout for your time or energy. Its saved targets stay in place.</p>':''}<ul>${list}</ul><p class="cue">Recommendations use your log and choices. They do not measure physical recovery.</p></div>`;
  const preferenceNote=d.querySelector('.plan-preferences .cue');preferenceNote.id='planPreferenceNote';
  d.querySelectorAll('.plan-preferences select').forEach(select=>select.setAttribute('aria-describedby',preferenceNote.id));
  d.addEventListener('cancel',e=>{e.preventDefault();closePlanSummary();});
@@ -3476,8 +3490,8 @@ function openTechnique(){
 function mountWorkoutTools(previous={}){
  const shell=$('.focus-shell');if(!shell)return;
  const button=document.createElement('button');button.id='workoutToolsButton';button.type='button';button.className='workout-tools-button';button.dataset.ui='workouttools';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','workoutTools');button.setAttribute('aria-expanded',String(workoutToolsOpen));
- button.setAttribute('aria-label','Workout options');button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M9 4v6M15 14v6"/></svg><span>Workout</span>';
- const settings=$('.focus-edit');shell.querySelector('.focus-meta')?.append(button);
+ button.setAttribute('aria-label','Workout options');button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M9 4v6M15 14v6"/></svg><span>More</span>';
+ const settings=$('.focus-edit'),quick=document.createElement('div');quick.className='workout-quick-controls';quick.setAttribute('role','group');quick.setAttribute('aria-label','Workout controls');quick.innerHTML=workoutPauseMarkup();quick.append(button);shell.querySelector('.focus-meta')?.append(quick);
  const dialog=document.createElement('dialog');dialog.id='workoutTools';dialog.className='workout-tools';dialog.setAttribute('aria-labelledby','workoutToolsTitle');
  dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
  const body=dialog.querySelector('.workout-tools-body');
@@ -3727,7 +3741,7 @@ function viewToday(){
   const frozenIds=new Set(focusRun.items.flatMap(x=>[x.id,...(x.swap?[x.swap.original.id]:[])]));
   const more=available.filter(t=>!frozenIds.has(t.id));
   const view=focusView(plan,top,more,recent);
-  return view+(focusRun.phase!=='paused'&&focusRun.phase!=='finished'&&focusRun.items.length&&(report.duration?.reasonCodes?.length||report.equipmentExcluded)?'<details class="planning-details"><summary>About this plan</summary>'+planningExplanationView(focusRun.coaching)+'<button data-equipment-open>Your equipment</button></details>':'');
+  return view;
 }
 
 function sheet(){
@@ -4301,7 +4315,7 @@ $("#view").addEventListener("change",e=>{
 });
 $("#view").addEventListener("click",e=>{
   const sessionAction=e.target.closest("[data-session-action]");if(sessionAction){handleSessionAction(sessionAction);return;}
-  const journeyAction=e.target.closest("[data-journey]");if(journeyAction){const action=journeyAction.dataset.journey;if(action==='browse'){go('ladders');return;}if(action==='all'){if(!canAdjustReadiness()&&focusRun?.items?.length){toast('Finish or save your current workout before planning another.');return;}filter='All';store.set('bwl-filter',filter);focusRun=null;persistFocus();go('today');return;}if(action==='review'){go('today');if(journeyAction.dataset.review==='goal'){planSummaryOpen=true;render();}else{workoutToolsOpen=true;workoutToolsPanel='main';render();if(journeyAction.dataset.review==='energy'&&!canAdjustReadiness())toast('Your started workout is kept. Adjust energy before the first set of your next plan.');}return;}}
+  const journeyAction=e.target.closest("[data-journey]");if(journeyAction){const action=journeyAction.dataset.journey;if(action==='browse'){closePlanSummary();go('ladders');return;}if(action==='all'){if(!canAdjustReadiness()&&focusRun?.items?.length){toast('Finish or save your current workout before planning another.');return;}closePlanSummary();filter='All';store.set('bwl-filter',filter);focusRun=null;persistFocus();go('today');return;}if(action==='review'){go('today');if(journeyAction.dataset.review==='goal'){planSummaryOpen=true;render();}else{workoutToolsOpen=true;workoutToolsPanel='main';render();if(journeyAction.dataset.review==='energy'&&!canAdjustReadiness())toast('Your started workout is kept. Adjust energy before the first set of your next plan.');}return;}}
   const swapButton=e.target.closest("[data-swap]");if(swapButton){if(['apply','restore'].includes(swapButton.dataset.swap))closeWorkoutTools();handleSwap(swapButton);return;}
   const readinessButton=e.target.closest("[data-readiness]");if(readinessButton){if(['apply','reset'].includes(readinessButton.dataset.readiness)||(readinessButton.dataset.readiness==='choose'&&readinessButton.dataset.kind==='ready'))closeWorkoutTools();handleReadiness(readinessButton);return;}
   const coachButton=e.target.closest("[data-coach]");if(coachButton){if(coachButton.dataset.coach==='level')closeWorkoutTools();handleCoach(coachButton);return;}
@@ -4856,10 +4870,14 @@ function finishWorkoutToday({startNew=false}={}){
  d.addEventListener('close',()=>{d.remove();document.body.classList.remove('end-workout-open');if(!accepted){render();document.querySelector('[data-session-action="resume"]')?.focus({preventScroll:true});}},{once:true});
  document.body.append(d);applyComponentSystem(d);document.body.classList.add('end-workout-open');d.showModal();d.querySelector('[data-session-finish-cancel]').focus({preventScroll:true});
 }
+function workoutPauseMarkup(){
+ if(!focusRun||!['work','rest'].includes(focusRun.phase)||!focusRun.items.some(sessionPending))return '';
+ return '<button type="button" id="workoutPauseButton" class="workout-pause" data-session-action="pause" aria-label="Pause workout"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5v10M13 5v10"/></svg><span>Pause</span></button>';
+}
 function workoutActionsMarkup(){
  if(!focusRun||focusRun.phase==='finished')return '';
  const paused=focusRun.phase==='paused';
- return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="${paused?'resume':'pause'}">${paused?'Resume':'Pause'}</button><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
+ return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
 }
 function sessionPausedView(){
  const x=focusItem(),t=x&&findTrack(x.id),p=focusRun?.pauseSnapshot;
