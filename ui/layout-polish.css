@@ -82,3 +82,10 @@ body .plan-sheet .plan-preferences{padding:0;background:transparent;border-radiu
 .equipment-preferences .equipment-setting{grid-template-columns:minmax(0,1fr) 152px;gap:12px}
 @media(max-width:359px){.equipment-preferences .equipment-setting{grid-template-columns:1fr;gap:6px;padding-block:12px}}
 @media(forced-colors:active){body select,body select option,body textarea{background:Canvas;color:CanvasText}}
+.progress-method,.backup-scope{border-top:1px solid var(--line);margin-top:16px}
+.progress-method>summary,.backup-scope>summary{min-height:44px;box-sizing:border-box;padding:12px 0;font-size:var(--type-control);font-weight:600;line-height:1.5;cursor:pointer}
+.progress-method>p,.backup-scope>p{font-size:var(--type-control);color:var(--muted);line-height:1.6;margin:8px 0 12px}
+.progress-week>.progress-method{grid-column:1/-1;width:100%;margin-top:12px}
+.progress-backup [data-backup-download]{width:100%;min-height:48px;margin:8px 0}
+.progress-backup section>h3{margin-top:0}
+.progress-backup [role="status"]:empty{margin:0}
