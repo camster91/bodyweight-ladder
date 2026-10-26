@@ -1,0 +1,8 @@
+{
+  "appId": "ca.ashbi.ladder",
+  "appName": "Bodyweight Ladder",
+  "webDir": "mobile/www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false },
+  "ios": { "contentInset": "automatic" }
+}
