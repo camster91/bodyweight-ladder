@@ -31,7 +31,7 @@ function saveCuePreferences(){
  announceTimer(cueStatusText());
 }
 function exerciseSetupMarkup(st,{rest=false}={}){
- return `<div class="exercise-setup-cue"><p><strong>Set up</strong> ${esc(st[5])}</p><p class="cue">${isSec(st[4])?(rest?'Rest ending won’t start your hold. Tap Start when you’re ready.':'Tap Start when you’re ready. You’ll get time to get into position.'):(rest?'After rest, do your reps and tap Complete set.':'Do your reps, adjust the number if needed, then tap Complete set.')}</p></div>`;
+ return `<div class="exercise-setup-cue${rest?'':' is-brief'}"><p>${esc(st[5])}</p>${rest?`<p class="cue">${isSec(st[4])?'Your hold waits for you to tap Start.':'After rest, do your reps and tap Complete set.'}</p>`:''}</div>`;
 }
 function restPreviewMarkup(t,x,st){
  const changed=focusRun?.restFrom&&focusRun.restFrom!==t.id,check=equipmentCheck(t,sessionLevel(t)),needs=check.requirements.groups.filter(g=>!g.anyOf.includes('floor')).map(g=>g.description);
