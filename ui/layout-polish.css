@@ -189,3 +189,12 @@ body .technique-guide>.technique-measure,body .technique-guide>.technique-equipm
 .journey-week>button{min-height:44px}.journey-week>.journey-note{font-size:12px;line-height:1.5;margin:12px 0 0}
 .journey-history{background:var(--surface);margin-top:12px}.journey-history>summary{cursor:pointer;min-height:44px;align-content:center;font-weight:600}.journey-history .journey-month{border:0;padding:12px 0 0;margin:0;background:transparent}
 @media(max-width:359px){.journey-week,.journey-history{padding:16px}.exercise-setup-cue{padding:12px}}
+/* Active sets keep the photo, one cue, recording control and primary action together. */
+body[data-view="today"] .focus-stage[data-phase="work"]:not([data-running-hold="true"]){gap:12px}
+body[data-view="today"] .focus-stage>.exercise-setup-cue.is-brief{background:transparent;border:0;padding:0 4px;margin:0;color:var(--muted);font-size:var(--type-control);line-height:1.5;text-align:center}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-set-path{margin-block:4px}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-counter{margin-block:4px;gap:16px}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-dial{width:clamp(128px,21svh,176px);height:auto;min-height:0;aspect-ratio:1}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-stepper{min-width:48px;min-height:48px}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-actions{margin-top:8px}
+@media(min-width:800px){body[data-view="today"] .focus-stage>.exercise-setup-cue.is-brief{grid-column:1/-1;max-width:560px;justify-self:center}}
