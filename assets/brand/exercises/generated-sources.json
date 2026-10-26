@@ -920,7 +920,8 @@
   },
   {
     "exercise_keys": [
-      "push:push-up"
+      "push:push-up",
+      "hold:push-up-bottom-hold"
     ],
     "name": "Studio push-up",
     "files": {
@@ -1078,6 +1079,89 @@
     "correction_prompt": "Edit this exercise reference with one targeted change only: replace the narrow green yoga strap with a soft pale mint household bath towel folded lengthwise, wrapped around the sole of the raised foot, both ends held by the hands. The towel must read as terry cotton fabric with softly folded edges and no buckle, elastic or strap hardware. Preserve athlete, pose, hands, feet, lighting, studio, colors, framing and all other details. Keep the full body visible. No text or graphics. This should depict a towel-assisted hamstring stretch position, not claim to show the full contract-relax sequence. Save output and return local path.",
     "edit_reference": "exec-ec26f0cd-4657-48dc-ad42-217e40e02206.png",
     "source_sha256": "7c9da37abdc038065aefcb8a8c5165e3d59de8b8a4bc19d6bb19d90180b87c76",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
+  },
+  {
+    "exercise_keys": [
+      "push:incline-push-up"
+    ],
+    "name": "Incline push-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/push-incline-push-up-studio-v5-thumb.webp",
+      "detail": "assets/brand/exercises/generated/push-incline-push-up-studio-v5-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "references": [
+      "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp"
+    ],
+    "prompt": "Create ONE new photorealistic exercise editorial photograph for the Bodyweight Ladder app, 3:2 landscape. References are style and composition guidance only. Match the established warm ivory studio, pale floor, soft daylight from the left, cobalt top, navy shorts, mint mat and restrained mint/coral accents. One fictional adult athlete, realistic approachable proportions and natural skin texture, simple unbranded clothing. Preserve clear visible supporting contact points and plausible anatomy. Full body including fingers, feet and all essential support equipment stays inside the frame with clear margins; no crop or hidden extremities. A single still pose, no collage or motion sequence. No text, arrows, logos, watermark, labels, badges, interface or anatomy overlay. Visual pose reference only; do not claim professional technique approval. A fictional adult woman doing an incline push-up on a sturdy fixed waist-height counter or rectangular studio bench, shown from the side. Both hands planted on the support shoulder-width apart. Body straight from shoulders through hips to heels, feet on the floor behind, heels raised naturally. Elbows bent about 60 degrees in the lowering phase, chest approaching the counter edge without touching. Keep hips in line with trunk. A stable broad counter, not a chair, wall or loose furniture. Show complete support and both hands/feet. Background stays unobtrusive.",
+    "source_sha256": "4d1f7331b0c92eb5bfc69b184f977fa3394a140b36555ff418746ac71daf5152",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
+  },
+  {
+    "exercise_keys": [
+      "pull:flexed-arm-hang"
+    ],
+    "name": "Flexed-arm hang",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-flexed-arm-hang-studio-v5-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-flexed-arm-hang-studio-v5-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "references": [
+      "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp",
+      "assets/brand/exercises/generated/pull-jumping-pull-up-v2-detail.webp"
+    ],
+    "prompt": "Create ONE new photorealistic exercise editorial photograph for the Bodyweight Ladder app, 3:2 landscape. References are style and composition guidance only. Match the established warm ivory studio, pale floor, soft daylight from the left, cobalt top, navy shorts, mint mat and restrained mint/coral accents. One fictional adult athlete, realistic approachable proportions and natural skin texture, simple unbranded clothing. Preserve clear visible supporting contact points and plausible anatomy. Full body including fingers, feet and all essential support equipment stays inside the frame with clear margins; no crop or hidden extremities. A single still pose, no collage or motion sequence. No text, arrows, logos, watermark, labels, badges, interface or anatomy overlay. Visual pose reference only; do not claim professional technique approval. A fictional adult man in a cobalt short-sleeve shirt and navy shorts holding the top position of a flexed-arm hang from a sturdy freestanding horizontal pull-up bar. Three-quarter side view. Both hands gripping the bar overhand about shoulder width, both elbows clearly bent, chin slightly above the horizontal bar, shoulders under control. Torso upright, knees gently bent behind, both feet visibly off the floor. No kick or body swing. Show full body and the stable black metal pull-up station with flat bases on the floor. Do not rest chin on bar. This is a static top hold.",
+    "source_sha256": "e6305ca4db5deb8e2b6f1221465fb0dd8b18bf6f369651fe16174d1d95e9c8c2",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
+  },
+  {
+    "exercise_keys": [
+      "pull:negative-pull-up"
+    ],
+    "name": "Negative pull-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-negative-pull-up-studio-v5-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-negative-pull-up-studio-v5-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "references": [
+      "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp",
+      "assets/brand/exercises/generated/pull-jumping-pull-up-v2-detail.webp"
+    ],
+    "prompt": "Create ONE new photorealistic exercise editorial photograph for the Bodyweight Ladder app, 3:2 landscape. References are style and composition guidance only. Match the established warm ivory studio, pale floor, soft daylight from the left, cobalt top, navy shorts, mint mat and restrained mint/coral accents. One fictional adult athlete, realistic approachable proportions and natural skin texture, simple unbranded clothing. Preserve clear visible supporting contact points and plausible anatomy. Full body including fingers, feet and all essential support equipment stays inside the frame with clear margins; no crop or hidden extremities. A single still pose, no collage or motion sequence. No text, arrows, logos, watermark, labels, badges, interface or anatomy overlay. Visual pose reference only; do not claim professional technique approval. A fictional adult man in a cobalt short-sleeve shirt and navy shorts during the controlled LOWERING phase of a negative pull-up. Three-quarter side view on a stable black freestanding horizontal pull-up station. Both hands grip overhand at shoulder width, shoulders below the bar, chin now clearly below the bar, both elbows partly bent around 100 degrees as he lowers from the top toward a hang. Torso upright, knees softly bent behind, both feet off the floor, no kicking. Show full athlete, hands on bar, both legs, and stable equipment bases. A small stable step may sit off to the side for access but is not touching his feet. No arrows or motion trails. A still can only illustrate one instant of lowering.",
+    "source_sha256": "97cc6065c13ffa14604eb25aee2bb8a737a6b6daf0bbe76ece9392c2ef3d0a84",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
+  },
+  {
+    "exercise_keys": [
+      "pull:pull-up"
+    ],
+    "name": "Pull-up",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/pull-pull-up-studio-v5-thumb.webp",
+      "detail": "assets/brand/exercises/generated/pull-pull-up-studio-v5-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "references": [
+      "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp",
+      "assets/brand/exercises/generated/pull-jumping-pull-up-v2-detail.webp"
+    ],
+    "prompt": "Create ONE new photorealistic exercise editorial photograph for the Bodyweight Ladder app, 3:2 landscape. References are style and composition guidance only. Match the established warm ivory studio, pale floor, soft daylight from the left, cobalt top, navy shorts, mint mat and restrained mint/coral accents. One fictional adult athlete, realistic approachable proportions and natural skin texture, simple unbranded clothing. Preserve clear visible supporting contact points and plausible anatomy. Full body including fingers, feet and all essential support equipment stays inside the frame with clear margins; no crop or hidden extremities. A single still pose, no collage or motion sequence. No text, arrows, logos, watermark, labels, badges, interface or anatomy overlay. Visual pose reference only; do not claim professional technique approval. A fictional adult man in a cobalt short-sleeve shirt and navy shorts midway through a strict pull-up, using a stable black freestanding horizontal pull-up station. Three-quarter side view. Both hands grip the horizontal bar overhand at shoulder width, elbows bent near 90 degrees pulling toward the ribs, chin still just BELOW the bar. Chest lifted naturally toward bar, torso controlled and upright, knees gently bent behind, both feet off floor. No kipping, swinging, band, weights or chin resting on bar. Show full body and both hands and the stable station bases. One photographic moment, not a sequence.",
+    "source_sha256": "77d5339be8c9a6636c4740439dc5dab73824775868cd593834c7e41cbe109c05",
     "export": "Resized and encoded as WebP; original composition preserved.",
     "technique_review": "Pending professional review"
   }
