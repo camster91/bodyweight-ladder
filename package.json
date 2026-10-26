@@ -15,9 +15,22 @@
     "review:photos": "node scripts/build-photo-review.cjs",
     "technique:sync": "node scripts/sync-technique.cjs",
     "technique:check": "node scripts/sync-technique.cjs --check",
-    "start": "npx --yes serve@14.2.4 ."
+    "start": "npx --yes serve@14.2.4 .",
+    "mobile:prepare": "node scripts/package-mobile.cjs && cap sync",
+    "mobile:android": "npm run mobile:prepare && cap open android",
+    "mobile:ios": "npm run mobile:prepare && cap open ios"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.5.3",
+    "esbuild": "0.28.2",
     "jsdom": "24.1.3"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/filesystem": "8.1.5",
+    "@capacitor/ios": "8.5.3",
+    "@capacitor/share": "8.0.3"
   }
 }
