@@ -165,3 +165,17 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions>butto
 /* Shared photo treatment preserves poses without stretching or cropping. */
 body[data-view="ladders"] .exopen>.exrow>.exercise-thumb{width:80px;height:60px;flex-basis:80px}
 body .exercise-reference img.technique-art{background:#f2eee7;border:0;filter:none}
+/* Technique starts with the pose, followed by three scannable instructions. */
+body .technique-guide>.exercise-reference{margin:0 0 8px}
+body .technique-guide>.exercise-reference img.technique-art{height:clamp(160px,26svh,240px);max-height:none;width:100%;object-fit:contain}
+body .technique-guide>.technique-photo-note{font-size:var(--type-meta);line-height:1.5;margin:0 0 16px}
+body .technique-guide>.technique-cue{font-size:var(--type-body);font-weight:600;line-height:1.5;margin:12px 0}
+body .technique-guide>.technique-steps{list-style:none;padding:0;margin:0;counter-reset:none}
+body .technique-guide>.technique-steps>li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:var(--type-control);line-height:1.55}
+.technique-steps>li>b{font-weight:650}.technique-steps>li>span{min-width:0;overflow-wrap:break-word}
+body .technique-guide>.technique-links{gap:6px;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.technique-guide .technique-resource-label{font-size:var(--type-meta);font-weight:650;margin:0}
+body .technique-links>.technique-demo{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;color:var(--accent);text-decoration:none;font-weight:600}
+body .technique-links>.technique-reference-note{font-size:var(--type-meta);line-height:1.5;margin:4px 0 0}
+body .technique-guide>.technique-measure,body .technique-guide>.technique-equipment{font-size:var(--type-control);line-height:1.5;margin:12px 0}
+@media(max-width:359px){body .technique-guide>.technique-steps>li{grid-template-columns:1fr;gap:4px}}
