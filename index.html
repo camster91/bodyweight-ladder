@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-26-clean-active-workout',events=[];
+ const RELEASE='2026-10-26-centered-counter',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2275,6 +2275,11 @@ body[data-view="today"] .focus-stage[data-phase="work"] .focus-dial{width:clamp(
 body[data-view="today"] .focus-stage[data-phase="work"] .focus-stepper{min-width:48px;min-height:48px}
 body[data-view="today"] .focus-stage[data-phase="work"] .focus-actions{margin-top:8px}
 @media(min-width:800px){body[data-view="today"] .focus-stage>.exercise-setup-cue.is-brief{grid-column:1/-1;max-width:560px;justify-self:center}}
+/* Center the value independently; reserve space below for its caption. */
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-counter{padding-bottom:44px}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-dial{padding:0;justify-content:center;align-items:center;overflow:visible}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-number{letter-spacing:0;text-align:center;line-height:1;font-variant-numeric:tabular-nums}
+body[data-view="today"] .focus-stage[data-phase="work"] .focus-dial>.focus-unit{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:180px;max-width:180px;margin:10px 0 0;text-align:center;font-size:12px;line-height:1.4}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
