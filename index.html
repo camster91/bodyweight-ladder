@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-26-compact-exercise-details',events=[];
+ const RELEASE='2026-10-26-state-aware-menu',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2228,6 +2228,8 @@ body[data-view="ladders"] .library-detail-actions>button{width:auto;flex:1 1 120
 body[data-view="ladders"] .library-progression>.ladder{margin:0;max-width:none}
 body #workoutTools .workout-tools-body>.tool-section{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:16px 0;margin-top:12px}
 body #workoutTools .workout-tools-body>.tool-section>.tool-heading{margin-top:0}
+body #workoutTools .workout-session-actions.is-paused{grid-template-columns:minmax(0,1fr);background:transparent;padding:0;border-radius:0}
+.workout-session-actions.is-paused>.cue{grid-column:1/-1;margin:0;font-size:var(--type-control);line-height:1.5;color:var(--muted)}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -3598,6 +3600,9 @@ function openTechnique(){
  if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');
  d.querySelector('#techniqueTitle').focus({preventScroll:true});
 }
+function workoutSettingsAreDeferred(){
+ return !!focusRun&&(focusRun.phase==='finished'||!!hold?.focus||['rest','paused'].includes(focusRun.phase)||focusRun.items.some(x=>x.skipped||x.entry||x.values?.length||x.restartAfter||sessionHasDraft(x)));
+}
 function mountWorkoutTools(previous={}){
  const shell=$('.focus-shell');if(!shell)return;
  const button=document.createElement('button');button.id='workoutToolsButton';button.type='button';button.className='workout-tools-button';button.dataset.ui='workouttools';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','workoutTools');button.setAttribute('aria-expanded',String(workoutToolsOpen));
@@ -3613,7 +3618,7 @@ function mountWorkoutTools(previous={}){
  // Common controls are sections and direct actions, not nested accordions.
  const reveal=(details,title)=>{if(!details)return;const section=document.createElement('section');section.className=details.className+' tool-section';const heading=document.createElement('h3');heading.className='tool-heading';heading.textContent=title;section.append(heading);for(const child of [...details.children])if(child.tagName!=='SUMMARY')section.append(child);details.replaceWith(section);return section;};
  reveal(body.querySelector('.readiness-check'),'How are you feeling?');
- const lengthSection=reveal(settings,'Workout length');if(lengthSection){const note=document.createElement('p');note.className='cue';note.textContent=focusRun?.preferencesChanged?'Your started workout is preserved. These choices apply to your next workout.':'After you record a set, changes here apply to your next workout.';lengthSection.append(note);}
+ const deferred=workoutSettingsAreDeferred(),lengthSection=reveal(settings,deferred?'Next workout':'Workout length');if(lengthSection){const group=lengthSection.querySelector('.mins');if(group)group.setAttribute('aria-label',deferred?'Time for your next workout':'Time for this workout');const note=document.createElement('p');note.className='cue';note.textContent=deferred?'Your current workout keeps its saved exercises and targets.':'Choose your time before the first set. Later changes apply to your next workout.';lengthSection.append(note);}
  reveal(body.querySelector('.focus-workout'),'Your workout');
  const technique=body.querySelector('.focus-technique');if(technique){const action=document.createElement('button');action.className='focus-technique tool-action';action.dataset.ui='technique';action.setAttribute('aria-haspopup','dialog');action.setAttribute('aria-controls','techniqueSheet');action.innerHTML='<span>How to do this exercise</span><span aria-hidden="true">→</span>';technique.replaceWith(action);}
  const alternatives=body.querySelector('.swap-picker');
@@ -3838,7 +3843,7 @@ function viewToday(){
   if(filter.startsWith("r:") && !routine && sync!=="starting" && sync!=="syncing") filter="All";
   const vis = routine ? routine.items.map(findTrack).filter(t=>t&&!isHidden(t.id))
     : shown.filter(t=>filter==="All"||groupOf(t)===filter);
-  const nextWorkoutSettings=focusRun?.preferencesChanged||(focusRun?.signature!==focusSignature()&&(hold?.focus||focusRun?.phase==='rest'||focusRun?.items.some(x=>!x.entry&&(x.values?.length||x.restartAfter||sessionHasDraft(x))||x.entry&&focusRun.phase!=='finished')));
+  const nextWorkoutSettings=workoutSettingsAreDeferred();
   const top = `<div class="planbar">
       <div class="minrow"><span class="label">Minutes</span><div class="seg mins" role="group" aria-label="Minutes you have">${MIN_OPTS.map(m=>`<button data-ui="min" data-m="${m}" aria-pressed="${minutes===m}" aria-label="${m?m+" minutes":"All moves"}">${m||"All"}</button>`).join("")}</div></div>
       <button class="showbtn" data-ui="sheet" aria-haspopup="dialog">${nextWorkoutSettings?'Next workout':'Showing'}: <b>${esc(currentFilterName())}</b> ▾</button>
@@ -5006,7 +5011,8 @@ function workoutPauseMarkup(){
 function workoutActionsMarkup(){
  if(!focusRun||focusRun.phase==='finished')return '';
  const paused=focusRun.phase==='paused';
- return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
+ if(paused)return '<div class="workout-session-actions is-paused" role="group" aria-label="Paused workout actions"><button type="button" data-session-action="finish">Finish for today</button><p class="cue">Resume from the workout screen to skip or swap an exercise.</p></div>';
+ return '<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip">Skip exercise</button><button type="button" data-session-action="swap">Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>';
 }
 function sessionPausedView(){
  const x=focusItem(),t=x&&findTrack(x.id),p=validSessionPause(focusRun?.pauseSnapshot,x)?focusRun.pauseSnapshot:null;
