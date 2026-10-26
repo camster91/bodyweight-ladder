@@ -48,7 +48,7 @@ body[data-view="today"] .workout-quick-controls>button{display:inline-flex;align
 body .workout-session-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 body .workout-session-actions>[data-session-action="finish"]{grid-column:1/-1}
 /* Preserve the whole pose in every exercise thumbnail, regardless of source. */
-.exercise-thumb.is-photo{background:#eee9df;isolation:isolate}
+.exercise-thumb.is-photo{background:#f2eee7;isolation:isolate;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
 .exercise-thumb.is-photo img{object-fit:contain;object-position:center;filter:none}
 @media(min-width:700px){body .workout-session-actions{grid-template-columns:repeat(3,minmax(0,1fr))}body .workout-session-actions>[data-session-action="finish"]{grid-column:auto}}
 /* The paused screen answers what, where and when without opening another panel. */
@@ -162,3 +162,6 @@ body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions{displ
 body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions>#focusPrimary{grid-column:1/-1;width:100%}
 body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions>button:not(.primary){border-color:transparent;background:transparent;box-shadow:none;padding:10px 8px;min-height:44px;color:var(--accent);font-size:var(--type-control);white-space:normal;line-height:1.4;margin:0}
 @media(hover:hover){body[data-view] header.top .appearance-toggle:hover,body[data-view="today"] .workout-quick-controls>.workout-tools-button:hover{background:var(--chip)}}
+/* Shared photo treatment preserves poses without stretching or cropping. */
+body[data-view="ladders"] .exopen>.exrow>.exercise-thumb{width:80px;height:60px;flex-basis:80px}
+body .exercise-reference img.technique-art{background:#f2eee7;border:0;filter:none}

@@ -150,3 +150,9 @@ The original photographs also supplied photographic references for the generated
 Five additional exercise photographs cover the standard push-up, bodyweight squat, forearm plank, side plank and straight-leg bench dip. One lifestyle recovery photograph joins the rotating Exercises header. All were generated with ChatGPT built-in image generation using the credited licensed originals for movement/photographic grounding and the existing studio asset for visual style. The people depicted are fictional. The dip image received a targeted image-tool correction to remove ambiguous bench support beneath the hips.
 
 `generated-sources.json` records the exact prompts, correction prompt where relevant, source-original SHA-256, reference paths and WebP derivatives. Export only resized and encoded the generated image; the selected originals are preserved in the task's asset output folder. The original licensed files remain available and credited.
+
+## Studio set v4
+
+Three generated studio references replace the displayed stock mappings for kettlebell swing, half-kneeling hip flexor stretch, and contract-relax hamstring stretch. These depict fictional adults and use the existing generated push-up studio image as a visual-style reference. The hamstring image received a targeted correction from a yoga strap to a folded household towel. It illustrates a stretch position, not the full contract-relax sequence. All three remain pending professional technique review.
+
+Exact prompts, the correction prompt, style-reference path, selected-source SHA-256 values and derivative paths are recorded in `generated-sources.json`. The selected PNG originals and prompt set are preserved under the task's `outputs/studio-photo-consistency/` folder. Exports only resize and encode to WebP. Earlier licensed originals and credits are retained.
