@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-26-state-aware-menu',events=[];
+ const RELEASE='2026-10-26-quiet-workout-toolbar',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2230,6 +2230,15 @@ body #workoutTools .workout-tools-body>.tool-section{background:transparent;bord
 body #workoutTools .workout-tools-body>.tool-section>.tool-heading{margin-top:0}
 body #workoutTools .workout-session-actions.is-paused{grid-template-columns:minmax(0,1fr);background:transparent;padding:0;border-radius:0}
 .workout-session-actions.is-paused>.cue{grid-column:1/-1;margin:0;font-size:var(--type-control);line-height:1.5;color:var(--muted)}
+/* App preferences are quiet; workout actions belong to the session toolbar. */
+body[data-view] header.top .appearance-toggle{border-color:transparent;background:transparent;box-shadow:none;padding-inline:8px}
+body[data-view="today"] .workout-quick-controls>.workout-tools-button{border-color:transparent;background:transparent;color:var(--muted);padding-inline:8px}
+.workout-menu-mark{font-size:22px;line-height:1;letter-spacing:1px;font-weight:700}
+body[data-view="today"] .workout-quick-controls>.workout-pause{background:var(--surface);border-color:var(--line);color:var(--ink)}
+body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions>#focusPrimary{grid-column:1/-1;width:100%}
+body[data-view="today"] .focus-stage[data-phase="finished"]>.focus-actions>button:not(.primary){border-color:transparent;background:transparent;box-shadow:none;padding:10px 8px;min-height:44px;color:var(--accent);font-size:var(--type-control);white-space:normal;line-height:1.4;margin:0}
+@media(hover:hover){body[data-view] header.top .appearance-toggle:hover,body[data-view="today"] .workout-quick-controls>.workout-tools-button:hover{background:var(--chip)}}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -3606,7 +3615,7 @@ function workoutSettingsAreDeferred(){
 function mountWorkoutTools(previous={}){
  const shell=$('.focus-shell');if(!shell)return;
  const button=document.createElement('button');button.id='workoutToolsButton';button.type='button';button.className='workout-tools-button';button.dataset.ui='workouttools';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','workoutTools');button.setAttribute('aria-expanded',String(workoutToolsOpen));
- button.setAttribute('aria-label','Workout options');button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M9 4v6M15 14v6"/></svg><span>More</span>';
+ button.setAttribute('aria-label','Workout options');button.innerHTML='<span>Options</span><span class="workout-menu-mark" aria-hidden="true">···</span>';
  const settings=$('.focus-edit'),quick=document.createElement('div');quick.className='workout-quick-controls';quick.setAttribute('role','group');quick.setAttribute('aria-label','Workout controls');quick.innerHTML=workoutPauseMarkup();quick.append(button);shell.querySelector('.focus-meta')?.append(quick);
  const dialog=document.createElement('dialog');dialog.id='workoutTools';dialog.className='workout-tools';dialog.setAttribute('aria-labelledby','workoutToolsTitle');
  dialog.innerHTML='<div class="workout-tools-head"><h2 id="workoutToolsTitle">Workout options</h2><button data-ui="workouttoolsclose" aria-label="Close workout options" autofocus>×</button></div><div class="workout-tools-body"></div>';
