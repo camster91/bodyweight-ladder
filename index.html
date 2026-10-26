@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-26-quieter-screens',events=[];
+ const RELEASE='2026-10-26-compact-exercise-details',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2217,6 +2217,17 @@ body .pending-workout{background:var(--surface);border-color:var(--line)}
 .pending-workout h2{font-size:20px;margin-bottom:8px}
 body .app-settings .settings-content>.settings-section:not(.settings-progress){background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding-inline:4px}
 @media(min-width:700px){body[data-view="ladders"] .library-brand h2{font-size:22px;max-width:none}}
+/* An expanded exercise shows today's target before optional ladder exploration. */
+body[data-view="ladders"] .exopen{background:var(--surface);border-color:var(--line)}
+body[data-view="ladders"] .exopen>.library-current{background:transparent;padding:12px 16px;margin:0;border:0;border-radius:0}
+body[data-view="ladders"] .library-current>[data-track-prescription]{font-weight:650;margin:0 0 8px}
+.library-current>.library-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+body[data-view="ladders"] .library-detail-actions>button{width:auto;flex:1 1 120px;min-height:44px;margin:0;padding:10px 12px;justify-content:center;text-align:center;font-size:var(--type-control)}
+.library-progression{border-top:1px solid var(--line);margin:0 16px 12px}
+.library-progression>summary{min-height:48px;box-sizing:border-box;padding:14px 0;font-size:var(--type-control);font-weight:600;cursor:pointer}
+body[data-view="ladders"] .library-progression>.ladder{margin:0;max-width:none}
+body #workoutTools .workout-tools-body>.tool-section{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:16px 0;margin-top:12px}
+body #workoutTools .workout-tools-body>.tool-section>.tool-heading{margin-top:0}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -3966,7 +3977,7 @@ function viewLadders(){
         <li class="${i===lvl?"cur":i<lvl?"past":""}" data-step-name="${esc(s2[0])}"><span class="n">${i+1}</span>
         <div class="t"><b>${esc(s2[0])}</b><span>${targetText(s2)}${s2[6]!=="None"?" · "+esc(s2[6]):""}</span><button class="step-guide-button" data-ui="librarypanel" data-panel="guide-${t.id}-${i}" aria-haspopup="dialog" aria-label="Technique for ${esc(s2[0])}">Technique guide <span aria-hidden="true">→</span></button></div>
         ${i===lvl?`<span class="label" style="color:var(--accent)">Now</span>`:`<button data-act="set" data-t="${t.id}" data-l="${i}" aria-label="Start here: ${esc(t.name)} at ${esc(s2[0])}">Start here</button>`}</li>`).join("")}</ol>`;
-      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p class="label">Your current step · ${lvl+1} of ${t.steps.length}</p><h3>${esc(st[0])}</h3><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog" aria-label="How to do ${esc(st[0])}">How to do this <span aria-hidden="true">→</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog" aria-label="Training settings for ${esc(t.name)}">Training settings <span>${spec(t)[1]} sets · ${focusOf(t.id)==='normal'?'Balanced priority':focusOf(t.id)==='more'?'Higher priority':'Lower priority'}</span></button></div>${list?`<h3 class="ladder-heading">Explore the progression</h3>${list}`:''}</section>`;
+      return `<section class="card exopen" data-sr="${words}" data-g="${g}">${row}<div class="library-current"><p data-track-prescription="${t.id}">${targetText(st)}</p><p class="cue">${esc(st[5])}</p><div class="library-detail-actions"><button class="library-howto" data-ui="librarypanel" data-panel="guide-${t.id}" aria-haspopup="dialog" aria-label="How to do ${esc(st[0])}">How to <span aria-hidden="true">→</span></button><button data-ui="librarypanel" data-panel="settings-${t.id}" aria-haspopup="dialog" aria-label="Training settings for ${esc(t.name)}">Training settings</button></div></div>${list?`<details class="library-progression"${exQuery.trim()?' open':''}><summary>Explore ${t.steps.length} steps</summary>${list}</details>`:''}</section>`;
     }).join("");
   }
   html+=`<div class="library-actions"><button data-ui="librarypanel" data-panel="custom" aria-haspopup="dialog"><b>Add an exercise</b><span>Track your own movement <span aria-hidden="true">＋</span></span></button>${hidden.length?`<button data-ui="librarypanel" data-panel="hidden" aria-haspopup="dialog"><b>Hidden exercises <span>${hidden.length}</span></b><span>Manage what appears on Today <span aria-hidden="true">→</span></span></button>`:''}</div><div id="libraryPanelStore" hidden>${shown.map(t=>`<div data-library-content="settings-${t.id}"><h3>${esc(t.name)}</h3><p class="cue">Preferences save now. Started workouts keep their saved exercises and targets.</p>${controls(t)}</div>`).join('')}`;
@@ -4343,6 +4354,7 @@ function applySearch(){
   document.querySelectorAll("#view [data-grp]").forEach(el=>{ el.hidden = !groupsShown.has(el.dataset.grp); });
   document.querySelectorAll('[data-search-track]').forEach(el=>{const t=findTrack(el.dataset.searchTrack),names=q?t.steps.map(s=>s[0]).filter(matches):[];el.hidden=!names.length;el.textContent=names.length?'Matches: '+names.slice(0,2).join(' · ')+(names.length>2?' · +'+(names.length-2)+' more':''):'';});
   document.querySelectorAll('[data-step-name]').forEach(el=>el.classList.toggle('search-match',!!q&&matches(el.dataset.stepName)));
+  if(q)document.querySelectorAll('.exopen .library-progression').forEach(el=>{if([...el.querySelectorAll('[data-step-name]')].some(step=>matches(step.dataset.stepName)))el.open=true;});
   const none=$("#exNone"); if(none) none.hidden = !!count;
   const status=$('#exSearchStatus');if(status){status.hidden=!q&&exCategory==='All';status.textContent=(q||exCategory!=='All')?(count?count+' '+(count===1?'ladder':'ladders')+' found':'No matching exercise ladders in this category'):'';}
 }
