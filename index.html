@@ -2919,9 +2919,10 @@ function retrySavedProgress(){
  storageRecovery.active=false;storageRecovery.dirty=false;storageProblems.delete('bwl-state');storageProblems.delete('bwl-focus');
  render();setNote();toast('Saved progress reopened. Keep a backup before leaving.');return true;
 }
-function downloadRecoveryCopy(){
+async function downloadRecoveryCopy(){
  captureRecoveryRaw();
  const payload={app:'bodyweight-ladder-recovery',recoveryVersion:1,createdAt:new Date().toISOString(),notice:'Recovery material only. This file is not accepted by Merge backup. Keep it private; it may contain progress and unfinished workout details.',original:{stateReadable:storageRecovery.rawState!==undefined,focusReadable:storageRecovery.rawFocus!==undefined,state:storageRecovery.rawState??null,focus:storageRecovery.rawFocus??null},temporary:{state,focus:focusRun,drafts}};
+ if(window.LadderNative)return window.LadderNative.exportJson(JSON.stringify(payload),'bodyweight-ladder-recovery-'+Date.now()+'.json');
  const blob=new Blob([JSON.stringify(payload)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='bodyweight-ladder-recovery-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
@@ -3199,12 +3200,13 @@ function planProgressRestore(backup){
   try{parseProgressBackup(combinedText);}catch(e){throw new Error('These copies cannot be combined into a restorable backup: '+e.message+' Keep both backup files; no data was changed.');}
   return {next,added:next.log.filter(e=>!state.log.some(old=>entryId(old)===entryId(e))).length,removed:state.log.filter(e=>!next.log.some(n=>entryId(n)===entryId(e))).length};
 }
-function downloadProgressBackup(){
+async function downloadProgressBackup(){
   if(storageRecovery.active)throw new Error('Original saved progress is unreadable. Download the recovery copy instead; a normal backup here would contain only temporary progress.');
   const text=JSON.stringify(makeProgressBackup()),blob=new Blob([text],{type:'application/json'});
   if(blob.size>BACKUP_LIMIT)throw new Error('Your complete history exceeds the 5 MB backup limit. No partial backup was downloaded. Keep this page open; your existing history has not been removed.');
   // Never offer a file this version would reject when the person needs it later.
   try{parseProgressBackup(text);}catch(e){throw new Error('A complete restorable backup could not be created: '+e.message+' Your current history has not been removed.');}
+  if(window.LadderNative)return window.LadderNative.exportJson(text,'bodyweight-ladder-backup-'+Date.now()+'.json');
   const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='bodyweight-ladder-backup-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
@@ -3228,13 +3230,13 @@ function openProgressBackup(opener){
   if(state.historyPartial){const coverage=document.createElement('p');coverage.className='cue';coverage.textContent='This device may have only part of your history. A download preserves all records available here and keeps that warning. Merge another backup to add missing records; merging cannot prove that all history is present.';d.querySelector('section').before(coverage);}
   let pending=null,selection=0;
   const downloadMessage=d.querySelector('#backupDownloadMessage'),message=d.querySelector('#backupMessage'),preview=d.querySelector('#backupPreview'),apply=d.querySelector('[data-backup-apply]');
-  d.querySelector('[data-backup-download]').onclick=()=>{try{downloadProgressBackup();downloadMessage.textContent='Backup download requested. Check your downloads before closing this page.';}catch(e){downloadMessage.textContent=e.message||'The download could not start. Keep this page open and try again.';}};
+  d.querySelector('[data-backup-download]').onclick=async()=>{try{await downloadProgressBackup();downloadMessage.textContent=window.LadderNative?'Save sheet closed. Confirm the backup is in your chosen location.':'Backup download requested. Check your downloads before closing this page.';}catch(e){downloadMessage.textContent=e.message||'The download could not start. Keep this page open and try again.';}};
   d.querySelector('#backupFile').onchange=async e=>{const selected=++selection;pending=null;apply.disabled=true;preview.hidden=true;message.textContent='';const f=e.target.files[0];if(!f)return;try{if(f.size>BACKUP_LIMIT)throw new Error('Choose a backup smaller than 5 MB.');const parsed=parseProgressBackup(await f.text());if(selected!==selection)return;const plan=planProgressRestore(parsed);pending=parsed;preview.textContent='Backup from '+parsed.createdAt+'. '+parsed.state.log.length+' saved exercise records. Adds '+plan.added+' records; removes '+plan.removed+' previously deleted records. Duplicate workouts won’t be added. The newest version of each training setting is used; this device wins ties. Your next workout will refresh.'+(plan.next.historyPartial?' This history may be incomplete. Missing records can be added from another backup; the coverage warning is retained.':'');preview.hidden=false;apply.disabled=false;}catch(err){if(selected===selection)message.textContent=err.message;}};
   apply.onclick=()=>{if(!pending)return;apply.disabled=true;try{const plan=applyProgressRestore(pending);pending=null;message.textContent='Backup merged and saved on this device. '+plan.added+' exercise records added.'+(plan.next.historyPartial?' History may still be incomplete; the coverage warning has been kept.':'');preview.hidden=true;}catch(e){message.textContent=e.message;apply.disabled=false;}};
   d.querySelector('.preferences-head button').onclick=()=>d.close();d.addEventListener('close',()=>{selection++;d.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
   document.body.append(d);applyComponentSystem(d);document.body.classList.add('preferences-open');if(d.showModal)d.showModal();else d.setAttribute('open','');d.querySelector('button').focus();
 }
-document.addEventListener('click',e=>{const recovery=e.target.closest('[data-recovery-download]');if(recovery){try{downloadRecoveryCopy();toast('Recovery download requested. Check Downloads. This is not a normal backup.');}catch(err){toast('Recovery download could not start. Keep this page open.');}return;}const b=e.target.closest('[data-backup]');if(!b)return;if(b.dataset.backup==='retry'){if(storageRecovery.active){retrySavedProgress();return;}const saved=saveLocal(),session=persistFocus();setNote();toast(saved&&session?'Progress saved on this device.':'Save still failed. Download a backup before leaving.');}else openProgressBackup(b);});
+document.addEventListener('click',async e=>{const recovery=e.target.closest('[data-recovery-download]');if(recovery){try{await downloadRecoveryCopy();toast(window.LadderNative?'Check your chosen save location. This recovery file is not a normal backup.':'Recovery download requested. Check Downloads. This is not a normal backup.');}catch(err){toast('Recovery download could not start. Keep this page open.');}return;}const b=e.target.closest('[data-backup]');if(!b)return;if(b.dataset.backup==='retry'){if(storageRecovery.active){retrySavedProgress();return;}const saved=saveLocal(),session=persistFocus();setNote();toast(saved&&session?'Progress saved on this device.':'Save still failed. Download a backup before leaving.');}else openProgressBackup(b);});
 const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
 let minutes = +store.get("bwl-min","20");
 const MIN_OPTS=[5,10,20,30,60,0];
