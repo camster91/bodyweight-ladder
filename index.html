@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-26-paused-actions',events=[];
+ const RELEASE='2026-10-26-quieter-screens',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2199,6 +2199,24 @@ body .app-settings .settings-content>.settings-section{margin:0;min-width:0}
 .end-workout-sheet .finish-save-summary{padding:16px;background:var(--section-plan);border-radius:12px;margin-bottom:16px}
 .end-workout-sheet .finish-save-summary>p{margin:0;line-height:1.5}
 .end-workout-sheet .finish-save-summary>p+p{margin-top:8px}
+/* Quiet default surfaces; color identifies sections and selected states. */
+body[data-view="ladders"] .stack>.exrow[data-g]{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;margin:0;padding:12px 4px}
+body[data-view="ladders"] .stack>.exrow[data-g]>.exercise-thumb{width:80px;height:60px;flex-basis:80px}
+body[data-view="ladders"] #routinesCard:has(>[data-ui="rtoggle"]){background:transparent;border-radius:0}
+body[data-view="ladders"] #routinesCard>[data-ui="rtoggle"]{padding:8px 4px;min-height:44px;border-bottom:1px solid var(--line)}
+.routine-count{color:var(--muted);font-size:var(--type-meta);font-weight:400;margin-left:8px}
+body[data-view="ladders"] .library-brand{min-height:0;padding:12px 16px}
+body[data-view="ladders"] .library-brand h2{font-size:20px;line-height:1.2;max-width:15ch;margin:0}
+body[data-view="ladders"] .library-brand .library-setup{min-height:44px;padding:8px 0;margin:0}
+body[data-view="ladders"] .library-filters{gap:4px;padding:0 0 4px}
+body[data-view="ladders"] .library-filters button{padding-inline:10px;background:transparent;border-color:transparent}
+body[data-view="ladders"] .library-filters button[aria-pressed="true"]{background:var(--section-training);border-color:var(--section-training-edge);color:var(--accent)}
+body[data-view="ladders"] .sect[data-grp]{margin-top:12px;padding-block:4px}
+body[data-view="today"] .focus-shell>.focus-stage.focus-paused{background:var(--surface);border-color:var(--line);gap:12px}
+body .pending-workout{background:var(--surface);border-color:var(--line)}
+.pending-workout h2{font-size:20px;margin-bottom:8px}
+body .app-settings .settings-content>.settings-section:not(.settings-progress){background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding-inline:4px}
+@media(min-width:700px){body[data-view="ladders"] .library-brand h2{font-size:22px;max-width:none}}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -3006,7 +3024,7 @@ function pendingWorkoutView(){
  const items=(focusRun?.items||[]).filter(x=>x&&!x.entry&&findTrack(x.id)&&Array.isArray(x.values)&&x.values.every(Number.isFinite)&&(x.values.length||sessionHasDraft(x)));
  if(!items.length){if(focusRun.phase!=='paused'&&(!sessionTotals().sets||!focusRun.items.some(sessionPending)))return '';return `<section class="pending-workout"><h2>Your workout is paused.</h2><button class="primary" data-ui="gotoday">Resume workout</button></section>`;}
  const count=items.reduce((n,x)=>n+sessionRecordedCount(x),0),next=items[0];
- return `<section class="pending-workout" aria-labelledby="pendingTitle"><div><p class="label">In progress on this device</p><h2 id="pendingTitle">Your workout is waiting.</h2><p>${count?`${count} ${count===1?'set':'sets'} recorded`:'Edited set draft saved'} · ${esc(sessionSpec(findTrack(next.id))[0])}</p><p class="cue">${count?'These recorded sets and edits':'These edits'} stay in your unfinished workout. Untouched targets are not recorded. Completed exercises appear below and are included in backups.</p></div><button class="primary" data-ui="gotoday">Resume workout</button></section>`;
+ return `<section class="pending-workout" aria-labelledby="pendingTitle"><div><h2 id="pendingTitle">Unfinished workout</h2><p>${count?`${count} ${count===1?'set':'sets'} recorded`:'Edited set draft saved'} · ${esc(sessionSpec(findTrack(next.id))[0])}</p><p class="cue">Your work is kept on this device. Untouched targets are not counted.</p></div><button class="primary" data-ui="gotoday">Resume workout</button></section>`;
 }
 function setCoachingPreference(key,value){
  if(key==='goal'&&!['balanced','strength','movement'].includes(value)||key==='days'&&(!Number.isInteger(value)||value<1||value>7)||!['goal','days'].includes(key))return;
@@ -3854,7 +3872,7 @@ function mountFilterSheet(){
   (dialog.querySelector('.opt[aria-pressed="true"]')||dialog.querySelector('button'))?.focus();
 }
 
-function libraryFilters(tracks){return '<div class="library-filters" role="group" aria-label="Exercise category">'+['All','Strength','Tendon','Mobility','Stretch','Weights','Custom'].filter(g=>g==='All'||g===exCategory||tracks.some(t=>groupOf(t)===g)).map(g=>`<button type="button" data-ui="category" data-category="${g}" aria-pressed="${exCategory===g}">${{All:'All',Tendon:'Tendons & joints',Stretch:'Stretching',Weights:'Carries & weights'}[g]||g}</button>`).join('')+'</div>';}
+function libraryFilters(tracks){return '<div class="library-filters" role="group" aria-label="Exercise category">'+['All','Strength','Tendon','Mobility','Stretch','Weights','Custom'].filter(g=>g==='All'||g===exCategory||tracks.some(t=>groupOf(t)===g)).map(g=>`<button type="button" data-ui="category" data-category="${g}" aria-label="${{Tendon:'Tendons & joints',Weights:'Carries & weights'}[g]||g}" aria-pressed="${exCategory===g}">${{Tendon:'Joints',Stretch:'Stretch',Weights:'Weights'}[g]||g}</button>`).join('')+'</div>';}
 function controls(t){
   const f=focusOf(t.id), n=spec(t)[1],pendingCustom=t.custom?focusRun?.items.find(x=>x.id===t.id&&!x.entry):null,pendingCustomSets=sessionRecordedCount(pendingCustom),pendingCustomDraft=sessionHasDraft(pendingCustom);
   const seg=["less","normal","more"].map(k=>`<button type="button" data-act="focus" data-t="${t.id}" data-f="${k}" aria-pressed="${f===k}">${k==="less"?"Lower priority":k==="more"?"Higher priority":"Balanced"}</button>`).join("");
@@ -3880,7 +3898,7 @@ function routinesCard(tracks){
       ${editing.id?`<button class="danger" style="margin-left:0;align-self:flex-start" data-ract="delete" aria-label="${confirmDel==='r:'+editing.id?'Tap again to delete':'Delete routine'}: ${esc(editing.name)}">${confirmDel==="r:"+editing.id?"Tap again to delete":"Delete routine"}</button>`:""}
     </section>`;
   }
-  if(!routinesOpen) return `<section class="card" id="routinesCard"><button class="exrow plain" data-ui="rtoggle" aria-expanded="false"><span class="mini-t"><b>Your routines</b><span>${state.routines.length} ${state.routines.length===1?"routine":"routines"} · Choose or edit a training plan</span></span><span class="chev">▾</span></button></section>`;
+  if(!routinesOpen) return `<section class="card" id="routinesCard"><button class="exrow plain" data-ui="rtoggle" aria-expanded="false"><span class="mini-t"><b>Your routines <span class="routine-count">${state.routines.length}</span></b></span><span class="chev">▾</span></button></section>`;
   return `<section class="card" id="routinesCard"><div class="track-head"><h2>Routines</h2><button class="ghost small" data-ract="new">+ New</button><button class="icon" data-ui="rtoggle" aria-expanded="true" aria-label="Collapse routines">▴</button></div>
     <div class="stack" style="gap:6px">${state.routines.map(r=>`<div class="rrow"><span><b>${esc(r.name)}</b><span>${r.items.length} ${r.items.length===1?'exercise':'exercises'} · ${esc(r.items.map(id=>findTrack(id)?.name).filter(Boolean).join(", ")||"No moves yet")}</span></span><button data-ract="edit" data-r="${esc(r.id)}" aria-label="Edit ${esc(r.name)}">Edit</button></div>`).join("") || `<p class="muted">No routines yet.</p>`}</div></section>`;
 }
@@ -4985,7 +5003,7 @@ function sessionPausedView(){
  const set=Math.min(Math.max(0,index)+1,x?.goals?.length||1),clock=ms=>{const s=Math.ceil(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
  const status=p?.kind==='rest'?'Rest paused · '+clock(p.remainingMs)+' left':p?.kind==='hold'?p.readyMs>0?'Get-ready countdown paused · '+Math.ceil(p.readyMs/1000)+' seconds left':'Hold paused · '+Math.floor(p.elapsedMs/1000)+' seconds elapsed'+(p.sides>1?' · side '+p.side:''):'Ready when you are.';
  const preview=t?`<div class="paused-next">${exerciseThumbnail(t,sessionLevel(t))}<div><p class="label">${p?.kind==='hold'?'Continue':'Up next'} · Set ${set} of ${x.goals.length}</p><h3>${esc(st[0])}</h3><p>${esc(p?.kind==='hold'?p.goal:x.goals[set-1])} ${isSec(st[4])?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><button type="button" id="focusHowTo" class="focus-howto paused-howto" data-ui="technique" aria-haspopup="dialog" aria-label="How to do ${esc(st[0])}">How to <span aria-hidden="true">→</span></button></div></div>`:'';
- return `<section class="focus-stage focus-paused" aria-labelledby="sessionPausedTitle"><h2 id="sessionPausedTitle">${older?'Your unfinished workout.':'Workout paused.'}</h2>${older?`<p>Started ${esc(started)}. Continue here or save it and choose today’s plan.</p>`:''}${preview}<p class="paused-status" role="status">${esc(status)}</p><p class="paused-save-note">Recorded sets and edits stay on this device.</p><button type="button" class="primary" id="focusPrimary" data-session-action="resume">Resume workout</button><button type="button" class="paused-finish" data-session-action="finish">Finish for today</button>${older?'<button type="button" data-session-action="save-new">Save & start today’s plan</button>':''}</section>`;
+ return `<section class="focus-stage focus-paused" aria-labelledby="sessionPausedTitle"><h2 id="sessionPausedTitle">${older?'Unfinished workout':'Workout paused'}</h2>${older?`<p>Started ${esc(started)}</p>`:''}${preview}${p&&p.kind!=='work'?`<p class="paused-status" role="status">${esc(status)}</p>`:''}<p class="paused-save-note">Recorded sets and edits stay on this device.</p><button type="button" class="primary" id="focusPrimary" data-session-action="resume">Resume workout</button><button type="button" class="paused-finish" data-session-action="finish">Finish for today</button>${older?'<button type="button" data-session-action="save-new">Save & start today’s plan</button>':''}</section>`;
 }
 function handleSessionAction(button){
  const action=typeof button==='string'?button:button?.dataset?.sessionAction;
