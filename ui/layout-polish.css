@@ -103,3 +103,16 @@ body .app-settings .settings-progress:has(.needs-attention){border-color:var(--c
 .app-settings .settings-footer>.appearance-note{margin:8px 0;font-size:var(--type-meta);line-height:1.5}
 .technique-guide>.technique-photo-note{margin:16px 0 8px;font-size:var(--type-control);line-height:1.6;color:var(--muted)}
 @media(max-width:359px){.app-settings .cue-preferences{grid-template-columns:1fr}}
+/* Scroll the settings content while keeping its close and done controls visible. */
+body .app-settings[open]{display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden;max-height:85vh;max-height:85dvh}
+.app-settings>.preferences-head{flex:none;margin:0;padding:0 0 12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.app-settings>.settings-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scroll-padding-block:12px;padding:12px 2px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+body .app-settings .settings-content>.settings-section{margin:0;min-width:0}
+.app-settings>.settings-footer{flex:none;padding-top:8px;border-top:1px solid var(--line);background:var(--surface)}
+.app-settings .settings-content :focus-visible{scroll-margin-block:12px}
+.app-settings [data-cue-mute][aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:650}
+@media(min-width:800px){
+ body .app-settings{width:min(760px,calc(100% - 48px))}
+ .app-settings>.settings-content{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+ .app-settings .settings-progress{grid-column:1/-1}
+}
