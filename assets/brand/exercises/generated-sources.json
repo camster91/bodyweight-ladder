@@ -63,7 +63,7 @@
     "exercise_keys": [
       "curl:towel-curl-hold-at-90"
     ],
-    "name": "Towel curl hold at 90\u00b0",
+    "name": "Towel curl hold at 90°",
     "files": {
       "thumb": "assets/brand/exercises/generated/curl-towel-curl-hold-at-90-v2-thumb.webp",
       "detail": "assets/brand/exercises/generated/curl-towel-curl-hold-at-90-v2-detail.webp"
@@ -72,7 +72,7 @@
     "synthetic": true,
     "subject": "fictional adult athlete",
     "reference": "assets/brand/exercises/forearm-plank-photo-v1.webp",
-    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Towel curl hold at 90\u00b0. Required mechanics: Standing isometric biceps towel curl, three-quarter side view. Athlete stands with both feet pinning CENTER OF ONE LONG TOWEL to floor. Each hand grips one end of same towel, palms facing up; upper arms stay beside ribs, elbows bent about 90 degrees, forearms horizontal. Towel runs taut from under feet to both hands. No weights, no unattached towels. Show full continuous towel and feet.. Equipment: Towel. Preserve the correct points of contact and support; no floating equipment."
+    "prompt": "Create ONE photorealistic exercise-reference photograph for Bodyweight Ladder, not a drawing or collage. Input image 1 is a freely licensed exercise photograph for realistic photographic grounding; do not reproduce the person's identity, setting or outfit. The requested movement is defined by the mechanics below, which override the pose in the reference photograph. Show one fictional adult athlete in a plain cobalt athletic top and navy shorts or leggings. Warm ivory minimal studio, pale mint mat where appropriate, soft natural daylight, realistic skin and joint anatomy. Landscape 3:2 framing, full body and all supporting equipment entirely visible with generous margins. Choose a clear side or three-quarter camera angle that reveals the key positions. One still pose only. No text, arrows, branding, logos, watermark, cartoon, exaggerated muscles or extra limbs. Movement: Towel curl hold at 90°. Required mechanics: Standing isometric biceps towel curl, three-quarter side view. Athlete stands with both feet pinning CENTER OF ONE LONG TOWEL to floor. Each hand grips one end of same towel, palms facing up; upper arms stay beside ribs, elbows bent about 90 degrees, forearms horizontal. Towel runs taut from under feet to both hands. No weights, no unattached towels. Show full continuous towel and feet.. Equipment: Towel. Preserve the correct points of contact and support; no floating equipment."
   },
   {
     "exercise_keys": [
@@ -1024,5 +1024,61 @@
     "prompt": "Use-case: photorealistic-natural. Create one finished editorial exercise photograph for the Bodyweight Ladder fitness app. It must look like a real professional photograph, not a drawing, rendering, collage or UI mockup. Reference 1 is a freely licensed photograph for movement/photographic grounding only: do not copy the real person's face, identity, clothes or room. Reference 2 is the existing app brand image for the warm ivory studio, pale mint mat, cobalt/navy kit, subtle coral accent and soft natural daylight only. Show one fictional adult athletic woman with medium-brown skin and tied-back natural curly hair, a plain cobalt athletic tank and navy training shorts. Natural skin texture and believable proportions. Uncluttered studio, softly shaded ivory wall, pale mint exercise mat, no text, no logos, no watermark. Landscape 3:2 composition, full body including hands and feet visible with at least 8% clear margin on every side. Camera at body height, clear side/three-quarter view; one still pose, not a movement sequence. This asset is a lifestyle RECOVERY HEADER, not an exercise-technique guide. One fictional adult athlete sits upright on the front edge of a low pale-mint studio platform after a workout. Both feet resting naturally flat on the floor, forearms resting lightly on her thighs, shoulders relaxed, calm small satisfied smile, looking slightly off camera. Full seated body visible, no forced exercise pose, no medical or performance claim. Wide 3:2 editorial composition. Subject centered slightly right to stay visible in the app's image half. Ivory, mint and subtle coral studio setting, soft window daylight. No props, dumbbells, graphics, medals, text, badges or decorative icons.",
     "source_sha256": "1c7e1f61a386fd18dfffd53894c2b9acb78833091e35b5987419e7d2300e2d04",
     "export": "Resized and encoded as WebP; original composition preserved."
+  },
+  {
+    "exercise_keys": [
+      "swing:kettlebell-swing"
+    ],
+    "name": "Kettlebell swing",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/swing-kettlebell-swing-studio-v4-thumb.webp",
+      "detail": "assets/brand/exercises/generated/swing-kettlebell-swing-studio-v4-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp",
+    "prompt": "Generate ONE new photorealistic exercise editorial photo for Bodyweight Ladder. The reference image is STYLE ONLY: match warm cream sunlit studio, pale floor, restrained mint and coral blocks, natural soft daylight, cobalt workout clothing, realistic non-glamour fitness photography. New fictional adult athlete, full body visible, performing a two-handed kettlebell swing at its chest-height forward apex: side-on profile, feet flat around shoulder width, hips extended and torso upright, neutral straight back, relaxed shoulders, both hands on one black kettlebell handle, arms extending forward at chest level. No overhead movement, no squat pose, no extra weights. Full person including head, shoes and kettlebell must be inside frame with comfortable margins. Simple dark shorts, cobalt sleeveless top, neutral sneakers. Landscape 3:2 framing. Athlete and kettlebell centered as a unit, fill approximately 80 percent of image height. Keep background understated and defocused enough for readability at thumbnail size. No labels, diagrams, arrows, text, logos, watermarks or UI. This is a visual pose reference, not a medical or biomechanical certification. Save the generated image as a project asset and return its local file path.",
+    "source_sha256": "0d29e51243cf0a807e70e39b232e804cebec5ecc19f3440ada9e10d08dedc756",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
+  },
+  {
+    "exercise_keys": [
+      "hipflex:half-kneeling-hip-flexor-stretch"
+    ],
+    "name": "Half-kneeling hip flexor stretch",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hipflex-half-kneeling-hip-flexor-stretch-studio-v4-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hipflex-half-kneeling-hip-flexor-stretch-studio-v4-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp",
+    "prompt": "Create one photorealistic exercise editorial photograph for Bodyweight Ladder, landscape 3:2. Reference is STYLE ONLY: warm cream studio and pale floor, soft natural daylight from left, understated mint and coral blocks with plants in distance, cobalt training shirt, navy shorts, realistic approachable fitness photography. Fictional adult male athlete demonstrating a half-kneeling hip-flexor stretch in a clear side profile: one knee resting on a folded pad on floor directly under the rear hip, other foot flat in front with knee bent about 90 degrees, trunk comfortably upright, hands resting lightly on front thigh, small forward shift rather than deep lunge or backbend. Entire person, front shoe, both knees, rear foot and mat visible with generous clear margin. Center body in frame; approximately 80 percent image height. No arrows, text, logos, UI, watermark, duplicated people, or decorative gym equipment. Visual reference only, no claimed technique certification. Save output and return local path.",
+    "source_sha256": "782f2b5c08681c1965358846c23e9a58a36c236cf8d1c8ae3194eb58ba401869",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
+  },
+  {
+    "exercise_keys": [
+      "hams:contract-relax-hamstring-stretch"
+    ],
+    "name": "Contract-relax hamstring stretch",
+    "files": {
+      "thumb": "assets/brand/exercises/generated/hams-contract-relax-hamstring-stretch-studio-v4-thumb.webp",
+      "detail": "assets/brand/exercises/generated/hams-contract-relax-hamstring-stretch-studio-v4-detail.webp"
+    },
+    "tool": "ChatGPT built-in image generation",
+    "synthetic": true,
+    "subject": "fictional adult athlete",
+    "reference": "assets/brand/exercises/generated/push-push-up-studio-v3-detail.webp",
+    "prompt": "Generate ONE new photorealistic exercise editorial photo for Bodyweight Ladder, 3:2 landscape. Reference is STYLE ONLY: warm cream studio, pale floor, soft natural daylight, restrained mint and coral blocks in distance, cobalt workout clothing, realistic approachable fitness editorial. New fictional adult woman on a muted mint mat, lying on her back in a clear side profile, performing a gentle supine hamstring stretch using a plain fabric yoga strap around the sole of her raised right foot. Raised leg comfortably near vertical with softly bent knee; other leg resting long on the mat. Both hands hold the two ends of the strap at the torso. Head and shoulders rest on mat, relaxed neck. Show complete body and raised foot with generous margin so no limbs, mat or strap are cropped. Subject centered as unit. Dark navy shorts and cobalt sleeveless top, plain neutral socks, natural anatomy. Clear visibility of legs, hands and strap. No lettering, branding, medical claims, overlays, arrows, watermark or UI. This still is a visual reference for the stretch position, not a claim to illustrate the full contraction/relaxation sequence or certify technique. Save output and return local path.",
+    "correction_prompt": "Edit this exercise reference with one targeted change only: replace the narrow green yoga strap with a soft pale mint household bath towel folded lengthwise, wrapped around the sole of the raised foot, both ends held by the hands. The towel must read as terry cotton fabric with softly folded edges and no buckle, elastic or strap hardware. Preserve athlete, pose, hands, feet, lighting, studio, colors, framing and all other details. Keep the full body visible. No text or graphics. This should depict a towel-assisted hamstring stretch position, not claim to show the full contract-relax sequence. Save output and return local path.",
+    "edit_reference": "exec-ec26f0cd-4657-48dc-ad42-217e40e02206.png",
+    "source_sha256": "7c9da37abdc038065aefcb8a8c5165e3d59de8b8a4bc19d6bb19d90180b87c76",
+    "export": "Resized and encoded as WebP; original composition preserved.",
+    "technique_review": "Pending professional review"
   }
 ]
