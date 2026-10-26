@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-26-settings-layout',events=[];
+ const RELEASE='2026-10-26-paused-actions',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2193,6 +2193,12 @@ body .app-settings .settings-content>.settings-section{margin:0;min-width:0}
  .app-settings>.settings-content{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
  .app-settings .settings-progress{grid-column:1/-1}
 }
+/* Paused workouts expose the two immediate choices without opening a menu. */
+.focus-paused .paused-howto{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 0;margin:2px 0 0;background:transparent;border:0;color:var(--accent);font-size:var(--type-control)}
+.focus-paused .paused-finish{width:100%;min-height:48px;margin:0;white-space:normal}
+.end-workout-sheet .finish-save-summary{padding:16px;background:var(--section-plan);border-radius:12px;margin-bottom:16px}
+.end-workout-sheet .finish-save-summary>p{margin:0;line-height:1.5}
+.end-workout-sheet .finish-save-summary>p+p{margin-top:8px}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -4947,7 +4953,7 @@ function finishWorkoutToday({startNew=false}={}){
  const session=focusRun,pending=session.items.filter(sessionPending),pendingSets=pending.reduce((n,x)=>n+LadderSessions.performed(x).length,0),totals=sessionTotals(session),untouched=pending.filter(x=>!LadderSessions.performed(x).length).length;
  const unfinishedHold=session.pauseSnapshot?.kind==='hold'?' The unfinished hold is not a completed set and will not be saved.':'';
  const d=document.createElement('dialog');d.id='finishWorkoutToday';d.className='workout-tools end-workout-sheet';d.setAttribute('aria-labelledby','finishWorkoutTodayTitle');
- d.innerHTML=`<div class="workout-tools-head"><h2 id="finishWorkoutTodayTitle">${startNew?'Save & start today’s plan?':'Finish for today?'}</h2><button type="button" data-session-finish-cancel aria-label="Keep workout paused">×</button></div><div class="workout-tools-body"><p>${totals.sets} ${totals.sets===1?'set is':'sets are'} already saved. ${pendingSets?pendingSets+' performed '+(pendingSets===1?'set will':'sets will')+' also be saved.':'No additional performed sets to save.'}</p><p>${untouched?untouched+' untouched '+(untouched===1?'exercise will':'exercises will')+' stay unrecorded. ':''}Unmarked numbers and targets are not counted.${unfinishedHold} Your workout stays paused until you choose.</p><div class="end-workout-actions"><button type="button" class="primary" data-session-finish-confirm>${startNew?'Save & start today’s plan':'Save & finish for today'}</button><button type="button" data-session-finish-cancel>Keep paused</button></div></div>`;
+ d.innerHTML=`<div class="workout-tools-head"><h2 id="finishWorkoutTodayTitle">${startNew?'Save & start today’s plan?':'Finish for today?'}</h2><button type="button" data-session-finish-cancel aria-label="Keep workout paused">×</button></div><div class="workout-tools-body"><div class="finish-save-summary"><p><strong>${totals.sets} ${totals.sets===1?'set':'sets'} already saved</strong></p>${pendingSets?`<p>${pendingSets} performed ${pendingSets===1?'set will':'sets will'} also be saved.</p>`:''}</div><p>${untouched?untouched+' untouched '+(untouched===1?'exercise stays':'exercises stay')+' unrecorded. ':''}Unmarked numbers and targets are not counted.${unfinishedHold}</p><p class="cue">The workout stays paused until you choose.</p><div class="end-workout-actions"><button type="button" class="primary" data-session-finish-confirm>${startNew?'Save & start today’s plan':'Save & finish for today'}</button><button type="button" data-session-finish-cancel>Keep paused</button></div></div>`;
  let accepted=false;
  const close=()=>d.close();d.querySelectorAll('[data-session-finish-cancel]').forEach(b=>b.addEventListener('click',close));
  d.querySelector('[data-session-finish-confirm]').addEventListener('click',()=>{
@@ -4978,8 +4984,8 @@ function sessionPausedView(){
  const st=t?sessionSpec(t):null,index=p?.kind==='hold'?p.i:x?.advancedDraft?.done?x.goals.findIndex((_,i)=>!x.advancedDraft.done.includes(i)):x?.values?.length||0;
  const set=Math.min(Math.max(0,index)+1,x?.goals?.length||1),clock=ms=>{const s=Math.ceil(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
  const status=p?.kind==='rest'?'Rest paused · '+clock(p.remainingMs)+' left':p?.kind==='hold'?p.readyMs>0?'Get-ready countdown paused · '+Math.ceil(p.readyMs/1000)+' seconds left':'Hold paused · '+Math.floor(p.elapsedMs/1000)+' seconds elapsed'+(p.sides>1?' · side '+p.side:''):'Ready when you are.';
- const preview=t?`<div class="paused-next">${exerciseThumbnail(t,sessionLevel(t))}<div><p class="label">${p?.kind==='hold'?'Continue':'Up next'} · Set ${set} of ${x.goals.length}</p><h3>${esc(st[0])}</h3><p>${esc(p?.kind==='hold'?p.goal:x.goals[set-1])} ${isSec(st[4])?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p></div></div>`:'';
- return `<section class="focus-stage focus-paused" aria-labelledby="sessionPausedTitle"><h2 id="sessionPausedTitle">${older?'Your unfinished workout.':'Workout paused.'}</h2>${older?`<p>Started ${esc(started)}. Continue here or save it and choose today’s plan.</p>`:''}${preview}<p class="paused-status" role="status">${esc(status)}</p><p class="paused-save-note">Recorded sets and edits stay on this device.</p><button type="button" class="primary" id="focusPrimary" data-session-action="resume">Resume workout</button>${older?'<button type="button" data-session-action="save-new">Save & start today’s plan</button>':''}</section>`;
+ const preview=t?`<div class="paused-next">${exerciseThumbnail(t,sessionLevel(t))}<div><p class="label">${p?.kind==='hold'?'Continue':'Up next'} · Set ${set} of ${x.goals.length}</p><h3>${esc(st[0])}</h3><p>${esc(p?.kind==='hold'?p.goal:x.goals[set-1])} ${isSec(st[4])?'seconds':'reps'}${st[4].includes('each')?' each side':''}</p><button type="button" id="focusHowTo" class="focus-howto paused-howto" data-ui="technique" aria-haspopup="dialog" aria-label="How to do ${esc(st[0])}">How to <span aria-hidden="true">→</span></button></div></div>`:'';
+ return `<section class="focus-stage focus-paused" aria-labelledby="sessionPausedTitle"><h2 id="sessionPausedTitle">${older?'Your unfinished workout.':'Workout paused.'}</h2>${older?`<p>Started ${esc(started)}. Continue here or save it and choose today’s plan.</p>`:''}${preview}<p class="paused-status" role="status">${esc(status)}</p><p class="paused-save-note">Recorded sets and edits stay on this device.</p><button type="button" class="primary" id="focusPrimary" data-session-action="resume">Resume workout</button><button type="button" class="paused-finish" data-session-action="finish">Finish for today</button>${older?'<button type="button" data-session-action="save-new">Save & start today’s plan</button>':''}</section>`;
 }
 function handleSessionAction(button){
  const action=typeof button==='string'?button:button?.dataset?.sessionAction;
