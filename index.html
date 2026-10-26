@@ -20,7 +20,7 @@
 /* Minimal diagnostics: memory only, never workout data or automatic uploads. */
 window.LadderSupport=(()=>{
  'use strict';
- const RELEASE='2026-10-25-clear-progress-backup',events=[];
+ const RELEASE='2026-10-26-settings-priority',events=[];
  const screen=()=>['today','ladders','history','setup'].includes(document.body?.dataset.view)?document.body.dataset.view:'setup';
  function record(kind,line=0,column=0){
   if(!['runtime','promise','image','script','stylesheet','storage'].includes(kind))return;
@@ -2166,6 +2166,20 @@ body .plan-sheet .plan-preferences{padding:0;background:transparent;border-radiu
 .progress-backup [data-backup-download]{width:100%;min-height:48px;margin:8px 0}
 .progress-backup section>h3{margin-top:0}
 .progress-backup [role="status"]:empty{margin:0}
+/* Keep progress protection first and cue controls comfortably tappable. */
+body .app-settings .settings-progress{background:var(--section-plan);border:1px solid var(--line)}
+body .app-settings .settings-progress:has(.needs-attention){border-color:var(--color-critical)}
+.app-settings .settings-progress h3{color:var(--ink);font-size:var(--type-body)}
+.app-settings .settings-detail{border-top:1px solid var(--line);margin-top:12px}
+.app-settings .settings-detail>summary{min-height:44px;box-sizing:border-box;padding:12px 0;cursor:pointer;font-size:var(--type-control);font-weight:600}
+.app-settings .cue-preferences{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.app-settings .cue-preferences>label{display:flex;align-items:center;gap:10px;min-height:48px;box-sizing:border-box;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:var(--type-control)}
+.app-settings .cue-preferences>label:has(:checked){border-color:var(--accent);background:var(--surface)}
+.app-settings .cue-preferences input{flex:none;margin:0}
+.app-settings .settings-footer{padding-top:8px}
+.app-settings .settings-footer>.appearance-note{margin:8px 0;font-size:var(--type-meta);line-height:1.5}
+.technique-guide>.technique-photo-note{margin:16px 0 8px;font-size:var(--type-control);line-height:1.6;color:var(--muted)}
+@media(max-width:359px){.app-settings .cue-preferences{grid-template-columns:1fr}}
 /* LADDER_LAYOUT_POLISH_END */
 </style>
 
@@ -3515,7 +3529,7 @@ function techniqueContent(t,i=lvlOf(t),st=spec(t,i)){
  if(t.id==='ankle'&&/jump|pogo/.test(name))instructions=['Use a clear, nonslip floor with enough room overhead. Start with small jumps and soft knees.','Keep each bounce small and land quietly under your body. Stop the set if landings become uncontrolled.','Settle both feet on the floor before resting or changing sides.'];
  if(t.id==='squat'&&/pistol/.test(name))instructions=['Stand on one foot near a fixed support, using it for the assisted step. Keep the other leg in front.','Lower only as far as your balance and control allow; do not drop into the bottom position.','Use assistance when needed to return to standing before changing legs.'];
  const each=st[4].includes('each'),timed=isSec(st[4]);
- return `<section class="technique-guide" aria-label="Instructions for ${esc(st[0])}"><p class="technique-cue">${esc(st[5])}</p><ol class="technique-steps"><li><b>Set up.</b> ${esc(instructions[0])}</li><li><b>${timed?'Hold or move':'Move'}.</b> ${esc(instructions[1])}</li><li><b>Finish.</b> ${esc(instructions[2])}</li></ol><p class="cue">${timed?'The target is seconds, not repetitions. Keep breathing throughout the set.':'One controlled movement out and back counts as one rep.'}${each?' Complete the target on each side; record the per-side amount.':''}</p>${st[6]!=='None'?`<p class="technique-equipment">Equipment · ${esc(st[6])}</p>`:''}<div class="technique-links"><a href="${source.url}" target="_blank" rel="noopener noreferrer">${esc(source.label)} ↗</a><p class="technique-reference-note">${esc(source.scope)}</p><a href="${ytLink(st[0])}" target="_blank" rel="noopener noreferrer">Search for this exact variation ↗</a></div><details class="technique-photo"><summary>Photo reference</summary>${exerciseFigure(t,i)}<p class="technique-reference-note">A still shows one moment, not the full movement. Generated references have not received professional technique sign-off.</p></details></section>`;
+ return `<section class="technique-guide" aria-label="Instructions for ${esc(st[0])}"><p class="technique-cue">${esc(st[5])}</p><ol class="technique-steps"><li><b>Set up.</b> ${esc(instructions[0])}</li><li><b>${timed?'Hold or move':'Move'}.</b> ${esc(instructions[1])}</li><li><b>Finish.</b> ${esc(instructions[2])}</li></ol><p class="cue">${timed?'The target is seconds, not repetitions. Keep breathing throughout the set.':'One controlled movement out and back counts as one rep.'}${each?' Complete the target on each side; record the per-side amount.':''}</p>${st[6]!=='None'?`<p class="technique-equipment">Equipment · ${esc(st[6])}</p>`:''}<div class="technique-links"><a href="${source.url}" target="_blank" rel="noopener noreferrer">${esc(source.label)} ↗</a><p class="technique-reference-note">${esc(source.scope)}</p><a href="${ytLink(st[0])}" target="_blank" rel="noopener noreferrer">Search for this exact variation ↗</a></div><p class="technique-photo-note">Photos are visual references, not form checks. Generated images have not been reviewed by an exercise professional.</p><details class="technique-photo"><summary>View photo reference</summary>${exerciseFigure(t,i)}<p class="technique-reference-note">A still shows one moment, not the full movement. Read the steps and check what the linked resource covers before following a variation.</p></details></section>`;
 }
 /* LADDER_TECHNIQUE_END */
 function openTechnique(){
@@ -4251,7 +4265,14 @@ function openAppearance(event){
  const opener=event?.currentTarget||document.activeElement;
  const dialog=document.createElement('dialog');dialog.id='appSettings';dialog.className='app-preferences app-settings';dialog.setAttribute('aria-labelledby','appearanceTitle');
  dialog.innerHTML='<div class="preferences-head"><h2 id="appearanceTitle">App settings</h2><button aria-label="Close app settings" autofocus>×</button></div><section class="settings-section"><h3>Appearance</h3><div class="appearance-options" role="group" aria-label="Appearance"><button data-appearance="system">System</button><button data-appearance="light">Light</button><button data-appearance="dark">Dark</button></div><p class="appearance-note">Saved on this device. System follows your device’s appearance.</p></section><section class="settings-section"><h3>Your progress</h3><p id="settingsSaveStatus" class="settings-save-status" role="status"></p><button class="settings-row" data-settings-backup aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Backup & restore</span><span class="settings-row-detail">Download your progress or restore a saved copy.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Workout equipment</h3><button class="settings-row" data-settings-equipment aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Equipment & supports</span><span class="settings-row-detail">Confirm what your exercise variations need.</span></span><span aria-hidden="true">›</span></button></section><section class="settings-section"><h3>Help</h3><button class="settings-row" data-display-support aria-haspopup="dialog"><span class="settings-row-copy"><span class="settings-row-title">Report a problem</span><span class="settings-row-detail">Open a private email draft. No account needed.</span></span><span aria-hidden="true">›</span></button></section><button class="primary" data-display-done>Done</button>';
- dialog.querySelector('.settings-section').insertAdjacentHTML('afterend',cueSettingsMarkup());
+ const progressSection=dialog.querySelector('#settingsSaveStatus').closest('.settings-section');
+ progressSection.classList.add('settings-progress');
+ dialog.querySelector('.preferences-head').after(progressSection);
+ dialog.querySelector('.appearance-options').closest('.settings-section').insertAdjacentHTML('afterend',cueSettingsMarkup());
+ const footer=document.createElement('div');footer.className='settings-footer';
+ footer.innerHTML='<p class="appearance-note">Preferences save on this device as you change them.</p>';
+ dialog.querySelector('[data-display-done]').before(footer);
+ footer.append(dialog.querySelector('[data-display-done]'));
  const close=()=>{if(dialog.open&&dialog.close)dialog.close();else dialog.dispatchEvent(new Event('close'));};
  dialog.addEventListener('close',()=>{dialog.remove();if(!document.querySelector('.app-preferences[open]'))document.body.classList.remove('preferences-open');if(opener?.isConnected)opener.focus({preventScroll:true});},{once:true});
  dialog.querySelector('.preferences-head button').addEventListener('click',close);
@@ -4800,7 +4821,7 @@ function workoutCue(kind){
  }}catch(e){}
 }
 function cueMuteMarkup(){return `<button type="button" class="cue-mute" data-cue-mute>${cuePrefs.muted?'Unmute cues':'Mute cues'}</button>`;}
-function cueSettingsMarkup(){return `<section class="settings-section workout-cue-settings"><h3>Workout cues</h3><label><input type="checkbox" data-cue-setting="sound"${cuePrefs.sound?' checked':''}> Sound</label><label><input type="checkbox" data-cue-setting="vibration"${cuePrefs.vibration?' checked':''}> Vibration</label>${cueMuteMarkup()}<p class="appearance-note" data-cue-status>${cueStatusText()}</p><p class="appearance-note">Cues mark rest ending, a new exercise, hold starting and hold target reached. Sound needs a browser that allows playback; vibration depends on your device. Keep the workout visible for timely cues.</p></section>`;}
+function cueSettingsMarkup(){return `<section class="settings-section workout-cue-settings"><h3>Workout cues</h3><div class="cue-preferences"><label><input type="checkbox" data-cue-setting="sound"${cuePrefs.sound?' checked':''}> Sound</label><label><input type="checkbox" data-cue-setting="vibration"${cuePrefs.vibration?' checked':''}> Vibration</label></div>${cueMuteMarkup()}<p class="appearance-note" data-cue-status role="status">${cueStatusText()}</p><p class="appearance-note">Keep the workout visible for timely cues. Availability depends on your browser and device.</p><details class="settings-detail"><summary>When cues play</summary><p class="appearance-note">Rest ending, a new exercise, hold starting and hold target reached. Sound needs browser playback permission; some devices do not support vibration.</p></details></section>`;}
 function cueStatusText(){return cuePrefs.muted?'All workout cues are muted.':!cuePrefs.sound&&!cuePrefs.vibration?'Sound and vibration are off.':'Cues use '+[cuePrefs.sound?'sound':'',cuePrefs.vibration?'vibration':''].filter(Boolean).join(' and ')+'.';}
 function saveCuePreferences(){
  writeLocal('bwl-cues',JSON.stringify(cuePrefs));
