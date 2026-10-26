@@ -17,12 +17,12 @@ function workoutCue(kind){
   activeCueSounds.add(oscillator);oscillator.connect(gain).connect(actx.destination);oscillator.start(start);oscillator.stop(start+duration+.02);oscillator.onended=()=>{activeCueSounds.delete(oscillator);oscillator.disconnect();gain.disconnect();};
  }}catch(e){}
 }
-function cueMuteMarkup(){return `<button type="button" class="cue-mute" data-cue-mute>${cuePrefs.muted?'Unmute cues':'Mute cues'}</button>`;}
+function cueMuteMarkup(){return `<button type="button" class="cue-mute" data-cue-mute aria-pressed="${cuePrefs.muted}">${cuePrefs.muted?'Unmute cues':'Mute cues'}</button>`;}
 function cueSettingsMarkup(){return `<section class="settings-section workout-cue-settings"><h3>Workout cues</h3><div class="cue-preferences"><label><input type="checkbox" data-cue-setting="sound"${cuePrefs.sound?' checked':''}> Sound</label><label><input type="checkbox" data-cue-setting="vibration"${cuePrefs.vibration?' checked':''}> Vibration</label></div>${cueMuteMarkup()}<p class="appearance-note" data-cue-status role="status">${cueStatusText()}</p><p class="appearance-note">Keep the workout visible for timely cues. Availability depends on your browser and device.</p><details class="settings-detail"><summary>When cues play</summary><p class="appearance-note">Rest ending, a new exercise, hold starting and hold target reached. Sound needs browser playback permission; some devices do not support vibration.</p></details></section>`;}
-function cueStatusText(){return cuePrefs.muted?'All workout cues are muted.':!cuePrefs.sound&&!cuePrefs.vibration?'Sound and vibration are off.':'Cues use '+[cuePrefs.sound?'sound':'',cuePrefs.vibration?'vibration':''].filter(Boolean).join(' and ')+'.';}
+function cueStatusText(){return cuePrefs.muted?'All workout cues are muted. Your sound and vibration choices stay saved.':!cuePrefs.sound&&!cuePrefs.vibration?'Sound and vibration are off.':'Cues use '+[cuePrefs.sound?'sound':'',cuePrefs.vibration?'vibration':''].filter(Boolean).join(' and ')+'.';}
 function saveCuePreferences(){
  writeLocal('bwl-cues',JSON.stringify(cuePrefs));
- document.querySelectorAll('[data-cue-mute]').forEach(b=>{b.textContent=cuePrefs.muted?'Unmute cues':'Mute cues';});
+ document.querySelectorAll('[data-cue-mute]').forEach(b=>{b.textContent=cuePrefs.muted?'Unmute cues':'Mute cues';b.setAttribute('aria-pressed',String(cuePrefs.muted));});
  document.querySelectorAll('[data-cue-setting]').forEach(input=>{input.checked=cuePrefs[input.dataset.cueSetting];});
  document.querySelectorAll('[data-cue-status]').forEach(el=>{el.textContent=cueStatusText();});
  if(cuePrefs.muted||!cuePrefs.sound){for(const oscillator of activeCueSounds)try{oscillator.stop();}catch(e){}activeCueSounds.clear();}
