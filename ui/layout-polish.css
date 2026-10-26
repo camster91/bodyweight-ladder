@@ -116,3 +116,9 @@ body .app-settings .settings-content>.settings-section{margin:0;min-width:0}
  .app-settings>.settings-content{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
  .app-settings .settings-progress{grid-column:1/-1}
 }
+/* Paused workouts expose the two immediate choices without opening a menu. */
+.focus-paused .paused-howto{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 0;margin:2px 0 0;background:transparent;border:0;color:var(--accent);font-size:var(--type-control)}
+.focus-paused .paused-finish{width:100%;min-height:48px;margin:0;white-space:normal}
+.end-workout-sheet .finish-save-summary{padding:16px;background:var(--section-plan);border-radius:12px;margin-bottom:16px}
+.end-workout-sheet .finish-save-summary>p{margin:0;line-height:1.5}
+.end-workout-sheet .finish-save-summary>p+p{margin-top:8px}
