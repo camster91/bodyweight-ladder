@@ -179,3 +179,13 @@ body .technique-links>.technique-demo{display:flex;align-items:center;justify-co
 body .technique-links>.technique-reference-note{font-size:var(--type-meta);line-height:1.5;margin:4px 0 0}
 body .technique-guide>.technique-measure,body .technique-guide>.technique-equipment{font-size:var(--type-control);line-height:1.5;margin:12px 0}
 @media(max-width:359px){body .technique-guide>.technique-steps>li{grid-template-columns:1fr;gap:4px}}
+/* Clear preparation and a compact saved-work recap. */
+.exercise-setup-cue{width:100%;text-align:left;padding:12px 16px;border-radius:16px;background:var(--section-guidance,var(--surface));box-sizing:border-box;line-height:1.5}
+.exercise-setup-cue p{margin:0}.exercise-setup-cue strong{display:block;font-size:12px;margin-bottom:4px}.exercise-setup-cue .cue{margin-top:6px;font-size:13px}
+.rest-preview .exercise-setup-cue{margin-top:12px}
+.journey-week,.journey-history{grid-column:1/-1;min-width:0;border:1px solid var(--line);border-radius:20px;padding:20px;background:var(--section-progress,var(--surface))}
+.journey-week h2{margin:0;font-size:22px}.journey-week .journey-heading p{margin:6px 0 0}
+.weekly-recap-lines{margin:16px 0}.weekly-recap-lines>div{padding:12px 0;border-top:1px solid var(--line)}.weekly-recap-lines dt{font-weight:700;font-size:14px}.weekly-recap-lines dd{margin:4px 0 0;line-height:1.5;overflow-wrap:anywhere}
+.journey-week>button{min-height:44px}.journey-week>.journey-note{font-size:12px;line-height:1.5;margin:12px 0 0}
+.journey-history{background:var(--surface);margin-top:12px}.journey-history>summary{cursor:pointer;min-height:44px;align-content:center;font-weight:600}.journey-history .journey-month{border:0;padding:12px 0 0;margin:0;background:transparent}
+@media(max-width:359px){.journey-week,.journey-history{padding:16px}.exercise-setup-cue{padding:12px}}
