@@ -58,3 +58,9 @@ Application tests remain skipped per user instruction. Native compilation alone 
 ## Dependency inspection
 
 The npm audit at preparation time reported no production-package advisories and three moderate development-tool advisories through Capacitor CLI / xcode / uuid. No forced downgrade or incompatible override was applied. Review these before establishing an automated release pipeline.
+
+## Play internal-track upload preparation
+
+`android/gradlew -p android :app:bundleRelease` creates the Android App Bundle. Set all four environment variables from your existing upload-key credentials to sign it: `LADDER_UPLOAD_KEYSTORE` (absolute path), `LADDER_UPLOAD_ALIAS`, `LADDER_UPLOAD_STORE_PASSWORD`, `LADDER_UPLOAD_KEY_PASSWORD`. Do not put passwords in chat, source files or command history. Partial configuration fails; no configuration produces an unsigned bundle, which cannot be uploaded to the internal testing track.
+
+Confirm the package ID and unused version code in Play Console first. Upload the signed AAB under Testing > Internal testing. No public production rollout is authorized by this beta task. Account agreements and final privacy/health declarations remain owner decisions. The current browser connection is unavailable, so no upload has taken place.

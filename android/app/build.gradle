@@ -1,5 +1,15 @@
 apply plugin: 'com.android.application'
 
+// Upload credentials stay outside the repository and are never printed.
+def uploadKeyPath = System.getenv('LADDER_UPLOAD_KEYSTORE')
+def uploadKeyAlias = System.getenv('LADDER_UPLOAD_ALIAS')
+def uploadStorePassword = System.getenv('LADDER_UPLOAD_STORE_PASSWORD')
+def uploadKeyPassword = System.getenv('LADDER_UPLOAD_KEY_PASSWORD')
+def hasUploadKey = [uploadKeyPath, uploadKeyAlias, uploadStorePassword, uploadKeyPassword].every { it }
+if ([uploadKeyPath, uploadKeyAlias, uploadStorePassword, uploadKeyPassword].any { it } && !hasUploadKey) {
+    throw new GradleException('Incomplete upload signing configuration. Supply all four LADDER_UPLOAD variables.')
+}
+
 android {
     namespace = "ca.ashbi.ladder"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -16,8 +26,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (hasUploadKey) {
+            upload {
+                storeFile file(uploadKeyPath)
+                storePassword uploadStorePassword
+                keyAlias uploadKeyAlias
+                keyPassword uploadKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
+            if (hasUploadKey) signingConfig signingConfigs.upload
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
