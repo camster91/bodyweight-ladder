@@ -110,7 +110,8 @@ function workoutPauseMarkup(){
 function workoutActionsMarkup(){
  if(!focusRun||focusRun.phase==='finished')return '';
  const paused=focusRun.phase==='paused';
- return `<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip"${paused?' disabled':''}>Skip exercise</button><button type="button" data-session-action="swap"${paused?' disabled':''}>Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>`;
+ if(paused)return '<div class="workout-session-actions is-paused" role="group" aria-label="Paused workout actions"><button type="button" data-session-action="finish">Finish for today</button><p class="cue">Resume from the workout screen to skip or swap an exercise.</p></div>';
+ return '<div class="workout-session-actions" role="group" aria-label="Workout actions"><button type="button" data-session-action="skip">Skip exercise</button><button type="button" data-session-action="swap">Swap exercise</button><button type="button" data-session-action="finish">Finish for today</button></div>';
 }
 function sessionPausedView(){
  const x=focusItem(),t=x&&findTrack(x.id),p=validSessionPause(focusRun?.pauseSnapshot,x)?focusRun.pauseSnapshot:null;

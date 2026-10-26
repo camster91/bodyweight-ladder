@@ -151,3 +151,5 @@ body[data-view="ladders"] .library-detail-actions>button{width:auto;flex:1 1 120
 body[data-view="ladders"] .library-progression>.ladder{margin:0;max-width:none}
 body #workoutTools .workout-tools-body>.tool-section{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:16px 0;margin-top:12px}
 body #workoutTools .workout-tools-body>.tool-section>.tool-heading{margin-top:0}
+body #workoutTools .workout-session-actions.is-paused{grid-template-columns:minmax(0,1fr);background:transparent;padding:0;border-radius:0}
+.workout-session-actions.is-paused>.cue{grid-column:1/-1;margin:0;font-size:var(--type-control);line-height:1.5;color:var(--muted)}
