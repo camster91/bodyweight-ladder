@@ -122,3 +122,21 @@ body .app-settings .settings-content>.settings-section{margin:0;min-width:0}
 .end-workout-sheet .finish-save-summary{padding:16px;background:var(--section-plan);border-radius:12px;margin-bottom:16px}
 .end-workout-sheet .finish-save-summary>p{margin:0;line-height:1.5}
 .end-workout-sheet .finish-save-summary>p+p{margin-top:8px}
+/* Quiet default surfaces; color identifies sections and selected states. */
+body[data-view="ladders"] .stack>.exrow[data-g]{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;margin:0;padding:12px 4px}
+body[data-view="ladders"] .stack>.exrow[data-g]>.exercise-thumb{width:80px;height:60px;flex-basis:80px}
+body[data-view="ladders"] #routinesCard:has(>[data-ui="rtoggle"]){background:transparent;border-radius:0}
+body[data-view="ladders"] #routinesCard>[data-ui="rtoggle"]{padding:8px 4px;min-height:44px;border-bottom:1px solid var(--line)}
+.routine-count{color:var(--muted);font-size:var(--type-meta);font-weight:400;margin-left:8px}
+body[data-view="ladders"] .library-brand{min-height:0;padding:12px 16px}
+body[data-view="ladders"] .library-brand h2{font-size:20px;line-height:1.2;max-width:15ch;margin:0}
+body[data-view="ladders"] .library-brand .library-setup{min-height:44px;padding:8px 0;margin:0}
+body[data-view="ladders"] .library-filters{gap:4px;padding:0 0 4px}
+body[data-view="ladders"] .library-filters button{padding-inline:10px;background:transparent;border-color:transparent}
+body[data-view="ladders"] .library-filters button[aria-pressed="true"]{background:var(--section-training);border-color:var(--section-training-edge);color:var(--accent)}
+body[data-view="ladders"] .sect[data-grp]{margin-top:12px;padding-block:4px}
+body[data-view="today"] .focus-shell>.focus-stage.focus-paused{background:var(--surface);border-color:var(--line);gap:12px}
+body .pending-workout{background:var(--surface);border-color:var(--line)}
+.pending-workout h2{font-size:20px;margin-bottom:8px}
+body .app-settings .settings-content>.settings-section:not(.settings-progress){background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding-inline:4px}
+@media(min-width:700px){body[data-view="ladders"] .library-brand h2{font-size:22px;max-width:none}}
