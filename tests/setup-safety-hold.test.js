@@ -32,9 +32,9 @@ const st=w=>JSON.parse(w.localStorage.getItem('bwl-state'));
   if(!d.querySelector('#card-core')) d.querySelector('.mini[data-t=core]').click();
   d.querySelector('[data-act=hold][data-t=core]').click(); await sleep(500); d.querySelector('#timer [data-tm=done]').click();
   ok(d.querySelector('#in-core-0').value==='25' && d.querySelector('#timer').hidden,'stop during countdown cancels ('+d.querySelector('#in-core-0').value+')');
-  d.querySelector('[data-act=hold][data-t=core]').click(); await sleep(3000+3100); d.querySelector('#timer [data-tm=done]').click();
+  d.querySelector('[data-act=hold][data-t=core]').click(); w.eval('hold.start=Date.now()-3100;tick()'); d.querySelector('#timer [data-tm=done]').click();
   ok(d.querySelector('#timer').textContent.includes('side 2'),'side 2 starts after side 1');
-  await sleep(3000+1100); d.querySelector('#timer [data-tm=done]').click(); await sleep(30);
+  w.eval('hold.start=Date.now()-1100;tick()'); d.querySelector('#timer [data-tm=done]').click(); await sleep(30);
   ok(d.querySelector('#in-core-0').value==='1','records the weaker side ('+d.querySelector('#in-core-0').value+')');
   // rest blocked during hold
   d.querySelector('#timer [data-tm=stop]')?.click();

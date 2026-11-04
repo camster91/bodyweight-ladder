@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('fs'),path=require('path');const {JSDOM}=require('jsdom');
 const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8'),windows=[];
-function boot(storage={}){const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://ladder.test/',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.localStorage.setItem('bwl-state',JSON.stringify({v:2,prefs:{setupDone:true},log:[]}));for(const[k,v]of Object.entries(storage))w.localStorage.setItem(k,v);}});windows.push(dom.window);return dom.window;}
+function boot(storage={}){const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://ladder.test/',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.localStorage.setItem('bwl-state',JSON.stringify({v:2,prefs:{setupDone:true,equipment:{counter:true,bar:true,lowBar:true,step:true,doorway:true,table:true}},log:[]}));for(const[k,v]of Object.entries(storage))w.localStorage.setItem(k,v);}});windows.push(dom.window);return dom.window;}
 const get=(w,e)=>JSON.parse(w.eval(`JSON.stringify(${e})`)),click=(w,s)=>{assert(w.document.querySelector(s),s);w.document.querySelector(s).click();};
 const pass=(n,f)=>{f();console.log('PASS '+n);};
 try{
@@ -29,13 +29,13 @@ pass('running or partially recorded exercises cannot be swapped and duplicate pa
  const a=boot({'bwl-min':'0'});a.eval('focusRun.items.find(x=>x.id==="row").values=[8];focusRun.at=focusRun.items.findIndex(x=>x.id==="pull");render();');assert(!get(a,'swapOptions()').some(x=>x.id==='row'));
 });
 pass('timed and unilateral substitute units drive the real hold timer',()=>{
- const w=boot({'bwl-min':'0'});w.eval('state.levels.core=keyOf(findTrack("core"),3);focusRun=null;render();focusRun.at=focusRun.items.findIndex(x=>x.id==="core");render();applySwap("core",2);');assert.equal(w.eval('sessionSpec(findTrack("core"))[4]'),'sec each side');click(w,'[data-focus="hold"]');assert.equal(w.eval('hold.sides'),2);assert.equal(w.eval('hold.goal'),15);assert.equal(w.eval('lvlOf(findTrack("core"))'),3);w.eval('stopTimer()');
+ const w=boot({'bwl-min':'0'});w.eval('state.levels.core=keyOf(findTrack("core"),3);focusRun=null;render();focusRun.at=focusRun.items.findIndex(x=>x.id==="core");render();applySwap("core",2);');assert.equal(w.eval('sessionSpec(findTrack("core"))[4]'),'sec each side');click(w,'[data-focus="hold"]');if(w.document.querySelector('[data-hold-prep-ready]'))click(w,'[data-hold-prep-ready]');assert.equal(w.eval('hold.sides'),2);assert.equal(w.eval('hold.goal'),15);assert.equal(w.eval('lvlOf(findTrack("core"))'),3);w.eval('stopTimer()');
 });
 pass('lighter targets and source markers survive normalization and old-copy merges',()=>{
  const w=boot();w.eval('applyReadiness("low");applySwap("push",1);');assert.deepEqual(get(w,'focusItem().goals'),[6,6,6]);for(let i=0;i<3;i++){if(i)click(w,'[data-focus="skip"]');click(w,'[data-focus="complete"]');}
  const e=get(w,'state.log[0]');assert.equal(e.mode,'light');assert.equal(e.insteadOf,'push:push-up');const old={...e};delete old.mode;delete old.insteadOf;const copies=JSON.stringify([e,old]);assert.equal(w.eval(`normalize({v:2,log:${copies}}).log[0].insteadOf`),'push:push-up');assert.equal(w.eval(`normalize({v:2,log:${copies}}).log[0].mode`),'light');
 });
 pass('invalid temporary metadata repairs safely and does not write workout history',()=>{
- const w=boot();w.eval('applySwap("push",1);focusItem().swap.original=null;persistFocus();');const a=boot({'bwl-focus':w.localStorage.getItem('bwl-focus')});assert(a.document.querySelector('#focusPrimary'));assert.equal(a.eval('focusItem().key'),'push:push-up');assert.equal(a.eval('state.log.length'),0);
+ const w=boot();w.eval('applySwap("push",1);focusItem().swap.original=null;persistFocus();');const a=boot({'bwl-focus':w.localStorage.getItem('bwl-focus')});assert(a.document.querySelector('#focusPrimary'));assert(a.eval('focusRun.items.every(x=>!x.swap)'));assert(a.eval('!!stepByKey(focusItem().key)'));assert.equal(a.eval('state.log.length'),0);
 });
 }finally{windows.forEach(w=>w.close());}process.exit(0);

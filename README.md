@@ -33,6 +33,15 @@ npm test
 ```
 The tests run the real page in jsdom: data repair of old saves, Undo, two-device sync with a fake cloud (offline phones, clock skew, conflicting edits), the session planner, hold timer, setup, search and History.
 
+For real-browser workout journeys:
+
+```bash
+npx playwright install chromium webkit
+npm run test:browser
+```
+
+The browser suite starts its own local server and uses isolated, fabricated progress. It checks setup through completion, partial sessions, timer recovery, extra sets and backup/restore in Chromium and WebKit. Set `QA_OUTPUT` to a directory to capture screenshots, or `QA_URL` to verify an existing deployment using the same isolated journeys. See [the November 4 launch verification](docs/workout-launch-qa-2026-11-04.md) for results and physical-device limits.
+
 ## Files
 - `index.html`: the whole app (HTML, CSS, JS)
 - `img/`: Rung illustrations for every step (`<track>-<step>.webp`), app icon, logo banner and cheer image
@@ -52,7 +61,7 @@ Development maintenance: `node scripts/sync-coaching.cjs` embeds `ui/coaching-en
 
 Open **Back up or restore progress** on Progress (also available during setup), or use the storage status button on any main screen. Download a JSON backup and keep it private. It contains completed exercise records, effort feedback, exercise levels, custom exercises, routines, preferences and deletion markers. Unfinished sets, workout-time selection and display settings remain on the device.
 
-Restore validates a versioned Bodyweight Ladder backup (up to 5 MB), previews the merge, and only applies it after an explicit **Merge backup** action. History is combined without duplicates; deletions are respected; the most recently changed setting wins, with the existing device winning ties. A fresh device receives the backup settings. Restoring during an unfinished exercise or timer is blocked. History above the existing 1,800-record limit is rejected instead of silently trimmed. Future or malformed formats are rejected without applying them.
+Restore validates a versioned Bodyweight Ladder backup (up to 5 MB), previews the merge, and only applies it after an explicit **Merge backup** action. History is combined without duplicates; deletions are respected; the most recently changed setting wins, with the existing device winning ties. A fresh device receives the backup settings. Restoring during an unfinished exercise or timer is blocked. Full local histories are preserved, including histories above 1,800 records; combined backups above 5 MB are rejected without changing progress. Future or malformed formats are rejected without applying them.
 
 Browser writes for completed progress and unfinished sessions are read back. Failed writes show a persistent warning with retry and backup actions. Restore writes and verifies the combined copy before changing the current session or initiating existing cloud sync. Self-hosted use remains browser-only: downloading a backup does not create an account or automatic cross-device sync. Files are parsed on the device; an account-connected artifact version still syncs restored state through its existing integration.
 

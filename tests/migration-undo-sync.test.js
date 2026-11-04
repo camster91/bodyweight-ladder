@@ -1,3 +1,4 @@
+const {record}=require('./record-fixture.cjs');
 const {JSDOM}=require('jsdom');const fs=require('fs');
 const html=fs.readFileSync(require('path').join(__dirname,'..','index.html'),'utf8');
 const H=3600e3, D=24*H, now=Date.now();
@@ -47,8 +48,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   w.close();
 
   // 2. Double tap, Undo, hidden in routine, side plank +5
-  w=boot({v:2,prefs:{setupDone:true}}).window; await sleep(50); const d=w.document;
-  d.querySelector('[data-act=save]').click(); d.querySelector('[data-act=save]').click();
+  w=boot({v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}}).window; await sleep(50); const d=w.document;
+  record(w); record(w);
   st=JSON.parse(w.localStorage.getItem('bwl-state')); ok(st.log.length===1,'double tap saves once ('+st.log.length+')');
   ok(!d.querySelector('#toastUndo').hidden,'Undo shown');
   d.querySelector('#toastUndo').click();
@@ -56,7 +57,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   ok(!!d.querySelector('#card-'+st.deleted[0].split('|')[1]),'undone card reopened');
   // hide push, check Full strength routine
   d.querySelector('#tab-ladders').click(); ((d.querySelector('[data-ui=ex][data-t=push][aria-expanded=false]')||{click(){}}).click(), d.querySelector('[data-act=hide][data-t=push]').click());
-  d.querySelector('#tab-today').click(); d.querySelector('[data-ui=sheet]').click(); d.querySelector('[data-ui=pick][data-f="r:r-strength"]').click();
+  w.eval('focusRun=null;persistFocus()');d.querySelector('#tab-today').click(); d.querySelector('[data-ui=sheet]').click(); d.querySelector('[data-ui=pick][data-f="r:r-strength"]').click();
   const ids=[...d.querySelectorAll('#view .card[id], #view .mini')].map(e=>e.id||e.dataset.t);
   ok(!ids.includes('push')&&!ids.includes('card-push'),'hidden Push not in routine');
   // side plank step
@@ -72,7 +73,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   const cloud={sets:0, doc:{v:2,updated:now-D,levels:{},log:[{ts:now-3*D,t:'push',k:'push:push-up',sets:[9,9,9]}],deleted:[],prefs:{hidden:{},focus:{},sets:{},presetsSeen:['r-strength','r-over40','r-tendon','r-heart','r-move','r-stretch']},custom:[],routines:[]}};
   const loc={v:2,updated:now-H,levels:{},log:[{ts:now-2*D,t:'squat',k:'squat:bodyweight-squat',sets:[15,15,15]}],deleted:[],prefs:{hidden:{dip:true},focus:{},sets:{}},custom:[],routines:[]};
   w=boot(loc,cloud).window; const d3=w.document;
-  d3.querySelector('[data-act=save]').click();           // logged while syncing
+  record(w);           // logged while syncing
   await sleep(150);
   const c=cloud.doc; const cks=c.log.map(e=>e.k);
   ok(cks.includes('push:push-up')&&cks.includes('squat:bodyweight-squat')&&c.log.length===3,'cloud has cloud+local+during-sync entries ('+c.log.length+')');

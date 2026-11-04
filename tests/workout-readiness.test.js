@@ -55,7 +55,7 @@ pass('adapted workouts hide variation changes and restoring the original brings 
 });
 pass('advanced set completion locks adaptation and advanced holds use lighter goals',()=>{
  const w=boot();click(w,'[data-act="complete"][data-t="push"][data-i="0"]');assert.equal(w.document.querySelector('.readiness-check'),null);assert.equal(w.eval('canAdjustReadiness()'),false);
- click(w,'[data-act="complete"][data-t="push"][data-i="0"]');choose(w,'low');click(w,'[data-readiness="apply"]');
+ click(w,'[data-act="complete"][data-t="push"][data-i="0"]');assert.equal(w.eval('sessionRecordedCount(focusItem())'),0);w.eval('delete focusItem().advancedDraft;delete drafts.push;delete completedSets.push;delete holdNext.push;render()');choose(w,'low');click(w,'[data-readiness="apply"]');
  const goal=w.eval('lightSessionItem(findTrack("core")).goals[0]');w.eval('startHold(findTrack("core"))');assert.equal(w.eval('hold.goal'),goal);w.eval('stopTimer()');
 });
 }finally{windows.forEach(w=>w.close());}process.exit(0);

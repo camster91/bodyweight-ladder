@@ -1,3 +1,4 @@
+const {prepareRecording}=require('./record-fixture.cjs');
 const {JSDOM}=require('jsdom');const fs=require('fs');
 const html=fs.readFileSync(require('path').join(__dirname,'..','index.html'),'utf8');
 const ok=(c,m)=>console.log((c?'PASS ':'FAIL ')+m);
@@ -20,16 +21,16 @@ function device(S, local, opts={}){
   dev.w=dom.window; dev.d=dom.window.document; return dev;
 }
 const st=dev=>JSON.parse(dev.w.localStorage.getItem('bwl-state'));
-const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Error('no '+sel); e.click(); };
+const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Error('no '+sel); if(e.dataset.act==='save')prepareRecording(dev.w); e.click(); };
 (async()=>{
   // C1: account has settings; brand new phone offline at first, logs a set, then comes online
   let S=server();
-  let A=device(S,{v:2,prefs:{setupDone:true}}); await sleep(80);
+  let A=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}}); await sleep(80);
   click(A,'#tab-ladders'); ((A.d.querySelector('[data-ui=ex][data-t=push][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=set][data-t=push][data-l="5"]')); ((A.d.querySelector('[data-ui=ex][data-t=crab][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=hide][data-t=crab]'));
   A.d.querySelector('#cName').value='Burpees'; A.d.querySelector('#addForm').dispatchEvent(new A.w.Event('submit',{bubbles:true,cancelable:true}));
   await sleep(80);
   ok(S.doc.levels.push==='push:archer-push-up' && S.doc.custom.length===1,'A settings in cloud');
-  let B=device(S,{v:2,prefs:{setupDone:true}},{online:false}); await sleep(60); ok(true,'(new offline phone now waits instead of setup)');
+  let B=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}},{online:false}); await sleep(60); ok(true,'(new offline phone now waits instead of setup)');
   click(B,'[data-act=save]'); await sleep(20);
   B.online=true; await sleep(31000/1000*0); // connect retry is 30s; call directly instead
   // force reconnect quickly: reload B with its local state online
@@ -40,8 +41,8 @@ const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Erro
   ok(st(B).levels.push==='push:archer-push-up','B now has A settings');
 
   // H1: B offline logs set while A levels up; B reconnects
-  S=server(); A=device(S,{v:2,prefs:{setupDone:true}}); await sleep(80);
-  B=device(S,{v:2,prefs:{setupDone:true}}); await sleep(80);
+  S=server(); A=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}}); await sleep(80);
+  B=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}}); await sleep(80);
   B.online=false;
   click(A,'#tab-ladders'); ((A.d.querySelector('[data-ui=ex][data-t=push][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=set][data-t=push][data-l="4"]')); await sleep(30);
   click(B,'#tab-today'); click(B,'[data-act=save]'); await sleep(30);
@@ -50,7 +51,7 @@ const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Erro
   ok(st(A).levels.push==='push:diamond-push-up','H1 A still shows it');
 
   // H2: clock skew, B hides crab, A (1h ahead) then hides bear
-  S=server(); A=device(S,{v:2,prefs:{setupDone:true}},{skew:3600e3}); await sleep(80); B=device(S,{v:2,prefs:{setupDone:true}}); await sleep(80);
+  S=server(); A=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}},{skew:3600e3}); await sleep(80); B=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}}); await sleep(80);
   click(A,'#tab-ladders'); ((A.d.querySelector('[data-ui=ex][data-t=push][aria-expanded=false]')||{click(){}}).click(), click(A,'[data-act=focus][data-t=push][data-f=more]')); await sleep(150);
   click(B,'#tab-ladders'); ((B.d.querySelector('[data-ui=ex][data-t=crab][aria-expanded=false]')||{click(){}}).click(), click(B,'[data-act=hide][data-t=crab]')); await sleep(150);
   ok(st(A).prefs.hidden.crab===true,'H2 A sees B hide despite clock skew');
@@ -66,7 +67,7 @@ const click=(dev,sel)=>{ const e=dev.d.querySelector(sel); if(!e) throw new Erro
   ok(A.d.querySelector('#saveNote').textContent.startsWith("Can't save"),'H3 shows read-only note');
 
   // Zoom/long name/zero
-  S=server(); A=device(S,{v:2,prefs:{setupDone:true}}); await sleep(60);
+  S=server(); A=device(S,{v:2,log:[],prefs:{setupDone:true,equipment:{counter:true,bar:true,table:true,doorway:true}}}); await sleep(60);
   A.d.querySelectorAll('.card.first input[data-t]').forEach(i=>{});
   const id=A.d.querySelector('.card.first').id.slice(5);
   A.d.querySelectorAll('.card.first [data-act=dec]').forEach(()=>{});

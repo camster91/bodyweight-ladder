@@ -3666,7 +3666,7 @@ function openTechnique(){
  d.querySelector('#techniqueTitle').focus({preventScroll:true});
 }
 function workoutSettingsAreDeferred(){
- return !!focusRun&&(focusRun.phase==='finished'||!!hold?.focus||['rest','paused'].includes(focusRun.phase)||focusRun.items.some(x=>x.skipped||x.entry||x.values?.length||x.restartAfter||sessionHasDraft(x)));
+ return !!focusRun&&(focusRun.phase==='finished'||!!hold?.focus||['rest','paused'].includes(focusRun.phase)||focusRun.items.some(x=>x&&(x.skipped||x.entry||x.values?.length||x.restartAfter||sessionHasDraft(x))));
 }
 function mountWorkoutTools(previous={}){
  const shell=$('.focus-shell');if(!shell)return;
@@ -3774,7 +3774,10 @@ function resumeFocus({background=false}={}){const next=focusItem(),changed=focus
 function completeFocus(value=focusValue()){
   const x=focusItem();if(!x||focusRun.phase!=='work'||x.entry)return;
   if(hold){toast('Finish or cancel the running hold first.');return;}
-  const t=findTrack(x.id),st=sessionSpec(t),before=JSON.parse(JSON.stringify(focusRun));before.items[before.at].value=value;
+  const t=findTrack(x.id),st=sessionSpec(t),before=JSON.parse(JSON.stringify(focusRun));
+  // Preserve an explicitly measured hold without turning an untouched target
+  // into an edit when Undo restores the first set.
+  if(value!==focusValue())before.items[before.at].value=value;
   let vals;
   if(validAdvancedDraft(x)){
     const i=x.values.length;if(i>=st[1])return;
@@ -4904,6 +4907,9 @@ function addWorkoutExtra(tid,{oneSet=false}={}){
  if(x){const at=focusRun.items.indexOf(x);focusRun.items[at]=next;focusRun.at=at;}
  else {focusRun.items.push(next);focusRun.at=focusRun.items.length-1;}
  delete drafts[tid];delete completedSets[tid];delete holdNext[tid];
+ // Replacing a skipped slot with optional extra work must not turn an
+ // unfinished original plan into a fully completed workout.
+ if(focusRun.endStatus==='partial')focusRun.closedEarly=true;
  delete focusRun.endStatus;delete focusRun.ended;delete focusRun.pauseSnapshot;delete focusRun.pausedAt;
  focusRun.phase='work';focusRun.restEnd=0;focusRun.extrasCount=(Number.isSafeInteger(focusRun.extrasCount)?focusRun.extrasCount:0)+1;
  focusUndo=null;readinessChoice=null;swapChoice=null;

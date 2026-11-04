@@ -15,4 +15,4 @@ f=fixture();const markup=f.run("restPreviewMarkup({id:'core'},{values:[],goals:[
 const {journeySummaryData,journeyCheckinCopy}=require('../ui/journey-summary.js');const now=Date.UTC(2026,10,25),day=86400000;
 const log=[{ts:now-29*day,t:'push',k:'push:step',sets:[5]},{ts:now-day,t:'push',k:'push:step',sets:[6]}],data=journeySummaryData(log,[],now);
 assert.equal(data.current.days,1);assert.equal(data.current.sets,1);assert.match(journeyCheckinCopy(data,{days:3}).heading,/first-month/);assert.match(journeyCheckinCopy({...data,partial:3,completed:1},{days:3}).text,/shorter time budget/);assert.match(journeyCheckinCopy({...data,current:{days:0,sets:0}},{days:3}).text,/When you return/);assert.match(journeyCheckinCopy({...data,historyDays:7},{days:3}).heading,/weekly/);
-console.log('Focused cue delivery, mute, device settings, preview and month check-in checks passed');
+console.log('PASS Focused cue delivery, mute, device settings, preview and month check-in checks passed');

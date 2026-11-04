@@ -25,6 +25,8 @@ Centralized browser-error ingestion is **not configured**. These diagnostics hel
 
 ## Current launch status
 
+November 4 update: the owner requested full workout testing. The new [launch verification record](workout-launch-qa-2026-11-04.md) supersedes the testing deferral below for its exact candidate. The historical limitations below describe the earlier release.
+
 The owner requested skipping additional testing for this release. No new unit, browser, physical-device or assistive-technology test pass is claimed. Parsing, source synchronization, code review, deploy-script safeguards and live delivery confirmation are release checks only.
 
 Independent exercise-professional review, photo/technique sign-off and a real-user pilot remain outstanding. See `launch-review-packet.md` and `exercise-photo-review.html`; preparing those materials does not complete the reviews.

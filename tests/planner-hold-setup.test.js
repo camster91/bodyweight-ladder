@@ -18,7 +18,7 @@ const ids=d=>[...d.querySelectorAll('#view .card[id], #view .mini')].map(e=>e.id
   d.querySelector('[data-ui=more]').click(); ok(d.body.innerHTML.includes('Try something new'),'More shows new moves group');
   // hold timer on plank-type: set level core plank, but core done 2h ago -> open from done list
   d.querySelector('[data-ui=done]').click(); d.querySelector('.mini[data-t=core]').click();
-  d.querySelector('[data-act=hold][data-t=core]').click(); await sleep(3000+2100);
+  d.querySelector('[data-act=hold][data-t=core]').click(); w.eval('hold.start=Date.now()-2100;tick()');
   d.querySelector('#timer [data-tm=done]').click(); await sleep(50);
   ok(d.querySelector('#in-core-0').value==='2','hold fills set 1 with seconds ('+d.querySelector('#in-core-0').value+')');
   ok(d.querySelector('#timer').textContent.includes('Rest'),'rest starts after hold');

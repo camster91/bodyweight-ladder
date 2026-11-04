@@ -28,6 +28,9 @@ function addWorkoutExtra(tid,{oneSet=false}={}){
  if(x){const at=focusRun.items.indexOf(x);focusRun.items[at]=next;focusRun.at=at;}
  else {focusRun.items.push(next);focusRun.at=focusRun.items.length-1;}
  delete drafts[tid];delete completedSets[tid];delete holdNext[tid];
+ // Replacing a skipped slot with optional extra work must not turn an
+ // unfinished original plan into a fully completed workout.
+ if(focusRun.endStatus==='partial')focusRun.closedEarly=true;
  delete focusRun.endStatus;delete focusRun.ended;delete focusRun.pauseSnapshot;delete focusRun.pausedAt;
  focusRun.phase='work';focusRun.restEnd=0;focusRun.extrasCount=(Number.isSafeInteger(focusRun.extrasCount)?focusRun.extrasCount:0)+1;
  focusUndo=null;readinessChoice=null;swapChoice=null;

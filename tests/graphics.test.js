@@ -16,7 +16,7 @@ try{
  const generated=JSON.parse(fs.readFileSync(path.join(root,'assets/brand/exercises/generated-sources.json'),'utf8'));
  const credited=new Set(originals.map(p=>'assets/brand/exercises/'+p.file).concat(generated.flatMap(p=>Object.values(p.files))));
  for(const step of steps){for(const file of [step.thumb,step.detail]){assert(credited.has(file),`Uncredited asset ${file}`);const bytes=fs.readFileSync(path.join(root,file));assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');}assert(fs.statSync(path.join(root,step.thumb)).size<100000,`${step.key}: oversized thumbnail`);}
- for(const record of generated){assert.equal(record.synthetic,true);assert(record.prompt&&record.tool==='ChatGPT built-in image generation');assert(credited.has(record.reference),`Uncredited generation reference ${record.reference}`);assert(fs.existsSync(path.join(root,record.reference)));}
+ for(const record of generated){assert.equal(record.synthetic,true);assert(record.prompt&&record.tool==='ChatGPT built-in image generation');const references=record.references||[record.reference];assert(references.length);for(const reference of references){assert(credited.has(reference),`Uncredited generation reference ${reference}`);assert(fs.existsSync(path.join(root,reference)));}}
  console.log('PASS photographic assets have provenance, licensed references, disclosure metadata and compact WebP thumbnails');
 
  const library=JSDOM.fragment(dom.window.eval('exerciseThumbnail(TRACKS.find(t=>t.id==="pull"))'));

@@ -5,6 +5,7 @@
   "description": "Phone-first bodyweight training app: skill ladders, time-based session planner, hold and rest timers.",
   "scripts": {
     "test": "node tests/run.js",
+    "test:browser": "node tests/browser-flow.cjs",
     "controls:sync": "node scripts/sync-controls.cjs",
     "controls:check": "node scripts/sync-controls.cjs --check && node scripts/build-controls-docs.cjs --check",
     "controls:docs": "node scripts/build-controls-docs.cjs",
@@ -18,6 +19,7 @@
     "start": "npx --yes serve@14.2.4 ."
   },
   "devDependencies": {
-    "jsdom": "24.1.3"
+    "jsdom": "24.1.3",
+    "playwright": "1.64.1"
   }
 }

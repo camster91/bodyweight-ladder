@@ -3,7 +3,7 @@ const dom=new JSDOM(fs.readFileSync(path.join(__dirname,'../index.html'),'utf8')
 const d=dom.window.document,click=s=>{d.querySelector(s).focus();d.querySelector(s).click();};
 try{
  click('#tab-ladders');click('[data-ui="ex"][data-t="push"]');
- assert(d.querySelector('.library-current h3').textContent.includes('Push-up'));assert(!d.querySelector('.exopen .ctl'));
+ assert(d.querySelector('.exopen .exrow .mini-t').textContent.includes('Push-up'));assert(!d.querySelector('.exopen .ctl'));
  click('[data-panel="settings-push"]');const inc=()=>d.querySelector('#librarySheet [data-act="setsInc"]');inc().focus();inc().click();assert.equal(d.activeElement,inc());assert.equal(d.querySelector('#librarySheet [data-set-count]').value,'4');
  click('[data-ui="libraryclose"]');assert.equal(d.activeElement,d.querySelector('[data-panel="settings-push"]'));assert(!d.body.classList.contains('library-sheet-open'));
  console.log('PASS current step precedes settings and settings preserve focus after changes and dismissal');

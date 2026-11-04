@@ -40,11 +40,11 @@ try{
  // Timed and unilateral work uses the existing elapsed-time and weaker-side rules.
  click(w,'[data-focus=skip]');
  const core=run(w).items.findIndex(x=>x.id==='core');assert(core>=0);click(w,`[data-focus=choose][data-i="${core}"]`);
- click(w,'[data-focus=hold]');assert(d.querySelector('[data-focus=finish]').disabled);click(w,'[data-focus=cancel]');assert.equal(run(w).items[core].values.length,0);
- click(w,'[data-focus=hold]');w.eval('hold.start=Date.now()-9000;tick()');click(w,'[data-focus=finish]');assert.equal(run(w).items[core].values[0],9);assert.equal(run(w).phase,'rest');
+ click(w,'[data-focus=hold]');if(w.document.querySelector('[data-hold-prep-ready]'))click(w,'[data-hold-prep-ready]');assert(d.querySelector('[data-focus=finish]').disabled);click(w,'[data-focus=cancel]');assert.equal(run(w).items[core].values.length,0);
+ click(w,'[data-focus=hold]');if(w.document.querySelector('[data-hold-prep-ready]'))click(w,'[data-hold-prep-ready]');w.eval('hold.start=Date.now()-9000;tick()');click(w,'[data-focus=finish]');assert.equal(run(w).items[core].values[0],9);assert.equal(run(w).phase,'rest');
  console.log('PASS timed sets use measured seconds; countdown cancellation records nothing');
  const side=boot({'bwl-state':JSON.stringify({v:2,log:[],levels:{core:'core:side-plank'},prefs:{setupDone:true}})});
- const ci=run(side).items.findIndex(x=>x.id==='core');click(side,`[data-focus=choose][data-i="${ci}"]`);click(side,'[data-focus=hold]');
+ const ci=run(side).items.findIndex(x=>x.id==='core');click(side,`[data-focus=choose][data-i="${ci}"]`);click(side,'[data-focus=hold]');click(side,'[data-hold-prep-ready]');
  side.eval('hold.start=Date.now()-20000;tick()');click(side,'[data-focus=finish]');assert.equal(side.eval('hold.side'),2);assert.equal(run(side).items[ci].values.length,0);
  side.eval('hold.start=Date.now()-12000;tick()');click(side,'[data-focus=finish]');assert.equal(run(side).items[ci].values[0],12);
  console.log('PASS unilateral Focus holds time both sides and record the weaker side');

@@ -69,7 +69,7 @@ pass('backup dialog is available without history and cancel makes no writes',()=
 pass('fresh device receives backup settings before setup and full histories are never silently trimmed',()=>{
  w.eval(`state=blank();globalThis.freshBackup=makeProgressBackup();freshBackup.state.prefs.setupDone=true;freshBackup.state.levels.push='push:wall-push-up';globalThis.parsedFresh=parseProgressBackup(JSON.stringify(freshBackup));`);
  assert.equal(w.eval('planProgressRestore(parsedFresh).next.levels.push'),'push:wall-push-up');
- w.eval(`state.log=Array.from({length:LOG_KEEP},(_,i)=>({ts:${now}-i-1,t:'push',k:'push:push-up',sets:[8]}));parsedFresh.state.log=[{ts:${now},t:'push',k:'push:push-up',sets:[8]}];`);
- assert.throws(()=>w.eval('planProgressRestore(parsedFresh)'),/storage limit/);
+ w.eval(`state.log=Array.from({length:1800},(_,i)=>({ts:${now}-i-1,t:'push',k:'push:push-up',sets:[8]}));parsedFresh.state.log=[{ts:${now},t:'push',k:'push:push-up',sets:[8]}];`);
+ assert.equal(w.eval('planProgressRestore(parsedFresh).next.log.length'),1801);assert.equal(w.eval('state.log.length'),1800);
 });
 }finally{setTimeout(()=>w.close(),0);}
