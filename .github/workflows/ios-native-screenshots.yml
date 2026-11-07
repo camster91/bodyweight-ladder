@@ -1,0 +1,84 @@
+name: iOS native store screenshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ladder-ios-native-screenshots
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    # macos-14 was retired from GitHub Actions on 2026-11-02 and does not
+    # provide the Xcode 26+ toolchain required by Capacitor 8.5.3.
+    runs-on: macos-26
+    timeout-minutes: 35
+    env:
+      EXPECTED_COMMIT: ec1a97f540ac56137ed8d7de9040ab31d2362de0
+    steps:
+      - name: Check out the screenshot harness
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: ci-harness
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out the exact candidate source
+        uses: actions/checkout@v4
+        with:
+          ref: ec1a97f540ac56137ed8d7de9040ab31d2362de0
+          path: candidate
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: candidate/package-lock.json
+
+      - name: Check Xcode compatibility
+        run: |
+          xcodebuild -version
+          xcode_major="$(xcodebuild -version | awk '/^Xcode / {split($2, v, "."); print v[1]}')"
+          if [[ -z "$xcode_major" || "$xcode_major" -lt 26 ]]; then
+            echo "Capacitor 8.5.3 requires Xcode 26 or newer; found Xcode ${xcode_major:-unknown}." >&2
+            exit 1
+          fi
+
+      - name: Install locked web/native dependencies
+        working-directory: candidate
+        run: npm ci
+
+      - name: Prepare the Capacitor iOS web bundle
+        working-directory: candidate
+        run: npm run mobile:prepare
+
+      - name: Capture and verify native simulator screens
+        run: |
+          SOURCE_ROOT="$GITHUB_WORKSPACE/candidate" \
+          HARNESS_ROOT="$GITHUB_WORKSPACE/ci-harness" \
+          OUTPUT_ROOT="$GITHUB_WORKSPACE/artifacts/ios-native-screenshots" \
+          "$GITHUB_WORKSPACE/ci-harness/scripts/capture-native-store-screenshots.sh"
+
+      - name: Record source and artifact provenance
+        run: |
+          git -C ci-harness rev-parse HEAD > artifacts/ios-native-screenshots/harness-commit.txt
+          git -C candidate rev-parse HEAD > artifacts/ios-native-screenshots/candidate-commit.txt
+          test "$(cat artifacts/ios-native-screenshots/candidate-commit.txt)" = "$EXPECTED_COMMIT"
+          shasum -a 256 artifacts/ios-native-screenshots/*.png \
+            artifacts/ios-native-screenshots/*.json \
+            artifacts/ios-native-screenshots/*-commit.txt \
+            > artifacts/ios-native-screenshots/SHA256SUMS
+
+      - name: Upload native screenshots and verification logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: bodyweight-ladder-ios-native-screenshots-${{ github.run_id }}
+          path: artifacts/ios-native-screenshots
+          if-no-files-found: error
