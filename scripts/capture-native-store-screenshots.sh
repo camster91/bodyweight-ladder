@@ -110,7 +110,7 @@ fi
 
 capture_device() {
   local label="$1" expected_width="$2" expected_height="$3" type_id="$4"
-  local udid screenshot process_state verification sha256 launch_output pid
+  local udid screenshot verification sha256 launch_output pid attempt deadline verify_error
   create_device "Ladder Screenshot $label" "$type_id"
   udid="$CREATED_UDID"
   screenshot="$OUTPUT_ROOT/$label.png"
@@ -122,14 +122,39 @@ capture_device() {
     echo "simctl did not return a live native app PID ($label): $launch_output" >&2
     exit 1
   fi
-  sleep 5
-  if ! kill -0 "$pid" 2>/dev/null; then
-    echo "Native app PID exited before screenshot ($label): $pid" >&2
+
+  # A live UIKit PID can precede a usable WebView framebuffer on a fresh
+  # simulator. Keep OCR strict, but poll the real native screenshot for up to
+  # 90 seconds instead of accepting a launch screen/status bar as evidence.
+  attempt=1
+  deadline=$((SECONDS + 90))
+  verify_error="$OUTPUT_ROOT/$label-verification-error.txt"
+  : >"$verify_error"
+  while (( SECONDS < deadline )); do
+    if ! kill -0 "$pid" 2>/dev/null; then
+      echo "Native app PID exited before screenshot ($label): $pid" >&2
+      printf 'launchOutput=%s\npid=%s\nattempt=%s\n' "$launch_output" "$pid" "$attempt" >"$OUTPUT_ROOT/$label-failure.txt"
+      exit 1
+    fi
+
+    xcrun simctl io "$udid" screenshot "$screenshot"
+    if verification="$($VERIFY_BIN "$screenshot" "$expected_width" "$expected_height" 'bodyweight,ladder,set up my workout,no account required,your pace,real strength,small steps,workout' 2>"$verify_error")"; then
+      break
+    fi
+    echo "Native content not ready for $label (attempt $attempt, ${SECONDS}s elapsed): $(tr '\n' ' ' <"$verify_error")" >&2
+    attempt=$((attempt + 1))
+    sleep 5
+  done
+  if [[ -z "${verification:-}" ]]; then
+    {
+      printf 'launchOutput=%s\npid=%s\nattempts=%s\nelapsedSeconds=%s\n' "$launch_output" "$pid" "$attempt" "$SECONDS"
+      printf 'lastVerificationError='
+      tr '\n' ' ' <"$verify_error"
+      printf '\n'
+    } >"$OUTPUT_ROOT/$label-failure.txt"
+    echo "Native app content was not detected after ${SECONDS}s ($label); see $OUTPUT_ROOT/$label-failure.txt" >&2
     exit 1
   fi
-
-  xcrun simctl io "$udid" screenshot "$screenshot"
-  verification="$($VERIFY_BIN "$screenshot" "$expected_width" "$expected_height" 'bodyweight,ladder,set up my workout,no account required,your pace,real strength,small steps,workout')"
   sha256="$(shasum -a 256 "$screenshot" | awk '{print $1}')"
   VERIFY_JSON="$verification" SHA256="$sha256" DEVICE_UDID="$udid" SOURCE_COMMIT="$actual_commit" LABEL="$label" APP_VERSION="$app_version" APP_BUILD="$app_build" LAUNCH_OUTPUT="$launch_output" python3 -c '
 import json, os
