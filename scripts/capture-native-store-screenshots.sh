@@ -7,6 +7,8 @@ set -euo pipefail
 
 EXPECTED_COMMIT="${EXPECTED_COMMIT:-ec1a97f540ac56137ed8d7de9040ab31d2362de0}"
 BUNDLE_ID="ca.ashbi.ladder"
+SOURCE_ROOT="${SOURCE_ROOT:-$PWD}"
+HARNESS_ROOT="${HARNESS_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 OUTPUT_ROOT="${OUTPUT_ROOT:-${GITHUB_WORKSPACE:-$PWD}/artifacts/ios-native-screenshots}"
 RUN_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/bodyweight-ladder-native-screenshots"
 DERIVED_DATA="$RUN_ROOT/DerivedData"
@@ -14,18 +16,18 @@ VERIFY_BIN="$RUN_ROOT/verify-native-screenshot"
 
 mkdir -p "$OUTPUT_ROOT" "$RUN_ROOT"
 
-actual_commit="$(git rev-parse HEAD)"
+actual_commit="$(git -C "$SOURCE_ROOT" rev-parse HEAD)"
 if [[ "$actual_commit" != "$EXPECTED_COMMIT" ]]; then
   echo "Expected source $EXPECTED_COMMIT but checked out $actual_commit" >&2
   exit 1
 fi
 
-if [[ ! -d ios/App/App.xcodeproj || ! -d ios/App/App/public ]]; then
+if [[ ! -d "$SOURCE_ROOT/ios/App/App.xcodeproj" || ! -d "$SOURCE_ROOT/ios/App/App/public" ]]; then
   echo "Prepared iOS project/assets are missing; run npm run mobile:prepare first" >&2
   exit 1
 fi
 
-swiftc scripts/verify-native-screenshot.swift \
+swiftc "$HARNESS_ROOT/scripts/verify-native-screenshot.swift" \
   -o "$VERIFY_BIN" \
   -framework AppKit \
   -framework Vision
@@ -73,7 +75,7 @@ create_device() {
 build_app() {
   rm -rf "$DERIVED_DATA"
   xcodebuild \
-    -project ios/App/App.xcodeproj \
+    -project "$SOURCE_ROOT/ios/App/App.xcodeproj" \
     -scheme App \
     -configuration Debug \
     -sdk iphonesimulator \

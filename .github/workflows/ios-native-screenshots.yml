@@ -2,12 +2,6 @@ name: iOS native store screenshots
 
 on:
   workflow_dispatch:
-    inputs:
-      source_commit:
-        description: Exact source commit to build and capture
-        required: false
-        default: ec1a97f540ac56137ed8d7de9040ab31d2362de0
-        type: string
 
 permissions:
   contents: read
@@ -18,41 +12,68 @@ concurrency:
 
 jobs:
   capture:
-    runs-on: macos-14
+    # macos-14 was retired from GitHub Actions on 2026-11-02 and does not
+    # provide the Xcode 26+ toolchain required by Capacitor 8.5.3.
+    runs-on: macos-26
     timeout-minutes: 35
     env:
-      EXPECTED_COMMIT: ${{ inputs.source_commit || 'ec1a97f540ac56137ed8d7de9040ab31d2362de0' }}
+      EXPECTED_COMMIT: ec1a97f540ac56137ed8d7de9040ab31d2362de0
     steps:
-      - name: Check out the exact candidate
+      - name: Check out the screenshot harness
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.source_commit || 'ec1a97f540ac56137ed8d7de9040ab31d2362de0' }}
+          ref: ${{ github.sha }}
+          path: ci-harness
           fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out the exact candidate source
+        uses: actions/checkout@v4
+        with:
+          ref: ec1a97f540ac56137ed8d7de9040ab31d2362de0
+          path: candidate
+          fetch-depth: 1
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: candidate/package-lock.json
+
+      - name: Check Xcode compatibility
+        run: |
+          xcodebuild -version
+          xcode_major="$(xcodebuild -version | awk '/^Xcode / {split($2, v, "."); print v[1]}')"
+          if [[ -z "$xcode_major" || "$xcode_major" -lt 26 ]]; then
+            echo "Capacitor 8.5.3 requires Xcode 26 or newer; found Xcode ${xcode_major:-unknown}." >&2
+            exit 1
+          fi
 
       - name: Install locked web/native dependencies
+        working-directory: candidate
         run: npm ci
 
       - name: Prepare the Capacitor iOS web bundle
+        working-directory: candidate
         run: npm run mobile:prepare
 
       - name: Capture and verify native simulator screens
         run: |
-          chmod +x scripts/capture-native-store-screenshots.sh
+          SOURCE_ROOT="$GITHUB_WORKSPACE/candidate" \
+          HARNESS_ROOT="$GITHUB_WORKSPACE/ci-harness" \
           OUTPUT_ROOT="$GITHUB_WORKSPACE/artifacts/ios-native-screenshots" \
-            scripts/capture-native-store-screenshots.sh
+          "$GITHUB_WORKSPACE/ci-harness/scripts/capture-native-store-screenshots.sh"
 
       - name: Record source and artifact provenance
         run: |
-          git rev-parse HEAD > artifacts/ios-native-screenshots/source-commit.txt
+          git -C ci-harness rev-parse HEAD > artifacts/ios-native-screenshots/harness-commit.txt
+          git -C candidate rev-parse HEAD > artifacts/ios-native-screenshots/candidate-commit.txt
+          test "$(cat artifacts/ios-native-screenshots/candidate-commit.txt)" = "$EXPECTED_COMMIT"
           shasum -a 256 artifacts/ios-native-screenshots/*.png \
             artifacts/ios-native-screenshots/*.json \
-            artifacts/ios-native-screenshots/source-commit.txt \
+            artifacts/ios-native-screenshots/*-commit.txt \
             > artifacts/ios-native-screenshots/SHA256SUMS
 
       - name: Upload native screenshots and verification logs
