@@ -1,0 +1,63 @@
+name: iOS native store screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_commit:
+        description: Exact source commit to build and capture
+        required: false
+        default: ec1a97f540ac56137ed8d7de9040ab31d2362de0
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ladder-ios-native-screenshots
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: macos-14
+    timeout-minutes: 35
+    env:
+      EXPECTED_COMMIT: ${{ inputs.source_commit || 'ec1a97f540ac56137ed8d7de9040ab31d2362de0' }}
+    steps:
+      - name: Check out the exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_commit || 'ec1a97f540ac56137ed8d7de9040ab31d2362de0' }}
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked web/native dependencies
+        run: npm ci
+
+      - name: Prepare the Capacitor iOS web bundle
+        run: npm run mobile:prepare
+
+      - name: Capture and verify native simulator screens
+        run: |
+          chmod +x scripts/capture-native-store-screenshots.sh
+          OUTPUT_ROOT="$GITHUB_WORKSPACE/artifacts/ios-native-screenshots" \
+            scripts/capture-native-store-screenshots.sh
+
+      - name: Record source and artifact provenance
+        run: |
+          git rev-parse HEAD > artifacts/ios-native-screenshots/source-commit.txt
+          shasum -a 256 artifacts/ios-native-screenshots/*.png \
+            artifacts/ios-native-screenshots/*.json \
+            artifacts/ios-native-screenshots/source-commit.txt \
+            > artifacts/ios-native-screenshots/SHA256SUMS
+
+      - name: Upload native screenshots and verification logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: bodyweight-ladder-ios-native-screenshots-${{ github.run_id }}
+          path: artifacts/ios-native-screenshots
+          if-no-files-found: error
