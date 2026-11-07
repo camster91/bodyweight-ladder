@@ -32,44 +32,59 @@ swiftc "$HARNESS_ROOT/scripts/verify-native-screenshot.swift" \
   -framework AppKit \
   -framework Vision
 
-runtime_id="$(xcrun simctl list runtimes available | \
-  sed -nE 's/^.* - (com\.apple\.CoreSimulator\.SimRuntime\.iOS-[^ ]+) \(available\).*$/\1/p' | tail -1)"
+runtime_id="$(xcrun simctl list runtimes --json | python3 -c '
+import json, sys
+runtimes = [r for r in json.load(sys.stdin).get("runtimes", [])
+            if r.get("isAvailable") and r.get("identifier", "").startswith("com.apple.CoreSimulator.SimRuntime.iOS-")]
+runtimes.sort(key=lambda r: tuple(int(x) for x in r.get("version", "0").split(".")))
+print(runtimes[-1]["identifier"] if runtimes else "")
+')"
 if [[ -z "$runtime_id" ]]; then
   echo "No available iOS Simulator runtime found" >&2
   exit 1
 fi
 
 device_type_id() {
-  local pattern="$1"
-  xcrun simctl list devicetypes | \
-    sed -nE "s/^.*(${pattern}) \((com\\.apple\\.CoreSimulator\\.SimDeviceType\\.[^)]*)\).*$/\2/p" | head -1
+  xcrun simctl list devicetypes --json | python3 -c '
+import json, sys
+wanted = set(sys.argv[1:])
+for device in json.load(sys.stdin).get("devicetypes", []):
+    if device.get("name") in wanted:
+        print(device["identifier"])
+        break
+' "$@"
 }
 
 iphone_type="$(device_type_id 'iPhone 16 Pro Max')"
-ipad_type="$(device_type_id 'iPad Pro.*13.*M4')"
+ipad_type="$(device_type_id 'iPad Pro 13-inch (M4)' 'iPad Pro (13-inch) (M4)')"
 if [[ -z "$iphone_type" || -z "$ipad_type" ]]; then
   echo "Required simulator device types are unavailable" >&2
-  xcrun simctl list devicetypes >&2
+  xcrun simctl list devicetypes --json >&2
   exit 1
 fi
 
 created_devices=()
 cleanup() {
-  for udid in "${created_devices[@]:-}"; do
+  for udid in "${created_devices[@]}"; do
     xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
     xcrun simctl delete "$udid" >/dev/null 2>&1 || true
   done
 }
 trap cleanup EXIT
 
+CREATED_UDID=""
 create_device() {
   local name="$1" type_id="$2"
-  local udid
-  udid="$(xcrun simctl create "$name" "$type_id" "$runtime_id")"
-  created_devices+=("$udid")
-  xcrun simctl boot "$udid" >/dev/null
-  xcrun simctl bootstatus "$udid" -b >&2
-  printf '%s\n' "$udid"
+  CREATED_UDID="$(xcrun simctl create "$name" "$type_id" "$runtime_id")"
+  created_devices+=("$CREATED_UDID")
+  xcrun simctl boot "$CREATED_UDID" >/dev/null
+  xcrun simctl bootstatus "$CREATED_UDID" -b >&2
+}
+
+destroy_device() {
+  local udid="$1"
+  xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+  xcrun simctl delete "$udid" >/dev/null 2>&1 || true
 }
 
 build_app() {
@@ -95,29 +110,28 @@ fi
 
 capture_device() {
   local label="$1" expected_width="$2" expected_height="$3" type_id="$4"
-  local udid screenshot process_state verification sha256
-  udid="$(create_device "Ladder Screenshot $label" "$type_id")"
+  local udid screenshot process_state verification sha256 launch_output pid
+  create_device "Ladder Screenshot $label" "$type_id"
+  udid="$CREATED_UDID"
   screenshot="$OUTPUT_ROOT/$label.png"
   xcrun simctl install "$udid" "$app_path"
-  xcrun simctl launch "$udid" "$BUNDLE_ID"
-  sleep 5
-
-  process_state="$RUN_ROOT/$label-process.txt"
-  if ! xcrun simctl spawn "$udid" launchctl print gui/501/"$BUNDLE_ID" >"$process_state" 2>&1; then
-    cat "$process_state" >&2
-    echo "The native app process was not found after launch ($label)" >&2
+  launch_output="$(xcrun simctl launch "$udid" "$BUNDLE_ID" 2>&1)"
+  printf '%s\n' "$launch_output"
+  pid="$(printf '%s\n' "$launch_output" | sed -nE 's/.*: ([0-9]+)$/\1/p' | tail -1)"
+  if [[ ! "$pid" =~ ^[0-9]+$ ]] || ! kill -0 "$pid" 2>/dev/null; then
+    echo "simctl did not return a live native app PID ($label): $launch_output" >&2
     exit 1
   fi
-  if ! rg -q 'state = running|running-active|running-interactive' "$process_state"; then
-    cat "$process_state" >&2
-    echo "The native app was not active after launch ($label)" >&2
+  sleep 5
+  if ! kill -0 "$pid" 2>/dev/null; then
+    echo "Native app PID exited before screenshot ($label): $pid" >&2
     exit 1
   fi
 
   xcrun simctl io "$udid" screenshot "$screenshot"
-  verification="$($VERIFY_BIN "$screenshot" "$expected_width" "$expected_height" 'Welcome,Today,Exercises,Progress,workout')"
+  verification="$($VERIFY_BIN "$screenshot" "$expected_width" "$expected_height" 'bodyweight,ladder,set up my workout,no account required,your pace,real strength,small steps,workout')"
   sha256="$(shasum -a 256 "$screenshot" | awk '{print $1}')"
-  VERIFY_JSON="$verification" SHA256="$sha256" DEVICE_UDID="$udid" SOURCE_COMMIT="$actual_commit" LABEL="$label" python3 -c '
+  VERIFY_JSON="$verification" SHA256="$sha256" DEVICE_UDID="$udid" SOURCE_COMMIT="$actual_commit" LABEL="$label" APP_VERSION="$app_version" APP_BUILD="$app_build" LAUNCH_OUTPUT="$launch_output" python3 -c '
 import json, os
 d = json.loads(os.environ["VERIFY_JSON"])
 d.update({
@@ -126,11 +140,25 @@ d.update({
     "label": os.environ["LABEL"],
     "sourceCommit": os.environ["SOURCE_COMMIT"],
     "bundleId": "ca.ashbi.ladder",
+    "appVersion": os.environ["APP_VERSION"],
+    "appBuild": os.environ["APP_BUILD"],
+    "launchOutput": os.environ["LAUNCH_OUTPUT"],
 })
 print(json.dumps(d, sort_keys=True))
 ' >"$OUTPUT_ROOT/$label.json"
   printf '%s %s %s\n' "$label" "$udid" "$sha256"
+  destroy_device "$udid"
 }
+
+info_plist="$app_path/Info.plist"
+app_bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$info_plist")"
+app_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$info_plist")"
+app_build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$info_plist")"
+xcode_version="$(xcodebuild -version | tr '\n' ' ')"
+if [[ "$app_bundle_id" != "$BUNDLE_ID" || "$app_version" != "1.0" || "$app_build" != "2" ]]; then
+  echo "Unexpected built app identity: $app_bundle_id $app_version ($app_build); expected $BUNDLE_ID 1.0 (2)" >&2
+  exit 1
+fi
 
 capture_device iphone-69 1320 2868 "$iphone_type"
 capture_device ipad-13 2064 2752 "$ipad_type"
@@ -139,6 +167,9 @@ cat >"$OUTPUT_ROOT/manifest.json" <<EOF
 {
   "app": "Bodyweight Ladder",
   "bundleId": "$BUNDLE_ID",
+  "version": "$app_version",
+  "build": "$app_build",
+  "xcodeVersion": "$xcode_version",
   "sourceCommit": "$actual_commit",
   "runtimeId": "$runtime_id",
   "captureMethod": "xcrun simctl io screenshot after native simulator launch",

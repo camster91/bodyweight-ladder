@@ -63,9 +63,11 @@ let recognized = (request.results ?? [])
 let matched = arguments.requiredTokens.filter { recognized.contains($0) }
 
 // A SpringBoard screen can have the right pixel dimensions, but it should not
-// contain the app's own navigation/content vocabulary. Require one of the
-// source-owned tokens before accepting the screenshot as a native app screen.
-guard !matched.isEmpty else {
+// contain the app's own navigation/content vocabulary. Require two
+// source-owned tokens, or the unique Ladder heading, before accepting the
+// screenshot as a native app screen.
+let hasUniqueLadderHeading = recognized.contains("ladder")
+guard matched.count >= 2 || hasUniqueLadderHeading else {
     fputs("native app content not detected; OCR was: \(recognized)\n", stderr)
     exit(1)
 }
